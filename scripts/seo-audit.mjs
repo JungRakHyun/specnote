@@ -94,10 +94,13 @@ for (const file of files) {
     warnings.push('faqs 항목이 없습니다 (구글 FAQPage 리치 스니펫 권장)');
   }
 
-  // 7. 쿠팡 링크 포함 시 공정위 고지 필수 검증
+  // 7. 쿠팡 링크 포함 시 공정위 고지 필수 검증 + 미추적 일반 검색 링크 경고
   const hasCoupang = /coupang\.com|provider="coupang"/i.test(body);
   if (hasCoupang && affiliateType !== 'coupang') {
     issues.push('본문에 쿠팡 링크가 있으나 frontmatter에 affiliateType: "coupang"이 설정되지 않았습니다 (공정위 문구 필수)');
+  }
+  if (/www\.coupang\.com\/np\/search/i.test(body)) {
+    warnings.push('일반 쿠팡 검색 링크가 포함되어 있습니다. affiliate-links.json의 본인 추적 링크(link.coupang.com)로 교체하세요.');
   }
 
   // 8. 한국어 CommonMark 굵게(**...**) 깨짐 패턴 감지

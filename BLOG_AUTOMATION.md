@@ -14,9 +14,14 @@
 4. `src/content/posts/<slug>.mdx`를 고품질 한국어 가이드로 작성합니다:
    - `tldr` 핵심 요약 3줄 작성
    - 비교표(Markdown table), `<Callout>`, `<AdSlot position="postInArticle" format="fluid" />` 포함
-   - `tech-gear` 등 구매 가이드에는 `<AffiliateCard provider="coupang" />` + `affiliateType: "coupang"` 필수 적용
+   - **하드웨어(`tech-gear`) & 쿠팡 파트너스 엄격 규칙**:
+     1. 해외직구(중국/일본) 전용 모델이나 단종 SKU는 추천 금지 — 반드시 **국내 정식 발매 + 쿠팡 로켓배송 재고가 풍부한 대중 모델**(삼성·LG·애플·로지텍·샌디스크 등)만 선정합니다.
+     2. 쿠팡 링크는 반드시 **`affiliate-links.json`에 등록된 본인 추적 링크(`https://link.coupang.com/...`)**만 사용합니다. 임시 검색 링크(`www.coupang.com/np/search`)를 넣지 마세요.
+     3. `affiliate-links.json`에 아직 링크가 없는 제품이라면 `affiliateType: "none"`(정보·스펙 비교 중심, 애드센스 트래픽 목적)으로 깔끔하게 발행하고, 운영자에게 추후 쿠팡 링크 추가가 필요한 제품명만 보고합니다.
+     4. `https://link.coupang.com/...` 링크가 1개라도 포함되면 반드시 `affiliateType: "coupang"`을 설정합니다. (공정위 문구 자동 표시)
    - 기존 글 1~2개 이상 내부 링크 연결
    - `faqs` 3개 작성 (구글 `FAQPage` 리치 스니펫)
+   - 한국어 조사 앞 굵게 문법 깨짐(`**...)**조사`) 방지: 괄호/따옴표로 끝나는 강조는 `<strong>...</strong>` 사용
    - `draft: false`로 변경
 5. `content-queue.json`에서 해당 항목의 `"status"`를 `"published"`로 업데이트합니다.
 6. `npm run publish` 실행 → `seo:audit` → `astro build` → `git commit & push` → GitHub Pages / Cloudflare Pages 자동 배포 완료!

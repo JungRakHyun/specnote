@@ -1,0 +1,43 @@
+{
+  "_guide": "검증된 국내 정발·로켓배송 쿠팡 파트너스 추적 링크(link.coupang.com) 저장소입니다. 자동 포스팅 에이전트는 하드웨어 추천 시 이 목록의 링크를 최우선으로 사용합니다.",
+  "products": [
+    {
+      "id": "macbook-pro-14",
+      "name": "Apple MacBook Pro 14 (M4 Pro / M5)",
+      "category": "tech-gear",
+      "keywords": ["맥북프로 14", "M4 Pro", "맥북 14인치"],
+      "url": "https://link.coupang.com/a/iXBmGi9UvA",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "macbook-pro-16",
+      "name": "Apple MacBook Pro 16 (M5 / M5 Pro)",
+      "category": "tech-gear",
+      "keywords": ["맥북프로 16", "M5 Pro", "맥북 16인치"],
+      "url": "https://link.coupang.com/a/iXBoWL3jQy",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "dell-ultrasharp-27-4k",
+      "name": "Dell UltraSharp 27 4K USB-C",
+      "category": "tech-gear",
+      "keywords": ["Dell UltraSharp", "델 4K 모니터"],
+      "url": "https://link.coupang.com/a/iXzNRK8uRg",
+      "provider": "coupang",
+      "rocketDelivery": false,
+      "note": "국내 정발 모델로 교체 예정"
+    },
+    {
+      "id": "lg-27uq850v",
+      "name": "LG전자 울트라 4K 27인치 (27UQ850V)",
+      "category": "tech-gear",
+      "keywords": ["LG 27UQ850V", "LG 4K 모니터"],
+      "url": "https://link.coupang.com/a/iXzXHLKL8u",
+      "provider": "coupang",
+      "rocketDelivery": false,
+      "note": "국내 정발 모델로 교체 예정"
+    }
+  ]
+}
