@@ -12,6 +12,7 @@ interface Props {
 const { post, variant, featured = false } = Astro.props;
 const mode = variant ?? (featured ? 'lead' : 'grid');
 const cat = getCategoryMeta(post.data.category);
+const catHref = post.data.category === 'apps' ? withBase('/apps/') : withBase(`/category/${cat.slug}/`);
 const readMin = estimateReadingTime(post.body);
 const postUrl = withBase(`/posts/${post.id}/`);
 const coverSrc = post.data.cover ? withBase(post.data.cover) : withBase(SITE.ogDefaultImage);
@@ -33,7 +34,7 @@ const coverSrc = post.data.cover ? withBase(post.data.cover) : withBase(SITE.ogD
       <div>
         <div class="flex flex-wrap items-center gap-2 text-xs">
           <a
-            href={withBase(`/category/${cat.slug}/`)}
+            href={catHref}
             class="font-bold text-blue-700 dark:text-blue-400 hover:underline"
           >
             {cat.label}
@@ -137,7 +138,7 @@ const coverSrc = post.data.cover ? withBase(post.data.cover) : withBase(SITE.ogD
       <div>
         <div class="flex items-center gap-2 text-xs">
           <a
-            href={withBase(`/category/${cat.slug}/`)}
+            href={catHref}
             class="font-bold text-blue-700 dark:text-blue-400 hover:underline"
           >
             {cat.label}

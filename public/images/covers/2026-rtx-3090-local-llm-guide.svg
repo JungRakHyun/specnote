@@ -33,21 +33,21 @@
   </g>
 
   <!-- Left Headline -->
-  <text x="72" y="204" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="60" font-weight="900" letter-spacing="-1.5">RTX 3090 역주행</text>
-  <text x="72" y="280" fill="#34D399" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">왜 로컬 LLM에서 핫할까?</text>
-  <text x="72" y="344" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">2026 한국 중고 시세 · 4090/5090 비교</text>
-  <text x="72" y="378" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="22" font-weight="700">24GB VRAM · 936GB/s 대역폭 가성비 분석</text>
+  <text x="72" y="204" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="54" font-weight="900" letter-spacing="-1.2">RTX 3090 역주행</text>
+  <text x="72" y="274" fill="#34D399" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="40" font-weight="900" letter-spacing="-1">왜 로컬 LLM에서 핫할까?</text>
+  <text x="72" y="336" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="20" font-weight="500">2026 한국 중고 시세 · 4090 / 5090 비교</text>
+  <text x="72" y="370" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="20" font-weight="700">24GB VRAM · 936GB/s 대역폭 가성비 분석</text>
 
   <!-- Bottom Left Key Metrics -->
-  <rect x="72" y="444" width="218" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-width="2"/>
-  <text x="96" y="482" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">2026 한국 중고 시세</text>
-  <text x="96" y="524" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="27" font-weight="900">110~160만 원</text>
-  <text x="96" y="552" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14">상태·채굴 이력별 차이</text>
+  <rect x="72" y="444" width="222" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-width="2"/>
+  <text x="94" y="482" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">2026 한국 중고 시세</text>
+  <text x="94" y="522" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="900">110~160만 원</text>
+  <text x="94" y="550" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="13">상태·채굴 이력별 차이</text>
 
-  <rect x="308" y="444" width="224" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-width="1.8"/>
-  <text x="332" y="482" fill="#38BDF8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">핵심 스펙</text>
-  <text x="332" y="524" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="27" font-weight="900">24GB / 936GB/s</text>
-  <text x="332" y="552" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14">27B~32B 모델 단독 구동</text>
+  <rect x="312" y="444" width="248" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-width="1.8"/>
+  <text x="334" y="482" fill="#38BDF8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">핵심 스펙</text>
+  <text x="334" y="522" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="22" font-weight="900">24GB · 936 GB/s</text>
+  <text x="334" y="550" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="13">27B~32B 모델 단독 구동</text>
 
   <!-- Right Comparison Card: 3090 vs 4090 vs 5090 -->
   <rect x="596" y="156" width="532" height="414" rx="26" fill="#0B1120" fill-opacity="0.9" stroke="#334155" stroke-width="2"/>

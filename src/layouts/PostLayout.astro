@@ -22,6 +22,7 @@ interface Props {
 const { post, headings, relatedPosts } = Astro.props;
 const { data } = post;
 const cat = getCategoryMeta(data.category);
+const catHref = data.category === 'apps' ? withBase('/apps/') : withBase(`/category/${cat.slug}/`);
 const readMin = estimateReadingTime(post.body);
 const coverSrc = data.cover ? withBase(data.cover) : withBase(SITE.ogDefaultImage);
 const canonicalUrl = absoluteUrl(`/posts/${post.id}/`, Astro.site ?? SITE.url);
@@ -120,7 +121,7 @@ const affiliateNotice =
     <nav aria-label="브레드크럼" class="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
       <a href={withBase('/')} class="hover:text-blue-600 dark:hover:text-blue-400">홈</a>
       <span>/</span>
-      <a href={withBase(`/category/${cat.slug}/`)} class="hover:text-blue-600 dark:hover:text-blue-400">
+      <a href={catHref} class="hover:text-blue-600 dark:hover:text-blue-400">
         {cat.label}
       </a>
       <span>/</span>
@@ -134,7 +135,7 @@ const affiliateNotice =
         <header class="mb-8">
           <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
             <a
-              href={withBase(`/category/${cat.slug}/`)}
+              href={catHref}
               class="rounded-full bg-blue-50 dark:bg-blue-950/70 px-3 py-1 text-blue-700 dark:text-blue-300"
             >
               {cat.label}
@@ -268,6 +269,20 @@ const affiliateNotice =
         <div class="sticky top-24 space-y-6">
           <TableOfContents headings={headings} />
           <AdSlot position="sidebar" format="rectangle" />
+
+          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
+            <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">FREE PUZZLE APPS</div>
+            <h3 class="mt-1.5 text-base font-extrabold text-slate-950 dark:text-white">잠깐 머리 식힐 무료 퍼즐 앱 4선</h3>
+            <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              시간 제한·로그인 없이 오프라인에서도 가볍게 즐기는 Cable Fix, 꽃담, Link Trail, Link Shift를 만나보세요.
+            </p>
+            <a
+              href={withBase('/apps/')}
+              class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white transition-colors"
+            >
+              추천 앱 보러가기 →
+            </a>
+          </div>
 
           <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
             <div class="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">SpecNote Briefing</div>

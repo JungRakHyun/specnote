@@ -24,7 +24,7 @@ export const SITE = {
   author: {
     name: '스펙노트 편집부',
     bio: 'AI 서비스 요금제, 개발 생산성 툴, IT 하드웨어 스펙을 1차 공식 자료와 실사용 시나리오로 교차 검증해 정리합니다.',
-    email: 'jlakh@naver.com',
+    email: 'jlh9809@gmail.com',
   },
 
   // 2. 도메인 & 기본 OG 이미지 (추후 개인 도메인 연결 시 url과 배포 환경변수 SITE_URL만 변경)
@@ -98,6 +98,15 @@ export const CATEGORIES: CategoryMeta[] = [
 ];
 
 export function getCategoryMeta(slug: string): CategoryMeta {
+  if (slug === 'apps') {
+    return {
+      slug: 'apps',
+      label: '추천 앱',
+      shortLabel: '추천 앱',
+      description: '출퇴근길·휴식 시간에 가볍게 즐기는 무료 오프라인 · 힐링 퍼즐 앱',
+      accent: 'emerald',
+    };
+  }
   return (
     CATEGORIES.find((c) => c.slug === slug) ?? {
       slug,

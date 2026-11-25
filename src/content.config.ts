@@ -9,7 +9,7 @@ const posts = defineCollection({
     description: z.string().min(40).max(170),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
-    category: z.enum(['ai-tools', 'dev-coding', 'tech-gear', 'automation']),
+    category: z.enum(['ai-tools', 'dev-coding', 'tech-gear', 'automation', 'apps']),
     tags: z.array(z.string()).min(2).max(8),
     cover: z.string().optional(),
     coverAlt: z.string().optional(),

@@ -58,6 +58,18 @@ const isHome = currentPath === homeHref || currentPath === homeHref.replace(/\/$
           </a>
         );
       })}
+      <a
+        href={withBase('/apps/')}
+        class:list={[
+          'relative flex h-full items-center gap-1.5 px-3 text-sm font-bold transition-colors',
+          currentPath.includes('/apps')
+            ? 'text-emerald-700 dark:text-emerald-400 after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-emerald-600'
+            : 'text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300',
+        ]}
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+        추천 앱
+      </a>
     </nav>
 
     <!-- Actions -->
@@ -122,5 +134,16 @@ const isHome = currentPath === homeHref || currentPath === homeHref.replace(/\/$
         </a>
       );
     })}
+    <a
+      href={withBase('/apps/')}
+      class:list={[
+        'shrink-0 rounded-full px-3 py-1 text-xs font-bold transition-colors',
+        currentPath.includes('/apps')
+          ? 'bg-emerald-600 text-white'
+          : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900',
+      ]}
+    >
+      추천 앱
+    </a>
   </nav>
 </header>
