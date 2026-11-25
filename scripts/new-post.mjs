@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SpecNote (스펙노트) — 새 포스트 + 매거진 인포그래픽 SVG 커버 자동 생성기
+ * SpecNote (스펙노트) — 새 포스트 + 에디토리얼 SVG 커버 자동 생성기
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -48,7 +48,7 @@ const svg = generateInfographicSvg({ title, category, tags });
 fs.mkdirSync(path.dirname(coverAbs), { recursive: true });
 if (!fs.existsSync(coverAbs)) {
   fs.writeFileSync(coverAbs, svg, 'utf8');
-  console.log(`🎨 매거진 인포그래픽 커버 생성 완료: ${coverRel}`);
+  console.log(`🎨 에디토리얼 커버 생성 완료: ${coverRel}`);
 }
 
 if (fs.existsSync(postAbs)) {
@@ -58,47 +58,57 @@ if (fs.existsSync(postAbs)) {
 
 const mdxTemplate = `---
 title: "${title}"
-description: "${title}에 대한 2026년 최신 공식 가격, 핵심 스펙, 장단점 및 실전 추천 가이드를 한눈에 정리했습니다."
+description: "${title} — 2026년 공식 가격, 핵심 스펙 차이, 실제 사용 시 한계와 선택 기준을 검증했습니다."
 pubDate: ${today}
 updatedDate: ${today}
 category: "${category}"
 tags: ${JSON.stringify(tags)}
 cover: "${coverRel}"
-coverAlt: "${title} 비교 인포그래픽"
+coverAlt: "${title} 스펙 비교 커버"
 featured: false
 draft: true
 affiliateType: "${affiliateType}"
 tldr:
-  - "핵심 결론 1을 1문장으로 작성하세요."
-  - "핵심 결론 2를 1문장으로 작성하세요."
-  - "핵심 결론 3을 1문장으로 작성하세요."
+  - "수치나 기준점이 들어간 핵심 결론 1"
+  - "숨겨진 한계나 함정이 드러나는 결론 2"
+  - "구체적 상황별 추천 결론 3"
 faqs:
-  - question: "자주 묻는 질문 1?"
-    answer: "명확하고 객관적인 답변을 작성하세요."
-  - question: "자주 묻는 질문 2?"
-    answer: "명확하고 객관적인 답변을 작성하세요."
+  - question: "구매·설치 직전에 실제로 가장 많이 헷갈리는 질문 1?"
+    answer: "수치와 근거를 포함해 간결하게 답변하세요."
+  - question: "자주 겪는 문제나 한계에 대한 질문 2?"
+    answer: "해결 방법 또는 대안을 제시하세요."
+  - question: "비용·호환성 관련 실전 질문 3?"
+    answer: "구체적인 기준을 제시하세요."
 ---
 
 import Callout from '../../components/Callout.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
 
-여기에 도입부를 작성하세요.
+첫 2문장 안에 핵심 결론이나 독자가 자주 겪는 함정(스펙 착시, 숨겨진 요금 제한 등)을 바로 제시하세요.
 
-## 1. 핵심 비교표
+## 1. 공식 스펙 · 실비용 비교 (${today.slice(0, 7)} 기준)
 
-| 항목 | 옵션 A | 옵션 B |
-| :--- | :--- | :--- |
-| 가격 | - | - |
-| 핵심 강점 | - | - |
+| 모델 / 서비스 | 확인 가격 | 핵심 스펙 | 놓치기 쉬운 제약 |
+| :--- | :--- | :--- | :--- |
+| 항목 A | - | - | - |
+| 항목 B | - | - | - |
+
+## 2. 선택 전에 꼭 따져야 할 한계와 함정
+
+여기에 "이럴 땐 사지 마세요" 또는 실사용에서 막히는 조건을 구체적으로 작성하세요.
 
 <AdSlot position="postInArticle" format="fluid" />
 
-## 2. 상황별 추천 가이드
+## 3. 실전 세팅 · 트러블슈팅 체크리스트
 
-여기에 구체적인 추천 시나리오와 선택 기준을 작성하세요.
+여기에 바로 복사해서 쓸 수 있는 설정, 계산 공식, Before/After 예시를 작성하세요.
+
+## 참고 출처
+
+- 공식 출처 링크를 최소 2개 이상 기재하세요.
 `;
 
 fs.writeFileSync(postAbs, mdxTemplate, 'utf8');
 console.log(`📝 새 포스트 초안 생성 완료: src/content/posts/${slug}.mdx`);
-console.log('👉 본문 작성 후 frontmatter의 draft: false로 바꾸고 npm run publish 를 실행하세요.');
+console.log('👉 BLOG_AUTOMATION.md의 탈(脫)AI 에디토리얼 원칙에 맞춰 본문을 완성한 뒤 draft: false로 바꾸고 npm run publish 를 실행하세요.');

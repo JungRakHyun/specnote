@@ -1,87 +1,111 @@
 ---
-title: "바이브 코딩(Vibe Coding)이란? 비전공자도 AI로 웹·앱 만드는 2026 입문 로드맵"
-description: "코딩 문법을 외우지 않고 자연어 대화로 웹서비스와 앱을 만드는 AI 바이브 코딩의 개념부터 툴 선택(Lovable·Bolt·Cursor·Claude Code), 5단계 무료 배포 로드맵까지 정리했습니다."
+title: "바이브 코딩(Vibe Coding) 입문 로드맵: 비전공자가 첫 웹앱을 무료로 배포하는 5단계"
+description: "자연어 지시로 웹앱을 만드는 바이브 코딩 툴 선택(Lovable·Bolt·Cursor·Claude Code), 복사해 쓰는 1페이지 PRD 샘플, Vercel·Cloudflare·GitHub Pages 무료 한도와 주의 영역을 정리했습니다."
 pubDate: 2026-11-25
 updatedDate: 2026-11-25
 category: "dev-coding"
-tags: ["바이브코딩", "AI코딩", "비전공자코딩", "Cursor", "Lovable", "웹앱제작"]
+tags: ["바이브코딩", "AI코딩", "비전공자코딩", "Cursor", "Lovable", "무료배포"]
 cover: "/images/covers/2026-vibe-coding-beginner-guide.svg"
-coverAlt: "AI 바이브 코딩 5단계 비전공자 입문 로드맵 인포그래픽"
+coverAlt: "비전공자를 위한 바이브 코딩 5단계 입문 및 무료 배포 로드맵 커버"
 featured: false
 draft: false
 affiliateType: "general"
 tldr:
-  - "바이브 코딩(Vibe Coding)은 직접 코드 한 줄씩 타이핑하는 대신, AI에게 원하는 화면과 동작을 자연어로 지시하고 결과를 눈으로 검증하며 소프트웨어를 만드는 개발 방식입니다."
-  - "코딩 경험이 전혀 없다면 브라우저에서 바로 실행되는 Lovable·Bolt·v0로 시작하고, 기능을 깊게 확장할 때 Cursor·Windsurf·Claude Code로 넘어가는 2단계 전략이 가장 빠릅니다."
-  - "성공의 80%는 코딩 실력이 아니라 '만들려는 기능을 3~5개로 좁힌 1장 기획서(PRD)'와 '기능 1개 완성할 때마다 Git으로 저장하기'에 달려 있습니다."
+  - "비전공자 바이브 코딩의 성패는 툴보다 '첫 요청 전에 기능을 3개로 좁힌 1페이지 기획서(PRD)'를 먼저 써두느냐에 달려 있습니다."
+  - "처음부터 로컬 개발 환경을 설치하다 포기하기 쉬우므로 Lovable·Bolt·v0에서 시안을 뽑은 뒤, 기능을 키울 때 GitHub를 거쳐 Cursor·Claude Code로 옮기는 2단계 경로가 시행착오가 가장 적습니다."
+  - "랜딩페이지·계산기·사내 대시보드는 혼자 하루 만에 배포할 수 있지만, 실결제·주민번호·의료/금융 데이터처럼 법적 책임이 따르는 기능은 반드시 전문 보안 검증을 거쳐야 합니다."
 faqs:
-  - question: "코딩을 단 한 번도 배워본 적 없는 완전 비전공자도 바이브 코딩으로 서비스를 만들 수 있나요?"
-    answer: "네. 랜딩페이지, 블로그, 계산기, 사내 업무 대시보드, 간단한 예약·설문 웹앱 정도는 코딩 문법을 몰라도 하루 만에 만들어 무료 호스팅으로 공개할 수 있습니다. 다만 결제나 민감한 개인정보를 다루는 상용 서비스는 배포 전 보안 점검이 꼭 필요합니다."
-  - question: "바이브 코딩을 시작할 때 가장 먼저 결제해야 할 툴은 무엇인가요?"
-    answer: "처음 1~2주는 무료 티어만으로 충분합니다. 웹 브라우저에서 바로 화면을 띄워보고 싶다면 Bolt·Lovable 무료 크레딧을, 내 PC에서 본격적으로 프로젝트를 키우고 싶다면 월 $20 수준의 Cursor 또는 Claude Pro(Claude Code 포함)를 추천합니다."
-  - question: "바이브 코딩으로 만든 웹사이트를 무료로 인터넷에 올릴 수 있나요?"
-    answer: "네. 정적 웹사이트나 Next.js·Astro 기반 웹앱은 GitHub Pages, Cloudflare Pages, Vercel 무료 플랜을 통해 트래픽이 크게 늘어나기 전까지 서버비 0원으로 전 세계에 공개할 수 있습니다."
+  - question: "코딩을 전혀 모르는데 정말 하루 만에 내 주소(URL)가 있는 사이트를 띄울 수 있나요?"
+    answer: "계산기, 설문/견적 폼, 포트폴리오, 콘텐츠 블로그처럼 서버 DB가 단순하거나 없는 웹앱은 GitHub Pages·Cloudflare Pages·Vercel 무료 플랜으로 반나절 만에 실제 URL로 공개할 수 있습니다."
+  - question: "Lovable·Bolt 무료 크레딧이 다 떨어지면 만든 코드가 날아가나요?"
+    answer: "미리 GitHub 저장소와 연동(Export/Sync)해 두면 코드는 본인 GitHub에 그대로 남습니다. 이후 Cursor나 VS Code로 코드를 내려받아 이어서 작업할 수 있으므로, 프로토타입이 완성되면 가장 먼저 GitHub 동기화부터 켜두세요."
+  - question: "Vercel, Cloudflare Pages, GitHub Pages 중 비전공자는 어디에 배포하는 게 좋나요?"
+    answer: "정적 블로그·소개 페이지는 트래픽 제한이 넉넉하고 상업적 사용 제약이 없는 Cloudflare Pages나 GitHub Pages가 유리합니다. Next.js 서버 기능(API 라우트)이 들어간 웹앱은 Vercel 연동이 가장 간편하지만, 무료 Hobby 플랜은 비상업용 제한이 있으므로 수익화 시 요금 정책을 확인해야 합니다."
 ---
 
 import Callout from '../../components/Callout.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
 
-“아이디어는 있는데 개발자를 구할 돈이 없어서 못 만든다”는 말은 2026년 들어 완전히 옛말이 되었습니다. 오픈AI 공동창업자 안드레이 카파시(Andrej Karpathy)가 처음 대중화한 <strong>바이브 코딩(Vibe Coding)</strong>이 이제는 1인 사업가, 기획자, 마케터, 직장인들의 표준 도구로 자리 잡았기 때문입니다.
+안드레이 카파시(Andrej Karpathy)가 대중화한 <strong>바이브 코딩(Vibe Coding)</strong>으로 비전공자도 하루 만에 웹앱을 띄우는 사례가 많아졌습니다. 하지만 실제로 시작해 보면 <strong>10명 중 7명은 “처음 10분은 신기했는데, 기능 3개째 붙이다가 화면이 깨져서 포기했다”</strong>고 말합니다.
 
-바이브 코딩은 프로그래밍 문법을 암기해 직접 타이핑하는 대신, **“이런 분위기와 기능을 가진 웹앱을 만들어 줘”라고 자연어로 지시하고, AI가 만든 결과를 실시간으로 눈으로 보며 수정해 나가는 방식**입니다. 이 글에서는 비전공자가 첫 웹서비스를 무료로 배포하기까지의 **5단계 입문 로드맵**을 정리해 드립니다.
+실패 원인은 코딩 지식이 부족해서가 아니라 **순서가 틀렸기 때문**입니다. 비전공자가 첫 웹서비스를 무료로 배포할 때까지 밟아야 할 5단계 절차, 그대로 복사해 쓰는 1페이지 기획서 샘플, 그리고 **바이브 코딩으로 혼자 만들면 위험한 영역**까지 정리했습니다.
 
-## 1. 내 수준에 맞는 바이브 코딩 툴 선택 (브라우저형 vs 에디터형)
+## 1. 내 단계에 맞는 바이브 코딩 툴 선택
 
-처음부터 복잡한 개발 환경을 설치하다 포기하는 경우가 많습니다. 내 단계에 맞는 툴을 고르는 것이 첫 단추입니다.
-
-| 구분 | 대표 툴 | 설치 필요 여부 | 특징 및 추천 대상 |
+| 단계 / 구분 | 대표 툴 | 설치 여부 | 장점과 한계 |
 | :--- | :--- | :---: | :--- |
-| **브라우저 올인원형** | **[Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/), [v0](https://v0.dev/)** | 설치 없음 | 웹 창에서 한국어로 입력하면 1분 만에 화면·DB·배포까지 자동 완성. **완전 비전공자 1순위** |
-| **AI 전용 IDE형** | **[Cursor](https://www.cursor.com/), [Windsurf](https://windsurf.com/)** | PC 설치 | 내 컴퓨터에서 파일을 직접 보며 여러 화면과 기능을 정교하게 확장. **사이드 프로젝트·수익화 블로그 추천** |
-| **자율 에이전트형** | **[Claude Code](https://claude.ai/code)** | 터미널 설치 | 프로젝트 전체 구조를 이해하고 복잡한 버그·테스트·자동화까지 수행. **중급자·파워유저 추천** |
+| **1단계: 브라우저 올인원** | [Lovable](https://lovable.dev/), [Bolt.new](https://bolt.new/), [v0](https://v0.dev/) | 없음 | 브라우저에서 한국어로 시안·배포까지 10분 완성. **한계:** 크레딧 소모가 빠르고 파일이 많아지면 세밀한 수정이 답답함 |
+| **2단계: AI 코드 에디터** | [Cursor](https://www.cursor.com/), [Windsurf](https://windsurf.com/) | PC 설치 | GitHub로 가져온 코드를 파일 단위로 보며 무제한 확장. **한계:** Node.js·Git 기초 설치 10분 필요 |
+| **3단계: 터미널 에이전트** | [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview) | 터미널 | 프로젝트 전체 테스트·리팩토링·자동 배포까지 자율 수행. **한계:** 터미널 로그 기반이라 완전 초보자는 진입 장벽 있음 |
 
-*(각 AI 코딩 도구의 최신 요금제와 상세 비교는 [2026 AI 코딩 툴 완전 비교](/posts/2026-ai-coding-tools-guide/)에서 확인하실 수 있습니다.)*
+*(4개 주력 도구의 요금 한도와 초과 과금 구조는 [2026 AI 코딩 툴 4종 비교](/posts/2026-ai-coding-tools-guide/)에서 숫자로 비교해 두었습니다.)*
 
-<Callout type="tip" title="비전공자가 가장 빨리 결과물을 내는 황금 루트">
-  1단계로 <strong>Lovable이나 v0</strong>에서 원하는 디자인 시안을 10분 만에 뽑아본 뒤, 코드를 GitHub로 내보내 <strong>Cursor</strong>에서 세밀한 기능을 붙이는 흐름이 가장 시행착오가 적습니다.
-</Callout>
+## 2. 실패 확률을 확 줄이는 5단계 실전 로드맵
 
-## 2. 하루 만에 첫 웹서비스를 배포하는 5단계 로드맵
+### STEP 1. 채팅창에 바로 “만들어 줘” 하지 말고 1페이지 PRD부터 쓰기
+“카페 예약 사이트 만들어 줘”라고 던지면 AI가 마음대로 기능 20개를 넣다 코드가 꼬입니다. 먼저 아래와 같은 15줄짜리 기획서(`PRD.md`)를 만들어 AI에게 읽히세요.
 
-### STEP 1. 코딩 전에 ‘1장 기획서(PRD)’부터 AI와 쓰기
-AI에게 “쇼핑몰 만들어 줘”라고 던지면 엉뚱한 결과물이 나옵니다. ChatGPT나 Claude에게 먼저 <strong>“내가 만들 서비스의 핵심 기능 3개, 화면 구성, 사용자 흐름을 1페이지 기획서(Markdown)로 정리해 줘”</strong>라고 요청해 기준 문서를 만드세요.
+```markdown
+# 프리랜서 견적 계산기 (MVP v1)
+- 목적: 클라이언트가 옵션을 고르면 예상 견적과 일정을 즉시 확인하고 PDF/텍스트로 복사
+- 핵심 기능 (딱 3개만):
+  1) 작업 유형 선택 (랜딩페이지 / 반응형 웹 / 유지보수) + 페이지 수 슬라이더
+  2) 선택 항목별 단가 합산 및 부가세(10%) 자동 계산 표
+  3) "견적서 텍스트 복사" 버튼 (클립보드 복사 완료 토스트 표시)
+- 제외 기능 (v1에서 절대 만들지 말 것): 회원가입, 로그인, 결제, 관리자 페이지
+- 디자인: 흰 배경, 남색 포인트(#1D4ED8), 모바일 375px에서 가로 스크롤 없음
+```
 
-### STEP 2. 화면(UI)과 더미 데이터 먼저 완성하기
-처음부터 로그인·결제·데이터베이스를 한꺼번에 붙이면 에러가 꼬입니다. 먼저 가짜 데이터(Mock Data)로 **눈에 보이는 화면과 버튼 동작이 완벽해질 때까지** UI를 다듬으세요.
+### STEP 2. 가짜 데이터(Mock)로 화면과 버튼 동작부터 끝내기
+로그인·데이터베이스를 첫날부터 붙이면 인증 에러와 CORS 오류에 갇힙니다. 1~2일 차에는 **더미 데이터로 모든 버튼과 모바일 레이아웃이 깔끔하게 동작하는 상태**를 먼저 완성하세요.
 
-### STEP 3. 기능 1개 성공할 때마다 ‘체크포인트 저장’
-바이브 코딩에서 가장 중요한 습관은 <strong>잘 돌아가는 순간마다 Git 커밋(또는 툴 내 버전 저장)</strong>을 남기는 것입니다. AI가 다음 기능을 붙이다가 기존 화면을 망가뜨려도 1초 만에 직전 정상 상태로 되돌릴 수 있습니다.
+### STEP 3. 기능 1개 성공할 때마다 Git 커밋 남기기
+AI가 새 기능을 추가하다 멀쩡하던 이전 화면을 망가뜨리는 일은 비일비재합니다. 기능 1개가 눈으로 확인될 때마다 **“방금 추가한 기능 빌드 확인하고 Git 커밋해 줘”** 한 마디만 습관화하면 1초 만에 직전 정상 상태로 돌아갈 수 있습니다.
 
 <AdSlot position="postInArticle" format="fluid" />
 
-### STEP 4. 필요할 때만 데이터베이스·로그인 붙이기
-회원가입이나 데이터 저장이 꼭 필요하다면 [Supabase](https://supabase.com/) 또는 [Firebase](https://firebase.google.com/)를 AI에게 연결해 달라고 요청합니다. 별도 백엔드 서버를 직접 구축할 필요 없이 무료 티어로 바로 시작할 수 있습니다.
+### STEP 4. DB·로그인이 꼭 필요할 때만 Supabase / Firebase 붙이기
+계산기·블로그·소개 페이지는 DB가 아예 필요 없습니다. 사용자 저장 데이터가 꼭 필요한 단계에 이르렀을 때만 [Supabase](https://supabase.com/) 무료 티어를 연결하세요.
 
-### STEP 5. 0원 무료 배포로 전 세계 공개하기
-완성된 코드는 [GitHub](https://github.com/)에 올린 뒤 **[Vercel](https://vercel.com/), [Cloudflare Pages](https://pages.cloudflare.com/), [GitHub Pages](https://pages.github.com/)** 중 하나를 연결하면 1분 만에 `https://...` 실제 주소가 생깁니다. 이후 수익화나 브랜딩이 필요해지면 연 1~2만 원짜리 개인 도메인만 붙이면 됩니다.
+### STEP 5. 무료 호스팅 플랫폼 선택 및 공개 배포
+
+| 호스팅 플랫폼 | 무료 티어 특징 | 상업·수익화 사이트 사용 | 추천 대상 |
+| :--- | :--- | :--- | :--- |
+| **[Cloudflare Pages](https://pages.cloudflare.com/)** | 대역폭 무제한급, 글로벌 CDN 속도 우수 | **가능** | 애드센스 블로그, 정적 웹앱, 계산기 |
+| **[GitHub Pages](https://pages.github.com/)** | GitHub 저장소 푸시만으로 자동 배포 | **가능** (정적 사이트) | 포트폴리오, 문서 사이트, Astro 블로그 |
+| **[Vercel](https://vercel.com/pricing)** | Next.js·서버 API 라우트 원클릭 배포 | 무료 Hobby는 **비상업용 제한** (수익화 시 Pro 필요) | 풀스택 프로토타입 테스트 |
+
+## 3. 비전공자가 바이브 코딩만으로 출시하면 위험한 3가지
+
+바이브 코딩이 만능은 아닙니다. 아래 3가지가 포함된다면 반드시 개발자 리뷰나 외부 보안 검증을 거쳐야 합니다.
+1. **직접 구현한 로그인·결제·포인트 정산:** 클라이언트 코드 조작만으로 금액이 바뀌거나 타인 계정에 접근되는 취약점이 자주 발생합니다. (결제는 토스페이먼츠·Stripe 공식 체크아웃 페이지 위임 권장)
+2. **개인정보(주민번호·주소·연락처) 자체 DB 보관:** Supabase RLS(행 수준 보안) 설정을 한 줄만 빠뜨려도 전체 회원 테이블이 브라우저에서 그대로 조회될 수 있습니다.
+3. **유료 AI API 키를 프론트엔드에 직접 삽입:** 배포 직후 크롤링 봇이 키를 탈취해 하룻밤 사이 수백 달러 요금이 청구될 수 있습니다.
+
+<Callout type="tip" title="첫 배포 이후 에러 루프·보안 사고를 막는 실전 프롬프트">
+  기능이 늘어나면서 에러가 반복되거나 배포 전 보안 점검이 필요하다면, 바로 복사해 쓸 수 있는 [AI 바이브 코딩 실전 프롬프트 7가지 & 치명적 함정 해결법](/posts/2026-vibe-coding-pitfalls-and-prompts/) 글을 북마크해 두세요.
+</Callout>
 
 <AffiliateCard
-  title="Cursor — 바이브 코딩 입문부터 수익화 서비스 확장까지"
-  subtitle="한국어 대화만으로 화면 디자인, 기능 구현, 에러 수정을 한 번에 처리하는 AI 코드 에디터"
-  badge="바이브 코딩 표준"
-  priceNote="무료 ~ 월 $20"
+  title="Cursor — 브라우저 시안을 실제 서비스로 확장하는 AI 에디터"
+  subtitle="Lovable·v0에서 만든 코드를 GitHub로 받아와 세밀한 기능 추가와 디버깅까지 처리"
+  badge="2단계 확장 도구"
+  priceNote="Free / Plus($8~$20) / Premium($30)"
   highlights={[
-    "브라우저 툴에서 만든 프로젝트를 가져와 제한 없이 기능 확장",
-    "수정 전후 화면(Diff)을 눈으로 보고 버튼 클릭으로 승인",
-    "Claude · GPT · Gemini 최신 모델을 작업에 따라 자유롭게 전환",
-    "무료 티어로 설치 및 첫 프로젝트 테스트 바로 가능"
+    "수정 전후 코드 Diff를 눈으로 보며 파일별 수락·거절",
+    "Git 커밋·빌드 검증·에러 추적을 한 화면에서 진행",
+    "Claude · GPT · Gemini 모델을 작업 난이도에 맞춰 선택",
+    "무료 티어로 설치 및 첫 프로젝트 배포 테스트 가능"
   ]}
-  ctaText="Cursor 공식 사이트에서 무료 시작"
+  ctaText="Cursor 공식 사이트 보기"
   href="https://www.cursor.com/pricing"
   provider="official"
 />
 
-## 3. 다음 단계: 바이브 코딩에서 실패하지 않으려면?
+## 참고 출처
 
-첫 화면을 띄우는 건 10분이면 되지만, 기능을 5개·10개로 늘리기 시작하면 **무한 에러 루프나 API 키 노출 같은 함정**을 꼭 만나게 됩니다. 실제 프로젝트에서 바로 복사해 쓸 수 있는 해결 공식은 이어지는 [AI 바이브 코딩 실전 프롬프트 7가지 & 치명적 함정 5가지 해결법](/posts/2026-vibe-coding-pitfalls-and-prompts/) 글에서 확인해 보세요.
+- [Cloudflare Pages 공식 문서 및 무료 한도 (pages.cloudflare.com)](https://pages.cloudflare.com/)
+- [Vercel 공식 요금 및 Hobby 플랜 라이선스 정책 (vercel.com)](https://vercel.com/pricing)
+- [GitHub Pages 공식 가이드 (pages.github.com)](https://pages.github.com/)
+- [Supabase 공식 문서 및 Row Level Security 안내 (supabase.com)](https://supabase.com/docs/guides/database/postgres/row-level-security)

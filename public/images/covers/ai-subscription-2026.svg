@@ -1,72 +1,55 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0B132B"/>
-      <stop offset="60%" stop-color="#111D42"/>
-      <stop offset="100%" stop-color="#172554"/>
+      <stop offset="0%" stop-color="#0A101F"/>
+      <stop offset="100%" stop-color="#13203B"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.82" cy="0.22" r="0.52">
-      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.38"/>
+    <radialGradient id="glow" cx="0.86" cy="0.2" r="0.52">
+      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1200" height="675" fill="url(#bg)"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
-  <g stroke="#334155" stroke-opacity="0.24" stroke-width="1">
-    <path d="M0 168H1200M0 337H1200M0 506H1200"/>
-    <path d="M300 0V675M600 0V675M900 0V675"/>
+  <rect x="0" y="0" width="10" height="675" fill="#3B82F6"/>
+  <g stroke="#334155" stroke-opacity="0.16">
+    <path d="M0 135H1200M0 270H1200M0 405H1200M0 540H1200"/>
+    <path d="M240 0V675M480 0V675M720 0V675M960 0V675"/>
   </g>
-
-  <!-- Top Editorial Header -->
-  <rect x="72" y="58" width="144" height="40" rx="20" fill="#2563EB"/>
-  <text x="144" y="84" text-anchor="middle" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="18" font-weight="800">AI 툴 비교</text>
-  <rect x="230" y="58" width="154" height="40" rx="20" fill="#1E293B" stroke="#475569" stroke-width="1.5"/>
-  <text x="307" y="84" text-anchor="middle" fill="#93C5FD" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="16" font-weight="700">2026 최신판</text>
-
-  <!-- SpecNote Mark (Top Right) -->
-  <g transform="translate(962, 62)">
-    <rect width="32" height="32" rx="8" fill="#FFFFFF" fill-opacity="0.12"/>
-    <rect x="7" y="8" width="11" height="3.5" rx="1.75" fill="#FFFFFF"/>
-    <rect x="7" y="14.5" width="18" height="3.5" rx="1.75" fill="#38BDF8"/>
-    <rect x="7" y="21" width="14" height="3.5" rx="1.75" fill="#34D399"/>
-    <text x="44" y="23" fill="#CBD5E1" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="19" font-weight="800" letter-spacing="1">SPECNOTE</text>
+  <rect x="76" y="72" width="152" height="36" rx="8" fill="#3B82F6" fill-opacity="0.18" stroke="#3B82F6" stroke-opacity="0.55"/>
+  <text x="152" y="96" text-anchor="middle" fill="#93C5FD" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">AI 툴 분석</text>
+  <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">AI TOOLS · 2026</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">2026 AI 유료 구독 비교</text>
+  <text x="76" y="302" fill="#93C5FD" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="39" font-weight="800" letter-spacing="-0.8">ChatGPT·Claude·Gemini·Perplexity</text>
+  <line x1="76" y1="354" x2="216" y2="354" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+  <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
+  
+  <g transform="translate(868, 152)">
+    <rect width="260" height="310" rx="16" fill="#0B1325" stroke="#3B82F6" stroke-opacity="0.38" stroke-width="1.5"/>
+    <line x1="28" y1="258" x2="232" y2="258" stroke="#334155" stroke-width="1.5"/>
+    <rect x="42" y="132" width="34" height="126" rx="8" fill="#3B82F6" fill-opacity="0.9"/>
+    <rect x="92" y="82" width="34" height="176" rx="8" fill="#93C5FD" fill-opacity="0.9"/>
+    <rect x="142" y="156" width="34" height="102" rx="8" fill="#3B82F6" fill-opacity="0.55"/>
+    <rect x="192" y="106" width="34" height="152" rx="8" fill="#38BDF8" fill-opacity="0.8"/>
+    <rect x="28" y="34" width="112" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.85"/>
+    <rect x="28" y="54" width="76" height="7" rx="3.5" fill="#64748B"/>
+    <rect x="42" y="274" width="184" height="8" rx="4" fill="#334155"/>
   </g>
-
-  <!-- Main Editorial Headline -->
-  <text x="72" y="196" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="64" font-weight="900" letter-spacing="-1.5">2026 AI 유료 구독</text>
-  <text x="72" y="274" fill="#60A5FA" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="64" font-weight="900" letter-spacing="-1.5">4대 서비스 요금 · 성능 비교</text>
-  <text x="72" y="330" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="24" font-weight="500">월 $4.99 보급형부터 $20 주력 플랜까지, 직군별 최저 비용 조합</text>
-
-  <!-- 4-Card Spec Comparison Strip -->
-  <!-- Card 1: ChatGPT -->
-  <rect x="72" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#10B981" stroke-opacity="0.65" stroke-width="2"/>
-  <rect x="96" y="420" width="96" height="26" rx="13" fill="#10B981" fill-opacity="0.2"/>
-  <text x="144" y="438" text-anchor="middle" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">올인원 범용</text>
-  <text x="96" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">ChatGPT</text>
-  <text x="96" y="532" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="800">Plus $20</text>
-  <text x="96" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="500">GPT-6 추론 · Go $8</text>
-
-  <!-- Card 2: Claude -->
-  <rect x="342" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#F59E0B" stroke-opacity="0.65" stroke-width="2"/>
-  <rect x="366" y="420" width="106" height="26" rx="13" fill="#F59E0B" fill-opacity="0.2"/>
-  <text x="419" y="438" text-anchor="middle" fill="#FBBF24" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">코딩 · 글쓰기</text>
-  <text x="366" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Claude</text>
-  <text x="366" y="532" fill="#FBBF24" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="800">Pro $20</text>
-  <text x="366" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="500">연결제 $17 · Claude Code</text>
-
-  <!-- Card 3: Gemini -->
-  <rect x="612" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#3B82F6" stroke-opacity="0.85" stroke-width="2.5"/>
-  <rect x="636" y="420" width="110" height="26" rx="13" fill="#2563EB"/>
-  <text x="691" y="438" text-anchor="middle" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">5TB 가성비</text>
-  <text x="636" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Gemini</text>
-  <text x="636" y="532" fill="#60A5FA" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="800">AI Pro 2.9만</text>
-  <text x="636" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="500">Gemini 4 · AI Plus 7,500원</text>
-
-  <!-- Card 4: Perplexity -->
-  <rect x="882" y="394" width="246" height="214" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#06B6D4" stroke-opacity="0.65" stroke-width="2"/>
-  <rect x="906" y="420" width="106" height="26" rx="13" fill="#06B6D4" fill-opacity="0.2"/>
-  <text x="959" y="438" text-anchor="middle" fill="#22D3EE" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">실시간 출처</text>
-  <text x="906" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Perplexity</text>
-  <text x="906" y="532" fill="#22D3EE" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="800">Pro $20</text>
-  <text x="906" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="500">멀티모델 · 학생 $10</text>
+  <line x1="76" y1="498" x2="1128" y2="498" stroke="#334155" stroke-opacity="0.45"/>
+  
+  <rect x="76" y="534" width="131" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="141.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#AI요금제</text>
+  <rect x="219" y="534" width="126" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="282" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#ChatGPT</text>
+  <rect x="357" y="534" width="115" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="414.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Claude</text>
+  <rect x="484" y="534" width="115" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="541.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Gemini</text>
+  <g transform="translate(952, 537)">
+    <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="6" y="12.5" width="16" height="3" rx="1.5" fill="#3B82F6"/>
+    <rect x="6" y="18" width="12" height="3" rx="1.5" fill="#93C5FD"/>
+    <text x="40" y="20" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800" letter-spacing="1.4">SPECNOTE</text>
+  </g>
 </svg>

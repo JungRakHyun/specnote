@@ -1,49 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#091118"/>
-      <stop offset="100%" stop-color="#064E3B"/>
+      <stop offset="0%" stop-color="#081214"/>
+      <stop offset="100%" stop-color="#0B2F2A"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.8" cy="0.25" r="0.5">
-      <stop offset="0%" stop-color="#34D399" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+    <radialGradient id="glow" cx="0.86" cy="0.2" r="0.52">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1200" height="675" fill="url(#bg)"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
-  <g stroke="#334155" stroke-opacity="0.24">
-    <path d="M0 168H1200M0 337H1200M0 506H1200"/>
-    <path d="M300 0V675M600 0V675M900 0V675"/>
+  <rect x="0" y="0" width="10" height="675" fill="#10B981"/>
+  <g stroke="#334155" stroke-opacity="0.16">
+    <path d="M0 135H1200M0 270H1200M0 405H1200M0 540H1200"/>
+    <path d="M240 0V675M480 0V675M720 0V675M960 0V675"/>
   </g>
-  <rect x="72" y="58" width="164" height="40" rx="20" fill="#059669"/>
-  <text x="154" y="84" text-anchor="middle" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="18" font-weight="800">IT 기기 · 스펙</text>
-  <rect x="250" y="58" width="154" height="40" rx="20" fill="#1E293B" stroke="#34D399" stroke-width="1.5"/>
-  <text x="327" y="84" text-anchor="middle" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">2026 리포트</text>
-  <g transform="translate(962, 62)">
-    <rect width="32" height="32" rx="8" fill="#FFFFFF" fill-opacity="0.12"/>
-    <rect x="7" y="8" width="11" height="3.5" rx="1.75" fill="#FFFFFF"/>
-    <rect x="7" y="14.5" width="18" height="3.5" rx="1.75" fill="#38BDF8"/>
-    <rect x="7" y="21" width="14" height="3.5" rx="1.75" fill="#34D399"/>
-    <text x="44" y="23" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="19" font-weight="800" letter-spacing="1">SPECNOTE</text>
-  </g>
-  <text x="72" y="200" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">2026 개발자·맥북용 4K 모니터 추천 TOP 3</text>
-  <text x="72" y="274" fill="#34D399" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="50" font-weight="900" letter-spacing="-1">국내 정발 USB-C PD 로켓배송 비교</text>
-  <text x="72" y="336" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="500">공식 스펙 · 최신 가격 · 실사용 기준 비교 정리</text>
+  <rect x="76" y="72" width="152" height="36" rx="8" fill="#10B981" fill-opacity="0.18" stroke="#10B981" stroke-opacity="0.55"/>
+  <text x="152" y="96" text-anchor="middle" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">하드웨어 · 스펙</text>
+  <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">HARDWARE SPEC · 2026</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="37" font-weight="900" letter-spacing="-1.2">2026 개발자·맥북용 4K USB-C 모니터 4종</text>
+  <text x="76" y="302" fill="#6EE7B7" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="34" font-weight="800" letter-spacing="-0.8">27UP850K·32UP830K·32UP550N·뷰피니티 S8</text>
+  <line x1="76" y1="354" x2="216" y2="354" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+  <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
   
-  <rect x="72" y="424" width="246" height="172" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#34D399" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="96" y="468" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 01</text>
-  <text x="96" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="26" font-weight="900">#LG27인치4K</text>
-  <text x="96" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>
-  <rect x="342" y="424" width="246" height="172" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#34D399" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="366" y="468" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 02</text>
-  <text x="366" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="26" font-weight="900">#LG32인치4K</text>
-  <text x="366" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>
-  <rect x="612" y="424" width="246" height="172" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#34D399" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="636" y="468" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 03</text>
-  <text x="636" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="26" font-weight="900">#삼성뷰피니티</text>
-  <text x="636" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>
-  <rect x="882" y="424" width="246" height="172" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="#34D399" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="906" y="468" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 04</text>
-  <text x="906" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="26" font-weight="900">#로켓배송</text>
-  <text x="906" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>
+  <g transform="translate(868, 152)">
+    <rect width="260" height="310" rx="16" fill="#071513" stroke="#10B981" stroke-opacity="0.38" stroke-width="1.5"/>
+    <rect x="46" y="42" width="168" height="122" rx="12" fill="#0F2924" stroke="#10B981" stroke-opacity="0.6" stroke-width="1.5"/>
+    <rect x="64" y="64" width="60" height="8" rx="4" fill="#10B981"/>
+    <rect x="64" y="84" width="124" height="6" rx="3" fill="#64748B"/>
+    <rect x="64" y="100" width="96" height="6" rx="3" fill="#475569"/>
+    <rect x="64" y="124" width="132" height="18" rx="5" fill="#10B981" fill-opacity="0.2"/>
+    <line x1="28" y1="202" x2="232" y2="202" stroke="#10B981" stroke-opacity="0.35"/>
+    <rect x="28" y="220" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="220" width="164" height="12" rx="6" fill="#10B981"/>
+    <rect x="28" y="248" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="248" width="122" height="12" rx="6" fill="#6EE7B7"/>
+    <rect x="28" y="276" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="276" width="184" height="12" rx="6" fill="#10B981" fill-opacity="0.65"/>
+  </g>
+  <line x1="76" y1="498" x2="1128" y2="498" stroke="#334155" stroke-opacity="0.45"/>
+  
+  <rect x="76" y="534" width="170" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="161" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#개발자모니터</text>
+  <rect x="258" y="534" width="131" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="323.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#4K모니터</text>
+  <rect x="401" y="534" width="149" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="475.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#맥북모니터</text>
+  <rect x="562" y="534" width="165" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="644.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#USB-C모니터</text>
+  <g transform="translate(952, 537)">
+    <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="6" y="12.5" width="16" height="3" rx="1.5" fill="#10B981"/>
+    <rect x="6" y="18" width="12" height="3" rx="1.5" fill="#6EE7B7"/>
+    <text x="40" y="20" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800" letter-spacing="1.4">SPECNOTE</text>
+  </g>
 </svg>

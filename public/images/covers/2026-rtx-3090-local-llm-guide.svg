@@ -1,71 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#090D16"/>
-      <stop offset="55%" stop-color="#111827"/>
-      <stop offset="100%" stop-color="#064E3B"/>
+      <stop offset="0%" stop-color="#081214"/>
+      <stop offset="100%" stop-color="#0B2F2A"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0.8" cy="0.7" r="0.52">
-      <stop offset="0%" stop-color="#10B981" stop-opacity="0.36"/>
+    <radialGradient id="glow" cx="0.86" cy="0.2" r="0.52">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.22"/>
       <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1200" height="675" fill="url(#bg)"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
-  <g stroke="#334155" stroke-opacity="0.24">
-    <path d="M0 168H1200M0 337H1200M0 506H1200"/>
-    <path d="M300 0V675M600 0V675M900 0V675"/>
+  <rect x="0" y="0" width="10" height="675" fill="#10B981"/>
+  <g stroke="#334155" stroke-opacity="0.16">
+    <path d="M0 135H1200M0 270H1200M0 405H1200M0 540H1200"/>
+    <path d="M240 0V675M480 0V675M720 0V675M960 0V675"/>
   </g>
-
-  <!-- Header Strip -->
-  <rect x="72" y="58" width="160" height="40" rx="20" fill="#059669"/>
-  <text x="152" y="84" text-anchor="middle" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="18" font-weight="800">IT 기기 · 스펙</text>
-  <rect x="246" y="58" width="194" height="40" rx="20" fill="#1E293B" stroke="#10B981" stroke-width="1.5"/>
-  <text x="343" y="84" text-anchor="middle" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">로컬 AI 역주행 분석</text>
-
-  <!-- SpecNote Mark -->
-  <g transform="translate(962, 62)">
-    <rect width="32" height="32" rx="8" fill="#FFFFFF" fill-opacity="0.12"/>
-    <rect x="7" y="8" width="11" height="3.5" rx="1.75" fill="#FFFFFF"/>
-    <rect x="7" y="14.5" width="18" height="3.5" rx="1.75" fill="#38BDF8"/>
-    <rect x="7" y="21" width="14" height="3.5" rx="1.75" fill="#34D399"/>
-    <text x="44" y="23" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="19" font-weight="800" letter-spacing="1">SPECNOTE</text>
+  <rect x="76" y="72" width="152" height="36" rx="8" fill="#10B981" fill-opacity="0.18" stroke="#10B981" stroke-opacity="0.55"/>
+  <text x="152" y="96" text-anchor="middle" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">하드웨어 · 스펙</text>
+  <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">HARDWARE SPEC · 2026</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="39" font-weight="900" letter-spacing="-1.2">RTX 3090이 2026년에 다시 팔리는 이유</text>
+  <text x="76" y="302" fill="#6EE7B7" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="35" font-weight="800" letter-spacing="-0.8">로컬 LLM 중고 시세·전력 제한 팁·신품 대안</text>
+  <line x1="76" y1="354" x2="216" y2="354" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
+  <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
+  
+  <g transform="translate(868, 152)">
+    <rect width="260" height="310" rx="16" fill="#071513" stroke="#10B981" stroke-opacity="0.38" stroke-width="1.5"/>
+    <rect x="46" y="42" width="168" height="122" rx="12" fill="#0F2924" stroke="#10B981" stroke-opacity="0.6" stroke-width="1.5"/>
+    <rect x="64" y="64" width="60" height="8" rx="4" fill="#10B981"/>
+    <rect x="64" y="84" width="124" height="6" rx="3" fill="#64748B"/>
+    <rect x="64" y="100" width="96" height="6" rx="3" fill="#475569"/>
+    <rect x="64" y="124" width="132" height="18" rx="5" fill="#10B981" fill-opacity="0.2"/>
+    <line x1="28" y1="202" x2="232" y2="202" stroke="#10B981" stroke-opacity="0.35"/>
+    <rect x="28" y="220" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="220" width="164" height="12" rx="6" fill="#10B981"/>
+    <rect x="28" y="248" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="248" width="122" height="12" rx="6" fill="#6EE7B7"/>
+    <rect x="28" y="276" width="204" height="12" rx="6" fill="#1E293B"/>
+    <rect x="28" y="276" width="184" height="12" rx="6" fill="#10B981" fill-opacity="0.65"/>
   </g>
-
-  <!-- Left Headline -->
-  <text x="72" y="204" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="54" font-weight="900" letter-spacing="-1.2">RTX 3090 역주행</text>
-  <text x="72" y="274" fill="#34D399" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="40" font-weight="900" letter-spacing="-1">왜 로컬 LLM에서 핫할까?</text>
-  <text x="72" y="336" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="20" font-weight="500">2026 한국 중고 시세 · 4090 / 5090 비교</text>
-  <text x="72" y="370" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="20" font-weight="700">24GB VRAM · 936GB/s 대역폭 가성비 분석</text>
-
-  <!-- Bottom Left Key Metrics -->
-  <rect x="72" y="444" width="222" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-width="2"/>
-  <text x="94" y="482" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">2026 한국 중고 시세</text>
-  <text x="94" y="522" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="900">110~160만 원</text>
-  <text x="94" y="550" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="13">상태·채굴 이력별 차이</text>
-
-  <rect x="312" y="444" width="248" height="126" rx="18" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-width="1.8"/>
-  <text x="334" y="482" fill="#38BDF8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="800">핵심 스펙</text>
-  <text x="334" y="522" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="22" font-weight="900">24GB · 936 GB/s</text>
-  <text x="334" y="550" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="13">27B~32B 모델 단독 구동</text>
-
-  <!-- Right Comparison Card: 3090 vs 4090 vs 5090 -->
-  <rect x="596" y="156" width="532" height="414" rx="26" fill="#0B1120" fill-opacity="0.9" stroke="#334155" stroke-width="2"/>
-  <text x="636" y="212" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="22" font-weight="800">로컬 LLM GPU 핵심 지표 비교</text>
-  <text x="636" y="242" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">VRAM 용량 &amp; 메모리 대역폭 (토큰 속도 직결)</text>
-
-  <text x="636" y="302" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="18" font-weight="900">RTX 3090 (중고 가성비 1위)</text>
-  <text x="1088" y="302" text-anchor="end" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="900">24GB · 936 GB/s</text>
-  <rect x="636" y="316" width="452" height="24" rx="12" fill="#1E293B"/>
-  <rect x="636" y="316" width="236" height="24" rx="12" fill="#10B981"/>
-
-  <text x="636" y="394" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="18" font-weight="800">RTX 4090 (전성비 우수)</text>
-  <text x="1088" y="394" text-anchor="end" fill="#60A5FA" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800">24GB · 1,008 GB/s</text>
-  <rect x="636" y="408" width="452" height="24" rx="12" fill="#1E293B"/>
-  <rect x="636" y="408" width="256" height="24" rx="12" fill="#2563EB"/>
-
-  <text x="636" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="18" font-weight="800">RTX 5090 (플래그십 신품)</text>
-  <text x="1088" y="486" text-anchor="end" fill="#A78BFA" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="900">32GB · 1,792 GB/s</text>
-  <rect x="636" y="500" width="452" height="24" rx="12" fill="#1E293B"/>
-  <rect x="636" y="500" width="444" height="24" rx="12" fill="#7C3AED"/>
+  <line x1="76" y1="498" x2="1128" y2="498" stroke="#334155" stroke-opacity="0.45"/>
+  
+  <rect x="76" y="534" width="126" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="139" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#RTX3090</text>
+  <rect x="214" y="534" width="121" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="274.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#로컬LLM</text>
+  <rect x="347" y="534" width="149" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="421.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#그래픽카드</text>
+  <rect x="508" y="534" width="138" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#10B981" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="577" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#VRAM24GB</text>
+  <g transform="translate(952, 537)">
+    <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="6" y="12.5" width="16" height="3" rx="1.5" fill="#10B981"/>
+    <rect x="6" y="18" width="12" height="3" rx="1.5" fill="#6EE7B7"/>
+    <text x="40" y="20" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800" letter-spacing="1.4">SPECNOTE</text>
+  </g>
 </svg>

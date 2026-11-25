@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * TechPick Lab — SEO & 애드센스 품질 자동 검수 스크립트
- * 발행 전 저품질·누락 항목을 자동으로 검출합니다.
+ * SpecNote — SEO · 애드센스 · 탈(脫)AI 에디토리얼 품질 자동 검수 스크립트
+ * 발행 전 저품질·누락·AI 상투어 항목을 자동으로 검출합니다.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -20,6 +20,15 @@ function getField(fm, key) {
   return m ? m[1].trim() : '';
 }
 
+const AI_CLICHE_PATTERNS = [
+  { regex: /단순한\s+[^.\n]{2,35}을\s*넘어/, label: '"단순한 ~을 넘어" 도입 상투어' },
+  { regex: /단순히\s+[“"'`][^.\n]{2,35}[”"'`]\s*단계를/, label: '"단순히 ~단계를" 도입 상투어' },
+  { regex: /고민하는\s*분들이\s*많습니다/, label: '"고민하는 분들이 많습니다" 상투어' },
+  { regex: /막막해지기\s*쉽습니다|막막한\s*경우가\s*많습니다/, label: '"막막한 경우가 많습니다" 상투어' },
+  { regex: /압도적인|끝판왕|완벽하게\s*보완|가성비\s*최강/, label: '과장형 AI 상투어(압도적인/끝판왕/최강)' },
+  { regex: /실시간\s*특가/, label: '모호한 가격 표기("실시간 특가" 대신 구체 가격대 기재)' },
+];
+
 const files = fs
   .readdirSync(POSTS_DIR)
   .filter((f) => f.endsWith('.md') || f.endsWith('.mdx'))
@@ -28,7 +37,7 @@ const files = fs
 let errorCount = 0;
 let warnCount = 0;
 
-console.log(`\n🔍 SpecNote SEO Audit — 총 ${files.length}개 포스트 검사 중...\n`);
+console.log(`\n🔍 SpecNote SEO & Editorial Audit — 총 ${files.length}개 포스트 검사 중...\n`);
 
 for (const file of files) {
   const fullPath = path.join(POSTS_DIR, file);
@@ -100,7 +109,7 @@ for (const file of files) {
     issues.push('본문에 쿠팡 링크가 있으나 frontmatter에 affiliateType: "coupang"이 설정되지 않았습니다 (공정위 문구 필수)');
   }
   if (/www\.coupang\.com\/np\/search/i.test(body)) {
-    warnings.push('일반 쿠팡 검색 링크가 포함되어 있습니다. affiliate-links.json의 본인 추적 링크(link.coupang.com)로 교체하세요.');
+    issues.push('일반 쿠팡 검색 링크가 포함되어 있습니다. affiliate-links.json의 본인 추적 링크(link.coupang.com)로 교체하세요.');
   }
 
   // 8. 한국어 CommonMark 굵게(**...**) 깨짐 패턴 감지
@@ -109,11 +118,26 @@ for (const file of files) {
     issues.push(`한국어 조사 앞 굵게(**...**) 문법 깨짐 감지: ${brokenBold.join(', ')} → <strong> 태그를 사용하세요.`);
   }
 
+  // 9. 탈(脫)AI 에디토리얼 품질 검사 (상투어·과장어)
+  for (const { regex, label } of AI_CLICHE_PATTERNS) {
+    if (regex.test(body) || regex.test(fm)) {
+      warnings.push(`AI 상투어/모호한 표현 감지 (${label}) — 구체적인 사실·수치로 다듬으세요.`);
+    }
+  }
+
+  // 10. 외부 공식 출처 링크 확인 (쿠팡 제휴 링크 제외)
+  const externalUrls = (body.match(/https?:\/\/[^\s)"'>]+/g) || []).filter(
+    (u) => !/coupang\.com/i.test(u)
+  );
+  if (externalUrls.length === 0) {
+    warnings.push('공식 출처/참고 외부 링크가 없습니다 (공식 가격표·문서·스펙 링크 최소 1~2개 권장)');
+  }
+
   if (issues.length === 0 && warnings.length === 0) {
-    console.log(`✅ ${file} — 통과 (${plainBody.length}자, H2 ${h2Matches.length}개)`);
+    console.log(`✅ ${file} — 통과 (${plainBody.length}자, H2 ${h2Matches.length}개, 출처 ${externalUrls.length}건)`);
   } else {
     const icon = issues.length > 0 ? '❌' : '⚠️';
-    console.log(`${icon} ${file} (${plainBody.length}자, H2 ${h2Matches.length}개)`);
+    console.log(`${icon} ${file} (${plainBody.length}자, H2 ${h2Matches.length}개, 출처 ${externalUrls.length}건)`);
     for (const msg of issues) {
       console.log(`   [ERROR] ${msg}`);
       errorCount++;

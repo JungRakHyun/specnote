@@ -1,99 +1,119 @@
 ---
-title: "2026 로컬 LLM 구성 완벽 가이드: VRAM별 추천 모델·Ollama·LM Studio 설치 총정리"
-description: "구독료와 보안 걱정 없이 내 PC에서 AI를 돌리는 2026년 로컬 LLM 구성법! VRAM 8GB~48GB별 추천 모델(Qwen3.8, DeepSeek-R1), Ollama vs LM Studio, 하드웨어 선택 기준을 정리했습니다."
+title: "2026 로컬 LLM 구축 가이드: VRAM별 추천 모델·Ollama·LM Studio 설치와 필수 트러블슈팅"
+description: "2026년 11월 기준 VRAM 8GB~48GB별 추천 로컬 LLM(EXAONE 3.5, Qwen3, Gemma 3, DeepSeek-R1), Ollama vs LM Studio 비교, 설치 후 C드라이브 용량·컨텍스트 잘림 해결법을 정리했습니다."
 pubDate: 2026-11-25
 updatedDate: 2026-11-25
 category: "dev-coding"
-tags: ["로컬LLM", "Ollama", "LMStudio", "Qwen3", "DeepSeekR1", "온디바이스AI"]
+tags: ["로컬LLM", "Ollama", "LMStudio", "Qwen3", "EXAONE", "DeepSeekR1"]
 cover: "/images/covers/2026-local-llm-ollama-setup-guide.svg"
-coverAlt: "2026 로컬 LLM VRAM 사양별 추천 모델 및 Ollama 구성 가이드 인포그래픽"
+coverAlt: "2026 로컬 LLM VRAM별 모델 매트릭스와 Ollama 트러블슈팅 가이드 커버"
 featured: false
 draft: false
 affiliateType: "coupang"
 tldr:
-  - "로컬 LLM을 쾌적하게 돌리려면 CPU보다 GPU VRAM 용량(또는 맥북 통합 메모리)과 메모리 대역폭이 성능의 80%를 좌우합니다."
-  - "2026년 기준 가장 만족도가 높은 황금 라인은 VRAM 24GB(RTX 3090 중고 / RTX 4090 / 맥북 32GB+)이며, Qwen3.8-27B와 DeepSeek-R1 32B 모델을 단독 구동할 수 있습니다."
-  - "개발 연동·가벼운 실행은 Ollama, 초보자용 GUI와 세밀한 튜닝은 LM Studio가 가장 편리합니다."
+  - "로컬 LLM은 기본 4비트 양자화(Q4) 파일 크기 외에 대화 문맥(KV 캐시)용 여유 메모리 20~30%가 필요하므로, 모델이 GPU VRAM(또는 맥 통합 메모리) 안에 통째로 들어가야 실사용 속도가 나옵니다."
+  - "한국어 문서·요약은 LG AI연구원의 exaone3.5:7.8b(약 4.8GB)와 qwen3:8b/14b, 이미지 분석은 gemma3:12b, 논리·디버깅 추론은 deepseek-r1:14b/32b가 검증된 선택지입니다."
+  - "Ollama 설치 직후 가장 자주 겪는 3대 문제(C드라이브 용량 부족, 기본 컨텍스트 4096 잘림, CPU 오프로드 저속)는 OLLAMA_MODELS 환경변수, num_ctx 설정, ollama ps 명령으로 5분 안에 해결할 수 있습니다."
 faqs:
-  - question: "로컬 LLM을 구축하면 ChatGPT나 Claude 유료 구독을 완전히 끊어도 되나요?"
-    answer: "사내 보안 문서 요약, 코드 보조, 일상적인 번역·초안 작성은 27B~32B급 로컬 모델로도 충분히 대체 가능합니다. 다만 최상위 추론이나 실시간 웹 검색이 필요한 작업은 클라우드 AI가 여전히 앞서므로, 보안·반복 작업은 로컬로 처리하고 핵심 작업만 클라우드를 쓰는 하이브리드 구성이 가장 효율적입니다."
-  - question: "그래픽카드 VRAM이 부족하면 일반 시스템 RAM으로 대신 돌릴 수 있나요?"
-    answer: "Ollama와 LM Studio는 VRAM이 모자랄 때 자동으로 일부 레이어를 시스템 RAM(CPU)으로 넘겨 실행할 수 있습니다. 하지만 메모리 대역폭 차이 때문에 생성 속도가 초당 2~5토큰 수준으로 급격히 느려지므로, 실사용을 원한다면 모델이 VRAM 안에 통째로 들어가는 크기를 선택하는 것이 좋습니다."
-  - question: "NVIDIA GPU 데스크탑과 애플 실리콘 맥북 중 로컬 LLM에 어느 쪽이 더 좋나요?"
-    answer: "같은 비용으로 가장 빠른 토큰 생성 속도(900GB/s 이상)와 파인튜닝·CUDA 호환성을 원한다면 RTX 3090 기반 NVIDIA PC가 압도적이고, 저전력·무소음·휴대성과 36GB~128GB 대용량 통합 메모리가 필요하다면 맥북 프로 M4/M5 Pro 또는 맥 스튜디오가 유리합니다."
+  - question: "외장 그래픽카드(GPU)가 없는 일반 사무용 노트북에서도 돌아가나요?"
+    answer: "시스템 RAM이 16GB 이상이면 CPU만으로도 exaone3.5:2.4b(약 1.6GB)나 gemma3:4b(약 3.3GB)를 실행할 수 있습니다. 다만 GPU 환경 대비 생성 속도가 느리므로 8B 이상 모델은 전용 GPU(VRAM 8GB+) 또는 애플 실리콘 통합 메모리가 필요합니다."
+  - question: "Ollama로 긴 문서를 붙여넣었는데 앞내용을 다 까먹습니다. 왜 그런가요?"
+    answer: "Ollama는 메모리 절약을 위해 기본 컨텍스트 길이(num_ctx)를 4096토큰으로 제한해 실행합니다. 긴 문서나 코드를 다루려면 Modelfile이나 실행 옵션에서 num_ctx를 16384~32768로 올려주어야 앞문맥이 잘리지 않습니다."
+  - question: "모델 파일을 받다 보니 C드라이브 용량이 꽉 찼습니다. D드라이브로 옮길 수 있나요?"
+    answer: "Windows 시스템 환경변수에 OLLAMA_MODELS=D:\\ollama-models를 등록하고 Ollama를 재시작한 뒤 기존 C:\\Users\\<계정>\\.ollama\\models 폴더를 옮겨주면 D드라이브에 모델을 저장할 수 있습니다."
 ---
 
 import Callout from '../../components/Callout.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
 
-매달 나가는 AI 구독료가 부담스럽거나, 회사 기밀 코드·내부 문서를 외부 서버로 보내기 찝찝해 **내 PC에서 직접 AI를 돌리는 ‘로컬 LLM’** 구축 수요가 2026년 들어 폭발적으로 늘었습니다.
+로컬 LLM을 처음 설치한 사람들이 가장 먼저 실망하는 이유는 <strong>“생각보다 답변이 너무 느리거나, 긴 문서를 넣으면 앞내용을 잊어버린다”</strong>는 점입니다. 대부분 PC 성능 자체보다 ① VRAM 용량을 넘는 모델을 받아 CPU로 오프로드됐거나 ② Ollama의 기본 컨텍스트 제한(`4096`)을 그대로 둔 채 썼기 때문에 생기는 문제입니다.
 
-예전에는 파이썬 환경과 CUDA 드라이버를 며칠씩 씨름해야 했지만, 지금은 **Ollama**나 **LM Studio**를 설치하면 5분 만에 내 컴퓨터를 개인 AI 서버로 만들 수 있습니다. 이 글에서는 **내 하드웨어(VRAM)에 딱 맞는 모델 선택표, 설치 방법, PC vs 맥북 하드웨어 구성 전략**을 한 번에 정리합니다.
+2026년 11월 `ollama.com/library` 공식 태그 기준으로 **내 VRAM에 맞는 정확한 모델 선택표, Ollama vs LM Studio 차이, 그리고 설치 직후 반드시 해두어야 할 트러블슈팅 3가지**를 정리했습니다.
 
-## 1. 로컬 LLM의 핵심 원리: 왜 VRAM과 대역폭이 전부일까?
+## 1. VRAM 사양별 추천 오픈웨이트 모델 & 실행 명령어 (2026년 11월 기준)
 
-로컬 LLM 실행에서 가장 흔한 오해는 “CPU 코어가 많거나 일반 램(RAM)이 64GB면 빠르겠지”라고 생각하는 것입니다.
+모델 가중치(4비트 양자화 Q4 기준)와 대화 문맥(KV 캐시)을 함께 담으려면 **모델 파일 크기보다 VRAM이 최소 25~30% 넉넉해야** GPU 단독 가속이 유지됩니다.
 
-- **VRAM 용량 = 올릴 수 있는 모델의 지능(크기):** 모델 가중치(보통 4비트 양자화 `Q4_K_M`)와 대화 문맥(KV 캐시)이 GPU VRAM 안에 통째로 올라가야 제 속도가 나옵니다.
-- **메모리 대역폭(GB/s) = 답변이 타이핑되는 속도(TPS):** AI가 단어(토큰) 하나를 뽑을 때마다 VRAM 전체를 읽어 들이므로, 메모리 대역폭이 넓을수록 답변 속도가 빠릅니다.
+| 내 VRAM / 통합 메모리 | 대표 하드웨어 | 추천 모델 (Ollama 공식 태그) | 파일 크기(Q4) | 추천 용도 |
+| :--- | :--- | :--- | :--- | :--- |
+| **8 GB** | RTX 3060 / 4060 / 맥북 16GB | `exaone3.5:7.8b` / `qwen3:8b` | 약 4.8~5.2GB | 한국어 문서 요약, 이메일 초안, 가벼운 코드 보조 |
+| **12 ~ 16 GB** | RTX 4060 Ti 16GB / 맥북 24GB | `gemma3:12b` / `deepseek-r1:14b` / `qwen3:14b` | 약 8.1~9.0GB | **이미지 인식(Gemma 3)**, 중급 코딩·추론 |
+| **24 GB (실무 기준선)** | **RTX 3090 중고** / 4090 / 맥북 36GB+ | `qwen3:32b` / `deepseek-r1:32b` / `exaone3.5:32b` | 약 19~20GB | 사내 문서 분석, 복잡한 버그 추적, 실전급 로컬 코딩 |
+| **48 GB 이상** | RTX 3090 듀얼 / 맥 스튜디오 64GB+ | `llama3.3:70b` | 약 43GB | 클라우드급 대형 모델 오프라인 구동, 장문 RAG |
 
-## 2. VRAM 사양별 2026 추천 오픈웨이트 모델 & 실행 명령어
+- **한국어 우선이라면:** LG AI연구원의 `exaone3.5:7.8b`와 알리바바의 `qwen3` 시리즈가 영어 중심 모델 대비 한국어 토크나이저 효율이 높아 같은 크기에서도 문장이 훨씬 자연스럽고 응답도 빠릅니다.
 
-2026년 로컬 LLM 생태계는 한국어·코딩 최강 **Qwen3 / Qwen3.8**, 추론 특화 **DeepSeek-R1 Distill**, 범용 **Llama·Gemma** 3강 구도로 정리됩니다.
+## 2. 소프트웨어 2대장 비교: Ollama vs LM Studio
 
-| 내 VRAM 사양 | 대표 하드웨어 예시 | 추천 모델 (Q4 양자화 기준) | Ollama 실행 명령어 |
-| :--- | :--- | :--- | :--- |
-| **8 GB** | RTX 3060 / 4060 | **7B ~ 8B 급** (가벼운 요약·번역·보조) | `ollama run qwen3:8b` / `deepseek-r1:7b` |
-| **12 ~ 16 GB** | RTX 4060 Ti 16GB / 맥북 24GB | **12B ~ 14B 급** (실무 문서·코딩 입문) | `ollama run deepseek-r1:14b` / `gemma4:12b` |
-| **24 GB (황금라인)** | **RTX 3090 중고** / 4090 / 맥북 32GB+ | **27B ~ 32B 급** (범용·코딩·추론 실전급) | `ollama run qwen3.8:27b` / `deepseek-r1:32b` |
-| **48 GB 이상** | RTX 3090 듀얼 / 맥 스튜디오 64GB+ | **70B 대형 모델** (고난도 추론·장문) | `ollama run llama3.1:70b` |
-
-<Callout type="summary" title="2026년 입문자·개발자 최우선 추천 조합">
-  VRAM 24GB 환경을 맞췄다면 <strong><code>ollama run qwen3.8:27b</code></strong>로 범용·코딩 작업을, 복잡한 로직 분석이나 디버깅에는 <strong><code>ollama run deepseek-r1:32b</code></strong>를 번갈아 쓰는 조합이 가장 만족도가 높습니다.
-</Callout>
-
-## 3. 소프트웨어 2대장 비교: Ollama vs LM Studio
-
-| 비교 항목 | **[Ollama](https://ollama.com/download)** | **[LM Studio](https://lmstudio.ai/)** |
+| 비교 항목 | [Ollama](https://ollama.com/download) | [LM Studio](https://lmstudio.ai/) |
 | :--- | :--- | :--- |
-| **인터페이스** | 터미널(CLI) + 백그라운드 데몬 | **직관적인 데스크탑 GUI 앱** |
-| **장점** | 가벼움, `localhost:11434` OpenAI 호환 API 즉시 제공 | 모델 검색·VRAM 오프로드·초당 토큰(TPS) 시각화 |
-| **추천 조합** | VS Code / Cursor / Open WebUI 연동 개발자 | 명령어 없이 바로 채팅·테스트하고 싶은 입문자 |
+| **실행 방식** | 백그라운드 서버(`localhost:11434`) + CLI + 기본 데스크톱 채팅 앱 | 전용 데스크톱 GUI 앱 (모델 검색·슬라이더 튜닝 내장) |
+| **강점** | 가벼운 메모리 점유, `ollama launch`·OpenAI 호환 API 연동, Open WebUI 결합 용이 | VRAM 오프로드 레이어 수·초당 토큰(TPS)·양자화(Q4/Q6/Q8)를 눈으로 보며 조절 |
+| **추천 대상** | VS Code·Cursor·스크립트·사내 웹서버 연동 개발자 | 터미널 없이 화면에서 모델 비교·채팅을 바로 해보고 싶은 사용자 |
 
-- **ChatGPT처럼 웹 화면으로 쓰고 싶다면?** [Ollama](https://ollama.com/download)를 켠 상태에서 Docker로 [Open WebUI](https://openwebui.com/)를 띄우면 사내·집안 공유기 안의 모든 기기에서 스마트폰으로도 내 로컬 AI에 접속할 수 있습니다.
+- **브라우저로 ChatGPT처럼 쓰고 싶다면:** Ollama를 실행한 상태에서 Docker로 [Open WebUI](https://openwebui.com/)를 연결하면 `http://localhost:3000`에서 문서 업로드(RAG), 대화 기록 관리, 한국어 메뉴를 그대로 쓸 수 있습니다.
 
 <AdSlot position="postInArticle" format="fluid" />
 
-## 4. 예산별 로컬 LLM 하드웨어 구성 3가지
+## 3. 설치 직후 꼭 막히는 트러블슈팅 3가지 (복붙 해결)
 
-1. **최고 가성비 데스크탑 (예산 150~220만 원대):**
-   - **중고 RTX 3090 (24GB VRAM, 약 110~160만 원)** + 850W 이상 파워서플라이 구성
-   - 936GB/s의 초고속 대역폭과 CUDA 호환성 덕분에 27B~32B 모델을 초당 수십 토큰으로 쾌적하게 돌릴 수 있습니다. 자세한 시세와 중고 구매 팁은 [RTX 3090이 2026년에 다시 핫해진 이유](/posts/2026-rtx-3090-local-llm-guide/) 글에서 자세히 다루었습니다.
-2. **저전력·휴대성 올인원 (예산 250~400만 원대):**
-   - **애플 실리콘 맥북 프로 M4 Pro / M5 Pro (통합 메모리 24GB~36GB+)**
-   - 데스크탑의 350W 발열·소음 없이 카페에서도 로컬 AI와 코딩을 동시에 돌릴 수 있습니다. 칩셋별 대역폭 차이는 [2026 AI 작업용 맥북 프로 구매 가이드](/posts/2026-macbook-pro-ai-buying-guide/)를 참고하세요.
-3. **70B 대형 모델 홈랩 (예산 300~500만 원대):**
-   - **RTX 3090 듀얼 (48GB VRAM)** 또는 **맥 스튜디오 64GB~128GB 통합 메모리**
+설치 자체는 공식 설치 파일 클릭 3번으로 끝나지만, 실사용에서 아래 3가지를 모르면 크게 헤맵니다.
+
+### ① 답변이 초당 2~3글자로 너무 느릴 때 → GPU 오프로드 비율 확인
+모델이 실행 중일 때 새 터미널을 열어 아래 명령어를 쳐보세요.
+```bash
+ollama ps
+```
+출력의 `PROCESSOR` 항목이 **`100% GPU`**가 아니라 `60% CPU / 40% GPU`처럼 쪼개져 있다면 모델이 VRAM을 초과한 상태입니다. 한 단계 작은 태그(예: `14b → 8b`)로 내려야 속도가 정상으로 돌아옵니다.
+
+### ② 긴 문서·코드를 넣으면 앞내용을 잊을 때 → `num_ctx` 확장
+Ollama 기본 컨텍스트는 `4096` 토큰(한글 약 2,000~2,500자)에 불과합니다. 긴 문서용 커스텀 모델을 아래처럼 한 번만 만들어 두면 해결됩니다.
+```bash
+# Modelfile 작성
+echo "FROM qwen3:8b" > Modelfile
+echo "PARAMETER num_ctx 16384" >> Modelfile
+
+# 16K 컨텍스트 모델 등록 및 실행
+ollama create qwen3-16k -f Modelfile
+ollama run qwen3-16k
+```
+
+### ③ C드라이브 SSD 용량이 순식간에 바닥날 때 → 모델 폴더 D드라이브 이동
+모델 3~4개만 받아도 40~60GB가 차기 때문에 Windows 사용자는 PowerShell에서 아래처럼 저장 경로를 D드라이브로 바꿔두는 편이 안전합니다.
+```powershell
+[System.Environment]::SetEnvironmentVariable("OLLAMA_MODELS", "D:\ollama-models", "User")
+```
+실행 후 작업 표시줄의 Ollama를 완전히 종료했다가 다시 켜면 이후 다운로드되는 모델이 `D:\ollama-models`에 저장됩니다.
+
+<Callout type="warning" title="로컬 LLM으로도 해결 안 되는 영역 (과대기대 주의)">
+  24GB VRAM에 32B 모델을 올려도 최신 웹 정보 검색이나 파일 수십 개를 동시에 리팩토링하는 작업은 클라우드 플래그십 모델이 여전히 한 수 위입니다. <strong>보안 문서·반복 분류·오프라인 코딩은 Ollama</strong>로, 고난도 설계와 최신 리서치는 [클라우드 AI 구독](/posts/2026-ai-subscription-comparison/)으로 나누어 쓰는 구성이 가장 현실적입니다.
+</Callout>
+
+## 4. 예산별 로컬 LLM 하드웨어 선택 기준
+
+1. **가성비·최고 토큰 속도 데스크톱 (150~220만 원대):** 중고 **RTX 3090 (24GB VRAM, 936GB/s)** + 정격 850W 이상 파워. 중고 구매 시 주의할 메모리 온도·채굴 판별법은 [RTX 3090 로컬 LLM 가이드](/posts/2026-rtx-3090-local-llm-guide/)에 별도로 정리했습니다.
+2. **저전력·저소음·휴대성 올인원 (269만~429만 원대):** 350W GPU 발열과 데스크톱 소음 없이 이동 중에도 로컬 AI와 개발을 함께 하려면 24GB~36GB+ 통합 메모리의 맥북 프로가 현실적인 선택지입니다. 칩셋별 실제 예상 토큰 속도는 [2026 AI 작업용 맥북 프로 구매 가이드](/posts/2026-macbook-pro-ai-buying-guide/)를 확인하세요.
 
 <AffiliateCard
-  title="Apple MacBook Pro 14 (M4 Pro / M5 — 저전력 로컬 LLM & 개발용)"
-  subtitle="350W GPU 발열·소음 없이 24GB~36GB+ 통합 메모리로 어디서나 로컬 AI 구동"
-  badge="저전력 · 휴대성 추천"
-  priceNote="쿠팡 로켓배송 실시간 가격"
+  title="Apple MacBook Pro 14 (M4 Pro / M5 · 로컬 LLM 휴대용 구성)"
+  subtitle="데스크톱 GPU의 350W 발열·소음 없이 통합 메모리와 Metal 가속으로 로컬 모델을 구동"
+  badge="저전력 · 휴대성 대안"
+  priceNote="269만~349만 원대 (칩셋·RAM별)"
   highlights={[
-    "273~307GB/s 통합 메모리 대역폭으로 Ollama 로컬 모델 쾌적 구동",
-    "데스크탑 GPU 대비 압도적인 저전력·무소음 작업 환경",
-    "외출 시에도 클라우드 비용 없이 오프라인 AI 코딩 가능",
-    "국내 정발 로켓배송 및 Apple 공식 AS 지원"
+    "M4 Pro(273GB/s) · M5 Pro(307GB/s) 통합 메모리로 Ollama 네이티브 가속",
+    "비행기·사내 폐쇄망에서도 외부 전송 없이 오프라인 코드 보조",
+    "데스크톱 대비 현저히 낮은 소비전력과 조용한 팬 소음",
+    "권장: 14B 이상 모델을 쓰려면 24GB~36GB RAM 옵션 선택 필수"
   ]}
   ctaText="쿠팡에서 맥북 프로 14인치 가격 확인"
   href="https://link.coupang.com/a/iXBmGi9UvA"
   provider="coupang"
 />
 
-## 5. 설치 후 바로 따라 하는 3분 시작 체크리스트
+## 참고 출처
 
-1. **[Ollama 공식 다운로드 페이지](https://ollama.com/download)**(또는 GUI를 원하면 **[LM Studio 공식 다운로드](https://lmstudio.ai/)**)에서 Windows/macOS용 설치 파일을 받아 설치합니다.
-2. 터미널을 열고 내 VRAM에 맞는 모델 명령어 한 줄을 입력합니다. (예: `ollama run qwen3:8b` 또는 `ollama run qwen3.8:27b`)
-3. AI 코딩 에디터([Cursor·Claude Code 비교](/posts/2026-ai-coding-tools-guide/))나 로컬 자동화 스크립트에서 베이스 URL을 `http://localhost:11434/v1`로 연결하면 API 요금 0원으로 바로 활용할 수 있습니다.
+- [Ollama 공식 다운로드 및 문서 (ollama.com)](https://ollama.com/download)
+- [Ollama 공식 모델 라이브러리 (ollama.com/library)](https://ollama.com/library)
+- [LM Studio 공식 사이트 (lmstudio.ai)](https://lmstudio.ai/)
+- [Open WebUI 공식 문서 (openwebui.com)](https://openwebui.com/)
