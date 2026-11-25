@@ -128,9 +128,9 @@ const affiliateNotice =
       <span class="text-slate-700 dark:text-slate-300 truncate max-w-xs sm:max-w-md">{data.title}</span>
     </nav>
 
-    <div class="grid gap-10 lg:grid-cols-12">
-      <!-- Main Article Column -->
-      <article class="lg:col-span-8 min-w-0">
+    <div class="grid gap-10 lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[272px_minmax(0,1fr)] lg:items-start">
+      <!-- Main Article Column (DOM 순서 우선 → 모바일/SEO 최적화, 데스크톱은 우측 배치) -->
+      <article class="min-w-0 lg:order-2 max-w-[800px] w-full">
         <!-- Header -->
         <header class="mb-8">
           <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
@@ -201,6 +201,30 @@ const affiliateNotice =
           </section>
         )}
 
+        <!-- 모바일 전용 접이식 목차 -->
+        {headings.filter((h) => h.depth >= 2 && h.depth <= 3).length > 0 && (
+          <details class="lg:hidden mb-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/70 px-5 py-3.5">
+            <summary class="flex cursor-pointer items-center justify-between text-xs font-extrabold tracking-wider uppercase text-slate-900 dark:text-white list-none">
+              <span>목차 바로가기</span>
+              <span class="text-slate-400">▾</span>
+            </summary>
+            <ul class="mt-3 space-y-1.5 text-sm border-t border-slate-100 dark:border-slate-800 pt-3">
+              {headings
+                .filter((h) => h.depth >= 2 && h.depth <= 3)
+                .map((h) => (
+                  <li class:list={[h.depth === 3 ? 'pl-3' : '']}>
+                    <a
+                      href={`#${h.slug}`}
+                      class="block py-1 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    >
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+          </details>
+        )}
+
         <!-- AdSense: Post Top -->
         <AdSlot position="postTop" />
 
@@ -264,39 +288,39 @@ const affiliateNotice =
         </div>
       </article>
 
-      <!-- Sticky Right Sidebar (Desktop) -->
-      <aside class="lg:col-span-4">
-        <div class="sticky top-24 space-y-6">
+      <!-- Sticky Left Sidebar (Desktop) -->
+      <aside class="lg:order-1 lg:sticky lg:top-24 space-y-5">
+        <div class="hidden lg:block">
           <TableOfContents headings={headings} />
-          <AdSlot position="sidebar" format="rectangle" />
+        </div>
+        <AdSlot position="sidebar" format="rectangle" />
 
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-            <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">FREE PUZZLE APPS</div>
-            <h3 class="mt-1.5 text-base font-extrabold text-slate-950 dark:text-white">잠깐 머리 식힐 무료 퍼즐 앱 4선</h3>
-            <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-              시간 제한·로그인 없이 오프라인에서도 가볍게 즐기는 Link Shift, 꽃담, Cable Fix, Link Trail을 만나보세요.
-            </p>
-            <a
-              href={withBase('/apps/')}
-              class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-xs font-bold text-white transition-colors"
-            >
-              추천 앱 보러가기 →
-            </a>
-          </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-xs">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">FREE PUZZLE APPS</div>
+          <h3 class="mt-1.5 text-sm font-extrabold text-slate-950 dark:text-white">잠깐 머리 식힐 무료 퍼즐 앱 4선</h3>
+          <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            시간 제한·로그인 없이 오프라인에서도 가볍게 즐기는 Link Shift, 꽃담, Cable Fix, Link Trail을 만나보세요.
+          </p>
+          <a
+            href={withBase('/apps/')}
+            class="mt-3.5 inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 hover:bg-emerald-700 px-3.5 py-2 text-xs font-bold text-white transition-colors"
+          >
+            추천 앱 보러가기 →
+          </a>
+        </div>
 
-          <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-xs">
-            <div class="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">TOPIC REQUEST</div>
-            <h3 class="mt-1.5 text-base font-extrabold text-slate-950 dark:text-white">비교해 주길 원하는 주제가 있나요?</h3>
-            <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
-              궁금한 AI 툴·요금제·IT 기기 스펙 비교 요청이나 정보 정정 제보를 편하게 보내주세요.
-            </p>
-            <a
-              href={withBase('/contact/')}
-              class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-500 px-4 py-2.5 text-xs font-bold text-white transition-colors"
-            >
-              주제 제안 · 문의하기
-            </a>
-          </div>
+        <div class="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 shadow-xs">
+          <div class="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">TOPIC REQUEST</div>
+          <h3 class="mt-1.5 text-sm font-extrabold text-slate-950 dark:text-white">비교해 주길 원하는 주제가 있나요?</h3>
+          <p class="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+            궁금한 AI 툴·요금제·IT 기기 스펙 비교 요청이나 정보 정정 제보를 편하게 보내주세요.
+          </p>
+          <a
+            href={withBase('/contact/')}
+            class="mt-3.5 inline-flex w-full items-center justify-center rounded-xl bg-slate-950 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-500 px-3.5 py-2 text-xs font-bold text-white transition-colors"
+          >
+            주제 제안 · 문의하기
+          </a>
         </div>
       </aside>
     </div>
