@@ -13,6 +13,7 @@ interface ShowcaseApp {
   description: string;
   badges: string[];
   playUrl: string;
+  reviewPath: string;
   extraUrl?: { label: string; href: string };
   iconUrl: string;
   thumbUrl: string;
@@ -29,6 +30,7 @@ const APPS: ShowcaseApp[] = [
       '번거로운 회원가입·로그인 없이 켜자마자 바로 즐기는 사천성 스타일 타일 퍼즐입니다. 매일 새롭게 열리는 데일리 퍼즐로 가볍게 두뇌 워밍업을 해 보세요.',
     badges: ['로그인 불필요', '매일 데일리 퍼즐', '빠른 한 판', '무료 플레이'],
     playUrl: 'https://play.google.com/store/apps/details?id=com.jrhapps.linkshift&hl=ko',
+    reviewPath: '/posts/app-review-link-shift/',
     extraUrl: { label: '24초 플레이 영상', href: 'https://www.youtube.com/shorts/fEVoKJ7UKBM' },
     iconUrl: 'https://jrh-apps-site.vercel.app/assets/link-shift-icon.webp',
     thumbUrl: 'https://jrh-apps-site.vercel.app/assets/link-shift-play-thumb.webp',
@@ -43,6 +45,7 @@ const APPS: ShowcaseApp[] = [
       '알록달록한 꽃을 같은 종류 네 송이씩 모아 예쁜 꽃다발을 완성하는 힐링 정렬 퍼즐입니다. 무료 힌트와 무제한 되돌리기, 자동 저장 덕분에 언제든 부담 없이 즐길 수 있습니다.',
     badges: ['무료 힌트', '무제한 되돌리기', '자동 저장', '힐링 퍼즐'],
     playUrl: 'https://play.google.com/store/apps/details?id=com.jrhapps.bloomsort&hl=ko',
+    reviewPath: '/posts/app-review-bloom-sort/',
     iconUrl: 'https://jrh-apps-site.vercel.app/assets/bloom-sort-icon.webp',
     thumbUrl: 'https://jrh-apps-site.vercel.app/assets/bloom-sort-play-ko-thumb.webp',
   },
@@ -56,6 +59,7 @@ const APPS: ShowcaseApp[] = [
       '멀티탭의 빈 연결구를 활용해 플러그를 옮기고 엉킨 선을 정리해 기기에 전원을 켜는 차분한 두뇌 퍼즐입니다. 매번 새로 생성되는 보드와 큰 글자·오프라인 플레이를 지원합니다.',
     badges: ['오프라인 지원', '시간 제한 없음', '무료 되돌리기', '한/영/일 지원'],
     playUrl: 'https://play.google.com/store/apps/details?id=com.jrhapps.cablefix&hl=ko',
+    reviewPath: '/posts/app-review-cable-fix/',
     extraUrl: { label: '게임 상세 소개', href: 'https://jrh-apps-site.vercel.app/cable-fix' },
     iconUrl: 'https://jrh-apps-site.vercel.app/assets/cable-fix-icon.webp',
     thumbUrl: 'https://jrh-apps-site.vercel.app/assets/cable-fix-play-ko-thumb.webp',
@@ -70,6 +74,7 @@ const APPS: ShowcaseApp[] = [
       '같은 그림 쌍을 선이 겹치지 않게 이어 길을 완성하는 클래식 두뇌 퍼즐입니다. 시간·생명 제한이 없어 출퇴근길이나 자기 전 차분하게 몰입하기 좋습니다.',
     badges: ['시간·생명 제한 없음', '되돌리기 지원', '자동 저장', '무료 플레이'],
     playUrl: 'https://play.google.com/store/apps/details?id=com.jrhapps.linktrail&hl=ko',
+    reviewPath: '/posts/app-review-link-trail/',
     iconUrl: 'https://jrh-apps-site.vercel.app/assets/link-trail-icon.webp',
     thumbUrl: 'https://jrh-apps-site.vercel.app/assets/link-trail-play-ko-thumb.webp',
   },
@@ -184,6 +189,12 @@ const appPosts = allPosts.filter((p) => p.data.category === 'apps');
               >
                 <span>Google Play 무료 다운로드</span>
                 <span aria-hidden="true">↗</span>
+              </a>
+              <a
+                href={withBase(app.reviewPath)}
+                class="inline-flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-blue-600 hover:text-blue-700 px-3.5 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 transition-colors"
+              >
+                상세 리뷰
               </a>
               {app.extraUrl && (
                 <a

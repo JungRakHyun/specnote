@@ -119,6 +119,14 @@ export function generateInfographicSvg({
       accent: '#38BDF8',
       sub: '#7DD3FC',
     },
+    apps: {
+      label: '추천 앱',
+      bg1: '#064E3B',
+      bg2: '#1E1B4B',
+      pill: '#059669',
+      accent: '#34D399',
+      sub: '#6EE7B7',
+    },
   };
 
   const t = themes[category] || themes['ai-tools'];
