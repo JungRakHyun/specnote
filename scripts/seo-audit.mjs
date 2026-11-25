@@ -117,7 +117,7 @@ for (const file of files) {
   }
 
   // 8. 한국어 CommonMark 굵게(**...**) 깨짐 패턴 감지
-  const brokenBold = body.match(/\*\*[^*\r\n]+[)\]}"'’”]\*\*[가-힣]/g);
+  const brokenBold = body.match(/\*\*[^*\r\n]+[)\]}"'’”`]\*\*[가-힣]/g);
   if (brokenBold) {
     issues.push(`한국어 조사 앞 굵게(**...**) 문법 깨짐 감지: ${brokenBold.join(', ')} → <strong> 태그를 사용하세요.`);
   }

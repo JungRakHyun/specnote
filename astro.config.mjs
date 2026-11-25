@@ -3,6 +3,8 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { unified } from '@astrojs/markdown-remark';
+import remarkGfm from 'remark-gfm';
 
 // 환경변수 또는 기본값으로 배포 URL/Base 자동 전환
 // - 커스텀 도메인 / Cloudflare Pages: SITE_URL="https://yourdomain.com", BASE_PATH="/"
@@ -26,6 +28,10 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   markdown: {
+    processor: unified({
+      gfm: false,
+      remarkPlugins: [[remarkGfm, { singleTilde: false }]],
+    }),
     shikiConfig: {
       theme: 'github-dark-default',
       wrap: true,
