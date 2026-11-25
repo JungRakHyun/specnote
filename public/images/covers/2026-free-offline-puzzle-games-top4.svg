@@ -35,14 +35,14 @@
   <!-- Headline -->
   <text x="72" y="196" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="56" font-weight="900" letter-spacing="-1.2">출퇴근 · 비행기 무료 퍼즐 앱 TOP 4</text>
   <text x="72" y="270" fill="#34D399" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="48" font-weight="900" letter-spacing="-1">시간 제한 · 로그인 없는 힐링 두뇌 게임</text>
-  <text x="72" y="328" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="23" font-weight="500">Cable Fix · 꽃담(Bloom Sort) · Link Trail · Link Shift 실전 리뷰</text>
+  <text x="72" y="328" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="23" font-weight="500">Link Shift · 꽃담(Bloom Sort) · Cable Fix · Link Trail 실전 리뷰</text>
 
-  <!-- 4-Card App Strip -->
-  <rect x="72" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#34D399" stroke-width="2"/>
-  <text x="96" y="438" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">오프라인 · 선 정리</text>
-  <text x="96" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Cable Fix</text>
-  <text x="96" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">엉킨 선 차근차근 정리</text>
-  <text x="96" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">오프라인 · 시간제한 없음</text>
+  <!-- 4-Card App Strip (Link Shift / 꽃담 / Cable Fix / Link Trail) -->
+  <rect x="72" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#A78BFA" stroke-width="2"/>
+  <text x="96" y="438" fill="#C4B5FD" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">사천성 타일 매칭</text>
+  <text x="96" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Link Shift</text>
+  <text x="96" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">같은 타일, 이어지는 즐거움</text>
+  <text x="96" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">로그인 없음 · 데일리 퍼즐</text>
 
   <rect x="342" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#F472B6" stroke-width="2"/>
   <text x="366" y="438" fill="#F9A8D4" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">힐링 꽃 정렬</text>
@@ -50,15 +50,15 @@
   <text x="366" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">같은 꽃 네 송이 한 다발</text>
   <text x="366" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">무료 힌트 · 무제한 되돌리기</text>
 
-  <rect x="612" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-width="2"/>
-  <text x="636" y="438" fill="#7DD3FC" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">그림 길 찾기</text>
-  <text x="636" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Link Trail</text>
-  <text x="636" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">겹치지 않게 모든 그림 잇기</text>
-  <text x="636" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">생명 제한 없음 · 자동 저장</text>
+  <rect x="612" y="394" width="248" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#34D399" stroke-width="2"/>
+  <text x="636" y="438" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">오프라인 · 선 정리</text>
+  <text x="636" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Cable Fix</text>
+  <text x="636" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">엉킨 선 차근차근 정리</text>
+  <text x="636" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">오프라인 · 시간제한 없음</text>
 
-  <rect x="882" y="394" width="246" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#A78BFA" stroke-width="2"/>
-  <text x="906" y="438" fill="#C4B5FD" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">사천성 타일 매칭</text>
-  <text x="906" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Link Shift</text>
-  <text x="906" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">같은 타일, 이어지는 즐거움</text>
-  <text x="906" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">로그인 없음 · 데일리 퍼즐</text>
+  <rect x="882" y="394" width="246" height="214" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-width="2"/>
+  <text x="906" y="438" fill="#7DD3FC" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">그림 길 찾기</text>
+  <text x="906" y="486" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="28" font-weight="900">Link Trail</text>
+  <text x="906" y="532" fill="#E2E8F0" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="700">겹치지 않게 모든 그림 잇기</text>
+  <text x="906" y="568" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">생명 제한 없음 · 자동 저장</text>
 </svg>
