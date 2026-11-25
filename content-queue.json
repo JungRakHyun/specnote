@@ -72,6 +72,24 @@
     "status": "published"
   },
   {
+    "slug": "2026-vibe-coding-beginner-guide",
+    "title": "바이브 코딩(Vibe Coding)이란? 비전공자도 AI로 웹·앱 만드는 2026 입문 로드맵",
+    "category": "dev-coding",
+    "tags": ["바이브코딩", "AI코딩", "비전공자코딩", "Cursor", "Lovable"],
+    "affiliateType": "general",
+    "monetization": "High Search Volume AdSense + Dev SaaS",
+    "status": "published"
+  },
+  {
+    "slug": "2026-vibe-coding-pitfalls-and-prompts",
+    "title": "AI 바이브 코딩 실전 프롬프트 7가지 & 초보자가 꼭 겪는 치명적 함정 5가지 해결법",
+    "category": "dev-coding",
+    "tags": ["바이브코딩", "AI프롬프트", "Cursor팁", "ClaudeCode", "보안점검"],
+    "affiliateType": "none",
+    "monetization": "High Search Volume AdSense",
+    "status": "published"
+  },
+  {
     "slug": "2026-ai-meeting-note-apps-comparison",
     "title": "2026 AI 회의록 자동 요약 앱 비교: 클로바노트·다글로·노션 AI·티로 정확도·가격 비교",
     "category": "automation",

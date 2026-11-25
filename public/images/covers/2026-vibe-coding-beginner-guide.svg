@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="55%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#312E81"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.82" cy="0.24" r="0.52">
+      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.38"/>
+      <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+  <g stroke="#475569" stroke-opacity="0.24">
+    <path d="M0 168H1200M0 337H1200M0 506H1200"/>
+    <path d="M300 0V675M600 0V675M900 0V675"/>
+  </g>
+
+  <!-- Header Strip -->
+  <rect x="72" y="58" width="160" height="40" rx="20" fill="#4F46E5"/>
+  <text x="152" y="84" text-anchor="middle" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="18" font-weight="800">AI 코딩 · 개발</text>
+  <rect x="246" y="58" width="174" height="40" rx="20" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
+  <text x="333" y="84" text-anchor="middle" fill="#7DD3FC" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">비전공자 입문 로드맵</text>
+
+  <!-- SpecNote Mark -->
+  <g transform="translate(962, 62)">
+    <rect width="32" height="32" rx="8" fill="#FFFFFF" fill-opacity="0.12"/>
+    <rect x="7" y="8" width="11" height="3.5" rx="1.75" fill="#FFFFFF"/>
+    <rect x="7" y="14.5" width="18" height="3.5" rx="1.75" fill="#38BDF8"/>
+    <rect x="7" y="21" width="14" height="3.5" rx="1.75" fill="#34D399"/>
+    <text x="44" y="23" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="19" font-weight="800" letter-spacing="1">SPECNOTE</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="72" y="196" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="60" font-weight="900" letter-spacing="-1.5">AI 바이브 코딩 입문 가이드</text>
+  <text x="72" y="272" fill="#38BDF8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">비전공자도 하루 만에 웹·앱 배포하기</text>
+  <text x="72" y="330" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="500">기획서 → 툴 선택(Lovable·Bolt·Cursor) → 무료 배포 5단계 로드맵</text>
+
+  <!-- 5-Step Roadmap Strip -->
+  <g transform="translate(72, 404)">
+    <rect x="0" y="0" width="194" height="190" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#38BDF8" stroke-opacity="0.65" stroke-width="1.8"/>
+    <text x="24" y="42" fill="#38BDF8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="900">STEP 01</text>
+    <text x="24" y="92" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="25" font-weight="900">1장 기획서</text>
+    <text x="24" y="132" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">화면·핵심기능 3개</text>
+    <text x="24" y="156" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="700">PRD 초안 작성</text>
+
+    <rect x="216" y="0" width="194" height="190" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#818CF8" stroke-opacity="0.65" stroke-width="1.8"/>
+    <text x="240" y="42" fill="#A5B4FC" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="900">STEP 02</text>
+    <text x="240" y="92" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="25" font-weight="900">툴 선택</text>
+    <text x="240" y="132" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">Lovable · Bolt</text>
+    <text x="240" y="156" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="700">Cursor · Claude</text>
+
+    <rect x="432" y="0" width="194" height="190" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#60A5FA" stroke-opacity="0.65" stroke-width="1.8"/>
+    <text x="456" y="42" fill="#60A5FA" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="900">STEP 03</text>
+    <text x="456" y="92" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="25" font-weight="900">UI 프로토타입</text>
+    <text x="456" y="132" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">기능 단위 분할</text>
+    <text x="456" y="156" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="700">화면 먼저 완성</text>
+
+    <rect x="648" y="0" width="194" height="190" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#34D399" stroke-opacity="0.65" stroke-width="1.8"/>
+    <text x="672" y="42" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="900">STEP 04</text>
+    <text x="672" y="92" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="25" font-weight="900">DB · 로그인</text>
+    <text x="672" y="132" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">Supabase 연동</text>
+    <text x="672" y="156" fill="#34D399" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="700">Git 백업 필수</text>
+
+    <rect x="864" y="0" width="192" height="190" rx="20" fill="#0F172A" fill-opacity="0.9" stroke="#F59E0B" stroke-opacity="0.7" stroke-width="1.8"/>
+    <text x="888" y="42" fill="#FBBF24" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="16" font-weight="900">STEP 05</text>
+    <text x="888" y="92" fill="#FFFFFF" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="25" font-weight="900">무료 배포</text>
+    <text x="888" y="132" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15">Vercel · GitHub</text>
+    <text x="888" y="156" fill="#FBBF24" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="700">전 세계 공개</text>
+  </g>
+</svg>
