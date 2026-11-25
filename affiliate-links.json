@@ -20,24 +20,31 @@
       "rocketDelivery": true
     },
     {
-      "id": "dell-ultrasharp-27-4k",
-      "name": "Dell UltraSharp 27 4K USB-C",
+      "id": "lg-27-4k-usbc",
+      "name": "LG전자 27인치 4K UHD USB-C 모니터 (국내 정발)",
       "category": "tech-gear",
-      "keywords": ["Dell UltraSharp", "델 4K 모니터"],
-      "url": "https://link.coupang.com/a/iXzNRK8uRg",
+      "keywords": ["LG 27인치 4K", "27UP850", "맥북 27인치 모니터"],
+      "url": "https://link.coupang.com/a/iXB5ejjY0y",
       "provider": "coupang",
-      "rocketDelivery": false,
-      "note": "국내 정발 모델로 교체 예정"
+      "rocketDelivery": true
     },
     {
-      "id": "lg-27uq850v",
-      "name": "LG전자 울트라 4K 27인치 (27UQ850V)",
+      "id": "lg-32-4k-usbc",
+      "name": "LG전자 32인치 4K UHD USB-C 모니터 (국내 정발)",
       "category": "tech-gear",
-      "keywords": ["LG 27UQ850V", "LG 4K 모니터"],
-      "url": "https://link.coupang.com/a/iXzXHLKL8u",
+      "keywords": ["LG 32인치 4K", "32UP830K", "맥북 32인치 모니터"],
+      "url": "https://link.coupang.com/a/iXB68dUrwO",
       "provider": "coupang",
-      "rocketDelivery": false,
-      "note": "국내 정발 모델로 교체 예정"
+      "rocketDelivery": true
+    },
+    {
+      "id": "samsung-viewfinity-4k-usbc",
+      "name": "삼성전자 뷰피니티 4K UHD USB-C 모니터 (국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["삼성 뷰피니티", "ViewFinity 4K", "삼성 4K 모니터"],
+      "url": "https://link.coupang.com/a/iXB9PTaKC4",
+      "provider": "coupang",
+      "rocketDelivery": true
     }
   ]
 }
