@@ -55,13 +55,13 @@ import AdSlot from '../../components/AdSlot.astro';
 
 ## 3. 소프트웨어 2대장 비교: Ollama vs LM Studio
 
-| 비교 항목 | **Ollama** | **LM Studio** |
+| 비교 항목 | **[Ollama](https://ollama.com/download)** | **[LM Studio](https://lmstudio.ai/)** |
 | :--- | :--- | :--- |
 | **인터페이스** | 터미널(CLI) + 백그라운드 데몬 | **직관적인 데스크탑 GUI 앱** |
 | **장점** | 가벼움, `localhost:11434` OpenAI 호환 API 즉시 제공 | 모델 검색·VRAM 오프로드·초당 토큰(TPS) 시각화 |
 | **추천 조합** | VS Code / Cursor / Open WebUI 연동 개발자 | 명령어 없이 바로 채팅·테스트하고 싶은 입문자 |
 
-- **ChatGPT처럼 웹 화면으로 쓰고 싶다면?** Ollama를 켠 상태에서 Docker로 **Open WebUI**를 띄우면 사내·집안 공유기 안의 모든 기기에서 스마트폰으로도 내 로컬 AI에 접속할 수 있습니다.
+- **ChatGPT처럼 웹 화면으로 쓰고 싶다면?** [Ollama](https://ollama.com/download)를 켠 상태에서 Docker로 [Open WebUI](https://openwebui.com/)를 띄우면 사내·집안 공유기 안의 모든 기기에서 스마트폰으로도 내 로컬 AI에 접속할 수 있습니다.
 
 <AdSlot position="postInArticle" format="fluid" />
 
@@ -94,6 +94,6 @@ import AdSlot from '../../components/AdSlot.astro';
 
 ## 5. 설치 후 바로 따라 하는 3분 시작 체크리스트
 
-1. <strong>Ollama 공식 사이트(<code>ollama.com</code>)</strong>에서 Windows/macOS용 설치 파일을 받아 설치합니다.
+1. **[Ollama 공식 다운로드 페이지](https://ollama.com/download)**(또는 GUI를 원하면 **[LM Studio 공식 다운로드](https://lmstudio.ai/)**)에서 Windows/macOS용 설치 파일을 받아 설치합니다.
 2. 터미널을 열고 내 VRAM에 맞는 모델 명령어 한 줄을 입력합니다. (예: `ollama run qwen3:8b` 또는 `ollama run qwen3.8:27b`)
 3. AI 코딩 에디터([Cursor·Claude Code 비교](/posts/2026-ai-coding-tools-guide/))나 로컬 자동화 스크립트에서 베이스 URL을 `http://localhost:11434/v1`로 연결하면 API 요금 0원으로 바로 활용할 수 있습니다.

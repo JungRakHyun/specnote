@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /**
  * SpecNote (스펙노트) — 매거진 인포그래픽 SVG 썸네일 자동 생성기
- * 향후 자동 발행되는 모든 포스트에 통일감 있는 고클릭률(CTR) 썸네일을 자동 생성합니다.
+ * 한국어 단어 중간 끊김 방지 + 제목 길이에 따른 폰트 크기 자동 조절 지원
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 function escapeXml(str) {
   return String(str)
@@ -15,18 +16,68 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
+/** 시각적 폭 근사치 계산 (한글/CJK 1.8, 영문/숫자 1.0, 공백 0.55) */
+function visualWidth(str) {
+  let w = 0;
+  for (const ch of str) {
+    if (/\s/.test(ch)) w += 0.55;
+    else if (/[가-힣ㄱ-ㅎㅏ-ㅣ\u3000-\u9FFF]/.test(ch)) w += 1.8;
+    else w += 1.0;
+  }
+  return w;
+}
+
+/** 단어 경계에서만 안전하게 줄임 (절대 단어 중간을 자르지 않음) */
+function trimAtWordBoundary(str, maxVisual) {
+  const clean = str.trim();
+  if (visualWidth(clean) <= maxVisual) return clean;
+  const words = clean.split(/\s+/);
+  let out = '';
+  for (const word of words) {
+    const candidate = out ? `${out} ${word}` : word;
+    if (visualWidth(candidate) <= maxVisual) {
+      out = candidate;
+    } else {
+      break;
+    }
+  }
+  return out || clean;
+}
+
 function splitHeadline(title) {
   const clean = title.trim();
   if (clean.includes(':')) {
-    const [left, ...rest] = clean.split(':');
-    const right = rest.join(':').trim();
-    return [left.trim().slice(0, 22), right.slice(0, 24)];
+    const idx = clean.indexOf(':');
+    const left = clean.slice(0, idx).trim();
+    const right = clean.slice(idx + 1).trim();
+    return [trimAtWordBoundary(left, 44), trimAtWordBoundary(right, 48)];
   }
-  if (clean.length <= 18) return [clean, '2026 핵심 비교 리포트'];
-  const mid = Math.min(18, Math.floor(clean.length / 2));
-  const spaceIdx = clean.lastIndexOf(' ', mid + 3);
-  const cut = spaceIdx > 8 ? spaceIdx : mid;
-  return [clean.slice(0, cut).trim(), clean.slice(cut).trim().slice(0, 24)];
+  if (visualWidth(clean) <= 28) {
+    return [clean, '2026 핵심 스펙 · 요금 비교 리포트'];
+  }
+  const words = clean.split(/\s+/);
+  const target = visualWidth(clean) / 2;
+  let line1 = '';
+  let splitIdx = 0;
+  for (let i = 0; i < words.length; i++) {
+    const next = line1 ? `${line1} ${words[i]}` : words[i];
+    if (visualWidth(next) <= target + 4 || i === 0) {
+      line1 = next;
+      splitIdx = i + 1;
+    } else {
+      break;
+    }
+  }
+  const line2 = words.slice(splitIdx).join(' ').trim() || '2026 핵심 비교 리포트';
+  return [trimAtWordBoundary(line1, 44), trimAtWordBoundary(line2, 48)];
+}
+
+/** 사용 가능한 가로폭(1056px)에 맞춰 폰트 크기 자동 계산 */
+function calcFontSize(line, maxPx = 58, minPx = 36) {
+  const w = visualWidth(line);
+  if (w <= 0) return maxPx;
+  const estimated = Math.floor((1040 / w) * 1.72);
+  return Math.max(minPx, Math.min(maxPx, estimated));
 }
 
 export function generateInfographicSvg({
@@ -72,16 +123,20 @@ export function generateInfographicSvg({
 
   const t = themes[category] || themes['ai-tools'];
   const [line1, line2] = splitHeadline(title);
+  const size1 = calcFontSize(line1, 58, 36);
+  const size2 = calcFontSize(line2, 50, 32);
   const badgeItems = (tags.length > 0 ? tags : ['핵심 비교', '요금제 분석', '추천 가이드', 'FAQ']).slice(0, 4);
 
   const cardsSvg = badgeItems
     .map((tag, idx) => {
       const x = 72 + idx * 270;
+      const tagText = `#${tag}`;
+      const tagSize = visualWidth(tagText) > 13 ? 22 : 26;
       return `
   <rect x="${x}" y="424" width="246" height="172" rx="20" fill="#0F172A" fill-opacity="0.88" stroke="${t.accent}" stroke-opacity="0.55" stroke-width="2"/>
-  <text x="${x + 26}" y="468" fill="${t.sub}" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 0${idx + 1}</text>
-  <text x="${x + 26}" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="28" font-weight="900">#${escapeXml(tag.slice(0, 9))}</text>
-  <text x="${x + 26}" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>`;
+  <text x="${x + 24}" y="468" fill="${t.sub}" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800">POINT 0${idx + 1}</text>
+  <text x="${x + 24}" y="520" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="${tagSize}" font-weight="900">${escapeXml(tagText)}</text>
+  <text x="${x + 24}" y="560" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="500">공식 스펙 · 실전 기준</text>`;
     })
     .join('');
 
@@ -113,8 +168,8 @@ export function generateInfographicSvg({
     <rect x="7" y="21" width="14" height="3.5" rx="1.75" fill="#34D399"/>
     <text x="44" y="23" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="19" font-weight="800" letter-spacing="1">SPECNOTE</text>
   </g>
-  <text x="72" y="200" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="58" font-weight="900" letter-spacing="-1.5">${escapeXml(line1)}</text>
-  <text x="72" y="276" fill="${t.accent}" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="54" font-weight="900" letter-spacing="-1.2">${escapeXml(line2)}</text>
+  <text x="72" y="200" fill="#FFFFFF" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="${size1}" font-weight="900" letter-spacing="-1.2">${escapeXml(line1)}</text>
+  <text x="72" y="274" fill="${t.accent}" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="${size2}" font-weight="900" letter-spacing="-1">${escapeXml(line2)}</text>
   <text x="72" y="336" fill="#94A3B8" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="24" font-weight="500">${escapeXml(subtitle)}</text>
   ${cardsSvg}
 </svg>
@@ -122,7 +177,7 @@ export function generateInfographicSvg({
 }
 
 // CLI 직접 실행 지원
-if (import.meta.url === `file://${process.argv[1].replace(/\\/g, '/')}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const args = process.argv.slice(2);
   const get = (k) => {
     const i = args.indexOf(`--${k}`);
