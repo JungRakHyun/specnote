@@ -33,7 +33,7 @@ export const SITE = {
 
   // 3. 검색엔진 소유권 인증 메타태그 (구글 서치콘솔 / 네이버 서치어드바이저 인증 content 값)
   verification: {
-    google: '',
+    google: '1r9axE2uczIThCoMnFY-eTh9NsP47UbpI9I2zwNq1SE',
     naver: '',
     bing: '',
   },
