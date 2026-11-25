@@ -55,11 +55,20 @@
   },
   {
     "slug": "2026-local-llm-ollama-setup-guide",
-    "title": "인터넷 없이 내 PC에서 무료 AI 돌리기: Ollama 로컬 LLM 설치·추천 모델 완벽 가이드",
+    "title": "2026 로컬 LLM 구성 완벽 가이드: VRAM별 추천 모델·Ollama·LM Studio 설치 총정리",
     "category": "dev-coding",
-    "tags": ["로컬LLM", "Ollama", "무료AI", "온디바이스AI"],
+    "tags": ["로컬LLM", "Ollama", "LMStudio", "Qwen3", "DeepSeekR1"],
     "affiliateType": "coupang",
     "monetization": "AdSense + Hardware Coupang",
+    "status": "published"
+  },
+  {
+    "slug": "2026-rtx-3090-local-llm-guide",
+    "title": "RTX 3090이 2026년에 다시 핫해진 이유: 로컬 LLM 가성비 1위 중고 시세·새상품·대안 총정리",
+    "category": "tech-gear",
+    "tags": ["RTX3090", "로컬LLM", "그래픽카드", "VRAM24GB", "RTX5090"],
+    "affiliateType": "coupang",
+    "monetization": "High Search Volume AdSense + Hardware Coupang",
     "status": "published"
   },
   {
