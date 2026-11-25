@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site';
+import { withBase } from '../utils/url';
+---
+
+<BaseLayout
+  title="블로그 소개 및 편집 원칙"
+  description={`${SITE.name}(${SITE.koName})의 운영 목적, 데이터 검증 기준 및 편집 원칙을 안내합니다.`}
+>
+  <article class="mx-auto max-w-3xl px-4 sm:px-6 py-12">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+      {SITE.name} ({SITE.koName}) 소개
+    </h1>
+    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      {SITE.name}은 빠르게 변화하는 AI 서비스, 개발 생산성 도구, IT 하드웨어 시장에서
+      <strong>불필요한 과장 없이 공식 스펙과 실사용 관점의 의사결정 정보</strong>를 제공하는 테크 가이드 미디어입니다.
+    </p>
+
+    <div class="prose-tech mt-8">
+      <h2>편집 및 검증 원칙</h2>
+      <ul>
+        <li>
+          <strong>공식 1차 출처 우선:</strong> 모든 요금제, 모델 사양, 하드웨어 스펙은 각 제조사 및 서비스 공식 문서·가격표를 기준으로 교차 확인합니다.
+        </li>
+        <li>
+          <strong>명확한 비교 기준:</strong> 단순 스펙 나열보다 “어떤 작업에 어떤 조합이 가성비가 높은가”를 표와 시나리오 중심으로 정리합니다.
+        </li>
+        <li>
+          <strong>지속적인 업데이트:</strong> AI 요금제나 신제품 라인업이 개편되면 기존 가이드에도 변경 이력과 수정일을 명시합니다.
+        </li>
+        <li>
+          <strong>독립적 평가:</strong> 일부 글에는 제휴 링크나 광고가 포함될 수 있으나, 제품 장단점 분석과 추천 순위는 객관적 효용을 기준으로 독립 작성합니다.
+        </li>
+      </ul>
+
+      <h2>주요 다루는 분야</h2>
+      <ul>
+        <li><strong>AI 툴 비교:</strong> ChatGPT, Claude, Gemini, Perplexity 등 생성형 AI 유료·무료 플랜 비교 및 최적 조합</li>
+        <li><strong>AI 코딩·개발:</strong> Cursor, Windsurf, Claude Code, GitHub Copilot 등 개발 워크플로 가이드</li>
+        <li><strong>IT 기기·스펙:</strong> 맥북, AI 노트북, 작업용 모니터 및 주변기기 구매 가이드</li>
+        <li><strong>업무 자동화:</strong> 노션, 구글 워크스페이스, AI 에이전트 기반 실무 자동화 레시피</li>
+      </ul>
+
+      <h2>문의 및 제보</h2>
+      <p>
+        정보 정정 요청, 비교 희망 주제 제안, 협업 문의는
+        <a href={withBase('/contact/')}>문의 페이지</a>를 통해 언제든 보내주실 수 있습니다.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

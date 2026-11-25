@@ -1,0 +1,139 @@
+---
+import { withBase } from '../utils/url';
+const searchIndexUrl = withBase('/search-index.json');
+---
+
+<div
+  id="search-modal"
+  data-index-url={searchIndexUrl}
+  class="fixed inset-0 z-50 hidden items-start justify-center bg-slate-950/60 backdrop-blur-sm p-4 pt-16 sm:pt-24"
+  role="dialog"
+  aria-modal="true"
+  aria-label="블로그 글 검색"
+>
+  <div class="w-full max-w-xl overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl">
+    <div class="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+      <svg class="h-5 w-5 text-slate-400 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+      </svg>
+      <input
+        id="search-input"
+        type="search"
+        placeholder="AI 툴, 맥북, Cursor, 요금제 등 키워드로 검색..."
+        autocomplete="off"
+        class="w-full bg-transparent text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none"
+      />
+      <button
+        type="button"
+        id="close-search-btn"
+        class="rounded-lg px-2 py-1 text-xs font-medium text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+      >
+        ESC
+      </button>
+    </div>
+
+    <div id="search-results" class="max-h-96 overflow-y-auto p-2">
+      <p class="px-3 py-8 text-center text-sm text-slate-400">
+        검색어를 입력하면 관련 글을 즉시 찾아드립니다.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const modal = document.getElementById('search-modal');
+    const openBtn = document.getElementById('open-search-btn');
+    const closeBtn = document.getElementById('close-search-btn');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('search-results');
+    if (!modal || !input || !results) return;
+
+    let cachedPosts = null;
+    const indexUrl = modal.getAttribute('data-index-url');
+
+    async function loadIndex() {
+      if (cachedPosts) return cachedPosts;
+      try {
+        const res = await fetch(indexUrl);
+        cachedPosts = await res.json();
+      } catch {
+        cachedPosts = [];
+      }
+      return cachedPosts;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function render(items, query) {
+      if (!items.length) {
+        results.innerHTML = `<p class="px-3 py-8 text-center text-sm text-slate-400">"${escapeHtml(query)}"에 대한 검색 결과가 없습니다.</p>`;
+        return;
+      }
+      results.innerHTML = items
+        .slice(0, 8)
+        .map(
+          (p) => `
+          <a href="${escapeHtml(p.url)}" class="block rounded-xl p-3 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors">
+            <div class="flex items-center gap-2 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+              <span>${escapeHtml(p.categoryLabel)}</span>
+              <span class="text-slate-400 font-normal">${escapeHtml(p.date)}</span>
+            </div>
+            <div class="mt-0.5 text-sm font-bold text-slate-900 dark:text-white">${escapeHtml(p.title)}</div>
+            <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 line-clamp-1">${escapeHtml(p.description)}</p>
+          </a>`
+        )
+        .join('');
+    }
+
+    async function openModal() {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      input.focus();
+      const posts = await loadIndex();
+      if (!input.value.trim()) {
+        render(posts, '');
+      }
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    openBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault();
+        openModal();
+      } else if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    input.addEventListener('input', async () => {
+      const q = input.value.trim().toLowerCase();
+      const posts = await loadIndex();
+      if (!q) {
+        render(posts, '');
+        return;
+      }
+      const matched = posts.filter((p) => {
+        const hay = `${p.title} ${p.description} ${p.categoryLabel} ${(p.tags || []).join(' ')}`.toLowerCase();
+        return q.split(/\s+/).every((word) => hay.includes(word));
+      });
+      render(matched, input.value.trim());
+    });
+  })();
+</script>

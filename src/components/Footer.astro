@@ -1,0 +1,88 @@
+---
+import { CATEGORIES, SITE } from '../config/site';
+import { withBase } from '../utils/url';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-12">
+    <div class="grid gap-8 md:grid-cols-3">
+      <!-- Brand -->
+      <div class="space-y-3">
+        <a href={withBase('/')} class="inline-flex items-center gap-2">
+          <svg class="h-7 w-7" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect width="64" height="64" rx="14" class="fill-slate-950 dark:fill-white"/>
+            <rect x="14" y="16" width="22" height="6" rx="3" class="fill-white dark:fill-slate-950"/>
+            <rect x="14" y="29" width="36" height="6" rx="3" fill="#2563EB"/>
+            <rect x="14" y="42" width="28" height="6" rx="3" fill="#10B981"/>
+            <circle cx="48" cy="19" r="4" fill="#38BDF8"/>
+          </svg>
+          <span class="text-base font-black text-slate-950 dark:text-white">{SITE.koName}</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-400">{SITE.name}</span>
+        </a>
+        <p class="text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+          {SITE.description}
+        </p>
+      </div>
+
+      <!-- Categories -->
+      <div>
+        <h3 class="text-xs font-bold tracking-wider uppercase text-slate-900 dark:text-white mb-3">
+          섹션
+        </h3>
+        <ul class="space-y-2 text-sm">
+          {CATEGORIES.map((cat) => (
+            <li>
+              <a
+                href={withBase(`/category/${cat.slug}/`)}
+                class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors"
+              >
+                {cat.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Trust & Policy Links (AdSense 필수 신뢰 페이지) -->
+      <div>
+        <h3 class="text-xs font-bold tracking-wider uppercase text-slate-900 dark:text-white mb-3">
+          편집 및 정책
+        </h3>
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a href={withBase('/about/')} class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+              스펙노트 소개 및 검증 기준
+            </a>
+          </li>
+          <li>
+            <a href={withBase('/privacy/')} class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+              개인정보처리방침
+            </a>
+          </li>
+          <li>
+            <a href={withBase('/disclaimer/')} class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+              제휴 마케팅 및 면책 고지
+            </a>
+          </li>
+          <li>
+            <a href={withBase('/contact/')} class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+              문의하기
+            </a>
+          </li>
+          <li>
+            <a href={withBase('/rss.xml')} class="text-slate-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+              RSS 피드 구독
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-500">
+      <p>© {year} {SITE.koName} ({SITE.name}). All rights reserved.</p>
+      <p>일부 콘텐츠에는 제휴 링크가 포함될 수 있으며, 모든 비교는 공식 스펙을 기준으로 작성됩니다.</p>
+    </div>
+  </div>
+</footer>

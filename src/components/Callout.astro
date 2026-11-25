@@ -1,0 +1,35 @@
+---
+interface Props {
+  type?: 'tip' | 'warning' | 'summary';
+  title?: string;
+}
+
+const { type = 'tip', title } = Astro.props;
+
+const styles = {
+  tip: {
+    box: 'border-blue-200 dark:border-blue-900/70 bg-blue-50/70 dark:bg-blue-950/30',
+    badge: 'text-blue-700 dark:text-blue-300',
+    defaultTitle: '핵심 팁',
+  },
+  warning: {
+    box: 'border-amber-200 dark:border-amber-900/70 bg-amber-50/70 dark:bg-amber-950/30',
+    badge: 'text-amber-700 dark:text-amber-300',
+    defaultTitle: '주의할 점',
+  },
+  summary: {
+    box: 'border-emerald-200 dark:border-emerald-900/70 bg-emerald-50/70 dark:bg-emerald-950/30',
+    badge: 'text-emerald-700 dark:text-emerald-300',
+    defaultTitle: '한눈에 결론',
+  },
+}[type];
+---
+
+<div class:list={['not-prose my-6 rounded-2xl border p-4 sm:p-5', styles.box]}>
+  <div class:list={['mb-1.5 text-sm font-bold', styles.badge]}>
+    {title ?? styles.defaultTitle}
+  </div>
+  <div class="text-sm leading-relaxed text-slate-700 dark:text-slate-300 [&>p]:my-1.5">
+    <slot />
+  </div>
+</div>

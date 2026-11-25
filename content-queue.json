@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "2026-ai-subscription-comparison",
+    "title": "2026 AI 유료 구독 총정리: ChatGPT·Claude·Gemini·Perplexity 요금제 비교",
+    "category": "ai-tools",
+    "tags": ["AI요금제", "ChatGPT", "Claude", "Gemini", "Perplexity"],
+    "affiliateType": "general",
+    "monetization": "High CPC AdSense + SaaS",
+    "status": "published"
+  },
+  {
+    "slug": "2026-ai-coding-tools-guide",
+    "title": "2026 AI 코딩 툴 완전 비교: Cursor·Windsurf·Claude Code·Copilot 선택 가이드",
+    "category": "dev-coding",
+    "tags": ["AI코딩", "Cursor", "Windsurf", "ClaudeCode", "GitHubCopilot"],
+    "affiliateType": "general",
+    "monetization": "High CPC AdSense + Dev SaaS",
+    "status": "published"
+  },
+  {
+    "slug": "2026-macbook-pro-ai-buying-guide",
+    "title": "2026 AI 작업용 맥북 프로 구매 가이드: M4 Pro vs M5·M5 Pro 스펙·메모리 비교",
+    "category": "tech-gear",
+    "tags": ["맥북프로", "M5맥북", "M4Pro", "AI노트북"],
+    "affiliateType": "coupang",
+    "monetization": "Coupang Partners + AdSense",
+    "status": "published"
+  },
+  {
+    "slug": "2026-free-ai-workflow-automation",
+    "title": "무료로 시작하는 AI 업무 자동화 5가지 루틴: 하루 2시간 아끼는 실전 가이드",
+    "category": "automation",
+    "tags": ["AI업무자동화", "생산성툴", "무료AI"],
+    "affiliateType": "none",
+    "monetization": "High Traffic AdSense",
+    "status": "published"
+  },
+  {
+    "slug": "2026-ai-video-generator-comparison",
+    "title": "2026 AI 영상 생성 툴 TOP 5 비교: Sora·Veo·Runway·Kling·Pika 화질·가격 총정리",
+    "category": "ai-tools",
+    "tags": ["AI영상", "Sora", "Veo", "Runway", "Kling"],
+    "affiliateType": "general",
+    "monetization": "High CPC AdSense + SaaS",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-developer-4k-monitor-guide",
+    "title": "2026 개발자·AI 작업용 4K 모니터 추천 TOP 5: 맥북 USB-C PD 호환·가독성 비교",
+    "category": "tech-gear",
+    "tags": ["개발자모니터", "4K모니터", "맥북모니터", "USB-C모니터"],
+    "affiliateType": "coupang",
+    "monetization": "Coupang Partners + AdSense",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-local-llm-ollama-setup-guide",
+    "title": "인터넷 없이 내 PC에서 무료 AI 돌리기: Ollama 로컬 LLM 설치·추천 모델 완벽 가이드",
+    "category": "dev-coding",
+    "tags": ["로컬LLM", "Ollama", "무료AI", "온디바이스AI"],
+    "affiliateType": "coupang",
+    "monetization": "AdSense + Hardware Coupang",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-ai-meeting-note-apps-comparison",
+    "title": "2026 AI 회의록 자동 요약 앱 비교: 클로바노트·다글로·노션 AI·티로 정확도·가격 비교",
+    "category": "automation",
+    "tags": ["AI회의록", "클로바노트", "다글로", "업무자동화"],
+    "affiliateType": "general",
+    "monetization": "High Korean Search Volume AdSense",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-windows-ai-laptop-top5",
+    "title": "2026 윈도우 AI 노트북 추천 TOP 5: 코파일럿+ PC·NPU 성능·배터리 실사용 비교",
+    "category": "tech-gear",
+    "tags": ["AI노트북", "코파일럿PC", "윈도우노트북", "노트북추천"],
+    "affiliateType": "coupang",
+    "monetization": "Coupang Partners + AdSense",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-ai-ppt-slide-generators",
+    "title": "2026 AI PPT 자동 제작 툴 비교: Gamma·Genspark·Canva·Copilot 발표자료 5분 완성",
+    "category": "ai-tools",
+    "tags": ["AIPPT", "Gamma", "Canva", "발표자료자동화"],
+    "affiliateType": "general",
+    "monetization": "High Korean Search Volume + SaaS",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-mcp-server-beginner-guide",
+    "title": "MCP(Model Context Protocol)란? AI 에이전트에 구글 드라이브·노션·슬랙 연결하는 법",
+    "category": "automation",
+    "tags": ["MCP", "AI에이전트", "업무자동화", "생산성"],
+    "affiliateType": "none",
+    "monetization": "Trending High CPC AdSense",
+    "status": "pending"
+  },
+  {
+    "slug": "2026-external-ssd-macbook-guide",
+    "title": "맥북 저장공간 업그레이드 대신 외장 SSD 추천 TOP 5: 썬더볼트·USB4 속도 및 발열 비교",
+    "category": "tech-gear",
+    "tags": ["외장SSD", "맥북SSD", "썬더볼트SSD", "가성비SSD"],
+    "affiliateType": "coupang",
+    "monetization": "High Conversion Coupang Partners",
+    "status": "pending"
+  }
+]

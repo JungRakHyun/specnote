@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<BaseLayout
+  title="문의하기"
+  description={`${SITE.name}에 콘텐츠 제안, 오류 정정, 광고 및 제휴 문의를 보내는 방법을 안내합니다.`}
+>
+  <article class="mx-auto max-w-3xl px-4 sm:px-6 py-12">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+      문의하기
+    </h1>
+    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
+      비교해 주길 원하는 AI 툴이나 IT 기기, 본문 내 최신 가격·스펙 정정 제보, 협업 및 제휴 문의는 아래 이메일로 편하게 연락해 주세요.
+    </p>
+
+    <div class="mt-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-sm">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-white">공식 연락처</h2>
+      <dl class="mt-4 space-y-3 text-sm">
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="w-28 font-semibold text-slate-500 dark:text-slate-400">운영팀</dt>
+          <dd class="text-slate-900 dark:text-white">{SITE.author.name}</dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="w-28 font-semibold text-slate-500 dark:text-slate-400">이메일</dt>
+          <dd>
+            <a
+              href={`mailto:${SITE.author.email}`}
+              class="font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+            >
+              {SITE.author.email}
+            </a>
+          </dd>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:gap-4">
+          <dt class="w-28 font-semibold text-slate-500 dark:text-slate-400">응답 시간</dt>
+          <dd class="text-slate-700 dark:text-slate-300">영업일 기준 1~2일 이내 회신</dd>
+        </div>
+      </dl>
+    </div>
+  </article>
+</BaseLayout>

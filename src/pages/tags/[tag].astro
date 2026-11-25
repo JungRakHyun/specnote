@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts } from '../../utils/posts';
+import { withBase } from '../../utils/url';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  const tagMap = new Map<string, typeof posts>();
+
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      const list = tagMap.get(tag) ?? [];
+      list.push(post);
+      tagMap.set(tag, list);
+    }
+  }
+
+  return Array.from(tagMap.entries()).map(([tag, tagPosts]) => ({
+    params: { tag },
+    props: { tag, posts: tagPosts },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`#${tag} 관련 글`} description={`${tag} 주제의 최신 AI·IT 비교 분석 및 가이드 모음입니다.`}>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-10">
+    <nav class="mb-4 text-xs text-slate-500 dark:text-slate-400">
+      <a href={withBase('/')} class="hover:text-blue-600">홈</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-slate-800 dark:text-slate-200">태그</span>
+    </nav>
+
+    <header class="mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
+      <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">#{tag}</h1>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">총 {posts.length}개의 글</p>
+    </header>
+
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

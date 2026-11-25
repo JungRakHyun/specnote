@@ -1,0 +1,67 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<BaseLayout
+  title="개인정보처리방침"
+  description={`${SITE.name}의 개인정보 수집·이용, 쿠키 및 Google AdSense 맞춤형 광고 정책을 안내합니다.`}
+>
+  <article class="mx-auto max-w-3xl px-4 sm:px-6 py-12">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+      개인정보처리방침
+    </h1>
+    <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">시행일: 2026년 11월 25일</p>
+
+    <div class="prose-tech mt-8">
+      <p>
+        {SITE.name}({SITE.koName}, 이하 “본 사이트”)은 방문자의 개인정보를 중요하게 생각하며,
+        관련 법령을 준수하여 아래와 같이 개인정보 처리 및 쿠키·광고 운영 방침을 공개합니다.
+      </p>
+
+      <h2>1. 수집하는 정보 및 이용 목적</h2>
+      <p>
+        본 사이트는 별도의 회원가입 절차를 두지 않으며, 방문자가 직접 이메일 문의를 보내는 경우를 제외하고
+        이름·주민등록번호 등 직접적인 개인식별정보를 수집하지 않습니다.
+        다만 서비스 품질 개선과 방문 통계 분석을 위해 접속 로그, 브라우저 유형, 기기 정보, 페이지 조회 기록 등
+        비식별 통계 데이터가 자동 수집될 수 있습니다.
+      </p>
+
+      <h2>2. 쿠키(Cookie) 및 Google AdSense 광고 안내</h2>
+      <ul>
+        <li>
+          본 사이트는 운영 수익을 위해 <strong>Google AdSense</strong> 등 제3자 광고 네트워크를 이용할 수 있습니다.
+        </li>
+        <li>
+          Google을 포함한 제3자 공급업체는 쿠키를 사용하여 사용자의 본 사이트 및 다른 웹사이트 이전 방문 기록을 기반으로
+          관심 기반(맞춤형) 광고를 게재할 수 있습니다.
+        </li>
+        <li>
+          방문자는 <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Google 광고 설정</a>에서
+          맞춤형 광고를 해제하거나, 브라우저 설정에서 쿠키 저장을 거부할 수 있습니다.
+        </li>
+      </ul>
+
+      <h2>3. 웹 분석 도구 (Google Analytics 등)</h2>
+      <p>
+        콘텐츠 품질 향상 및 트래픽 분석을 위해 Google Analytics 4 등의 분석 도구를 사용할 수 있으며,
+        수집된 데이터는 익명화된 통계 형태로만 활용됩니다.
+      </p>
+
+      <h2>4. 외부 사이트 링크</h2>
+      <p>
+        본 사이트의 글에는 공식 서비스 페이지, 쇼핑몰, 제휴 사이트 등 외부 링크가 포함될 수 있습니다.
+        외부 사이트로 이동한 이후의 개인정보 처리는 해당 사이트의 개인정보처리방침을 따릅니다.
+      </p>
+
+      <h2>5. 개인정보 보호 문의</h2>
+      <p>
+        개인정보 처리와 관련된 문의는 아래 이메일로 연락해 주시면 신속히 답변드리겠습니다.
+      </p>
+      <ul>
+        <li>운영자: {SITE.author.name}</li>
+        <li>이메일: <a href={`mailto:${SITE.author.email}`}>{SITE.author.email}</a></li>
+      </ul>
+    </div>
+  </article>
+</BaseLayout>

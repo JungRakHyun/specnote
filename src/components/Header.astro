@@ -1,0 +1,126 @@
+---
+import { CATEGORIES, SITE } from '../config/site';
+import { withBase } from '../utils/url';
+
+const currentPath = Astro.url.pathname;
+const homeHref = withBase('/');
+const isHome = currentPath === homeHref || currentPath === homeHref.replace(/\/$/, '');
+---
+
+<header class="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <!-- Editorial Masthead Brand -->
+    <a href={homeHref} class="flex items-center gap-2.5 group shrink-0">
+      <svg class="h-8 w-8 shrink-0" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <rect width="64" height="64" rx="14" class="fill-slate-950 dark:fill-white"/>
+        <rect x="14" y="16" width="22" height="6" rx="3" class="fill-white dark:fill-slate-950"/>
+        <rect x="14" y="29" width="36" height="6" rx="3" fill="#2563EB"/>
+        <rect x="14" y="42" width="28" height="6" rx="3" fill="#10B981"/>
+        <circle cx="48" cy="19" r="4" fill="#38BDF8"/>
+      </svg>
+      <div class="flex items-baseline gap-1.5">
+        <span class="text-xl font-black tracking-tight text-slate-950 dark:text-white">
+          {SITE.koName}
+        </span>
+        <span class="hidden sm:inline text-xs font-bold tracking-wider uppercase text-blue-700 dark:text-blue-400">
+          {SITE.name}
+        </span>
+      </div>
+    </a>
+
+    <!-- Desktop Editorial Nav -->
+    <nav aria-label="카테고리 메뉴" class="hidden md:flex h-full items-center gap-1">
+      <a
+        href={homeHref}
+        class:list={[
+          'relative flex h-full items-center px-3 text-sm font-semibold transition-colors',
+          isHome
+            ? 'text-slate-950 dark:text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-blue-700 dark:after:bg-blue-400'
+            : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white',
+        ]}
+      >
+        전체
+      </a>
+      {CATEGORIES.map((cat) => {
+        const href = withBase(`/category/${cat.slug}/`);
+        const isActive = currentPath.includes(`/category/${cat.slug}`);
+        return (
+          <a
+            href={href}
+            class:list={[
+              'relative flex h-full items-center px-3 text-sm font-semibold transition-colors',
+              isActive
+                ? 'text-slate-950 dark:text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-blue-700 dark:after:bg-blue-400'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white',
+            ]}
+          >
+            {cat.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        id="open-search-btn"
+        aria-label="글 검색 열기"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-3.5 py-1.5 text-sm text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200 transition-colors cursor-pointer"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+        </svg>
+        <span class="hidden sm:inline text-xs font-medium">리포트 검색</span>
+        <kbd class="hidden lg:inline-block rounded bg-white dark:bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 border border-slate-200 dark:border-slate-700">/</kbd>
+      </button>
+
+      <button
+        type="button"
+        id="theme-toggle-btn"
+        aria-label="다크 모드 전환"
+        title="라이트/다크 테마 전환"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+      >
+        <svg class="h-4 w-4 hidden dark:block" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.061 1.06l1.06 1.06z" />
+        </svg>
+        <svg class="h-4 w-4 block dark:hidden" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 01.26.77 7 7 0 009.958 7.967.75.75 0 011.067.853A8.5 8.5 0 116.647 1.921a.75.75 0 01.808.083z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Category Bar -->
+  <nav aria-label="모바일 카테고리 메뉴" class="flex md:hidden items-center gap-1.5 overflow-x-auto border-t border-slate-100 dark:border-slate-800/80 px-4 py-2">
+    <a
+      href={homeHref}
+      class:list={[
+        'shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors',
+        isHome
+          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300',
+      ]}
+    >
+      전체
+    </a>
+    {CATEGORIES.map((cat) => {
+      const href = withBase(`/category/${cat.slug}/`);
+      const isActive = currentPath.includes(`/category/${cat.slug}`);
+      return (
+        <a
+          href={href}
+          class:list={[
+            'shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors',
+            isActive
+              ? 'bg-blue-700 text-white'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300',
+          ]}
+        >
+          {cat.label}
+        </a>
+      );
+    })}
+  </nav>
+</header>

@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../config/site';
+---
+
+<BaseLayout
+  title="제휴 마케팅 및 면책 고지"
+  description={`${SITE.name}의 쿠팡 파트너스 등 제휴 마케팅 고지 및 콘텐츠 정확성에 대한 면책 안내입니다.`}
+>
+  <article class="mx-auto max-w-3xl px-4 sm:px-6 py-12">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+      제휴 마케팅 및 면책 고지
+    </h1>
+
+    <div class="prose-tech mt-8">
+      <h2>1. 제휴 마케팅(Affiliate) 투명성 고지</h2>
+      <p>
+        {SITE.name}({SITE.koName})은 콘텐츠 제작 및 서버·도메인 운영 비용을 충당하기 위해
+        일부 게시물에 제휴 링크(쿠팡 파트너스, 소프트웨어·클라우드 서비스 추천 링크 등)를 포함할 수 있습니다.
+      </p>
+      <blockquote>
+        “이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.”
+      </blockquote>
+      <p>
+        방문자가 제휴 링크를 통해 제품이나 서비스를 구매하더라도 <strong>추가 비용은 일절 발생하지 않으며</strong>,
+        제휴 여부와 관계없이 모든 비교 분석은 공식 스펙과 객관적 사용 시나리오를 기준으로 작성합니다.
+      </p>
+
+      <h2>2. 정보 정확성 및 변동성 안내</h2>
+      <p>
+        AI 서비스 요금제, 모델 한도, 전자제품 시장 가격과 할인 조건은 제조사·판매사 정책에 따라 수시로 변경될 수 있습니다.
+        본 사이트는 작성 시점의 최신 공식 자료를 바탕으로 정확한 정보를 제공하기 위해 노력하지만,
+        최종 결제·구독 전에는 반드시 해당 공식 페이지의 최신 조건을 확인하시기 바랍니다.
+      </p>
+
+      <h2>3. 저작권 안내</h2>
+      <p>
+        본 사이트에 게시된 모든 텍스트·도표·자체 제작 그래픽의 저작권은 {SITE.name}에 있습니다.
+        출처 링크를 명확히 표기한 일부 인용은 가능하나, 무단 전재 및 재배포는 금지합니다.
+      </p>
+    </div>
+  </article>
+</BaseLayout>

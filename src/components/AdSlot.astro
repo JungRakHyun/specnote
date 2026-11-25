@@ -1,0 +1,47 @@
+---
+import { SITE } from '../config/site';
+
+interface Props {
+  position: 'postTop' | 'postInArticle' | 'postBottom' | 'sidebar';
+  format?: 'auto' | 'fluid' | 'rectangle';
+  class?: string;
+}
+
+const { position, format = 'auto', class: className = '' } = Astro.props;
+const clientId = SITE.adsense.clientId;
+const slotId = SITE.adsense.slots[position];
+const isLive = Boolean(clientId && slotId);
+const showPlaceholder = !isLive && SITE.adsense.showDevPlaceholder;
+---
+
+{isLive && (
+  <aside
+    aria-label="광고"
+    class:list={['my-6 flex flex-col items-center justify-center overflow-hidden', className]}
+  >
+    <span class="mb-1 text-[10px] tracking-wider text-slate-400 uppercase">Advertisement</span>
+    <ins
+      class="adsbygoogle block w-full"
+      style="display:block; text-align:center;"
+      data-ad-client={clientId}
+      data-ad-slot={slotId}
+      data-ad-format={format}
+      data-full-width-responsive="true"
+    />
+    <script is:inline>
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </aside>
+)}
+
+{showPlaceholder && (
+  <aside
+    aria-label="광고 미리보기"
+    class:list={[
+      'my-6 flex h-24 items-center justify-center rounded-xl border border-dashed border-slate-300 dark:border-slate-700 bg-slate-100/70 dark:bg-slate-900/50 text-xs text-slate-500',
+      className,
+    ]}
+  >
+    Google AdSense 슬롯 ({position}) — src/config/site.ts에 ID 입력 시 자동 노출
+  </aside>
+)}
