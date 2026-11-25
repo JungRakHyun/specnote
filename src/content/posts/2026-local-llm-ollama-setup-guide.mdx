@@ -102,39 +102,39 @@ Ollama는 단순히 대화용 챗봇에 그치지 않고 로컬 개발 파이프
 - **이미지·문서 파이프라인 자동화:** `ollama run gemma3:12b "이 영수증의 날짜와 합계 금액을 JSON으로 추출해줘" ./receipt.png`처럼 명령줄에서 바로 멀티모달 분석을 스크립트화할 수 있습니다.
 - **클라우드 구독과 하이브리드 운영:** 보안이 민감한 사내 코드·개인 메모는 Ollama로 처리하고, 최신 웹 검색이나 초고난도 설계만 클라우드 모델에 맡기면 전체 AI 비용을 크게 낮출 수 있습니다. 주요 유료 요금제 비교는 [2026 AI 유료 구독 총정리](/posts/2026-ai-subscription-comparison/)에서 확인해 보세요.
 
-## 5. 로컬 LLM 입문·업그레이드 추천 하드웨어
+## 5. 로컬 LLM 입문·업그레이드 추천 도구 및 하드웨어
 
-현재 PC에서 8B 이상 모델이 너무 느리거나 메모리가 부족하다면, 목적에 따라 **애플 실리콘 미니 PC(고대역폭 통합 메모리)** 또는 **대용량 VRAM 데스크톱 GPU**로 업그레이드하는 것이 가장 효율적입니다.
+먼저 Ollama 공식 사이트에서 무료 런타임을 설치해 현재 PC 성능을 테스트해 본 뒤, 14B~32B 이상 중·대형 로컬 모델을 쾌적하게 돌리고 싶다면 **통합 메모리(RAM) 용량과 대역폭이 넉넉한 애플 실리콘 맥북 프로**를 고려하는 것이 가장 확실합니다.
 
 <AffiliateCard
-  title="Apple Mac mini M4 / M4 Pro (24GB RAM 이상 구성)"
-  subtitle="저전력·무소음 환경에서 24시간 Ollama + Open WebUI 개인 AI 서버를 구축하기 가장 좋은 미니 PC"
-  badge="로컬 AI 가성비 1위"
-  priceNote="100만~200만 원대 (RAM 옵션별)"
+  title="Ollama 공식 다운로드 (Windows · macOS · Linux)"
+  subtitle="완전 무료·오프라인 로컬 LLM 런타임 및 기본 데스크톱 채팅 앱 제공"
+  badge="필수 무료 도구"
+  priceNote="무료 (오픈소스)"
   highlights={[
-    "CPU와 GPU가 메모리를 공유하는 통합 메모리로 대형 모델 로딩에 유리",
-    "M4 Pro 선택 시 273GB/s 대역폭으로 14B~32B 모델 쾌적하게 구동",
-    "조용한 발열 제어와 낮은 소비전력으로 상시 서버 운용에 적합",
-    "Ollama macOS 네이티브 Metal 가속 완벽 지원"
+    "Windows·macOS·Linux 원클릭 설치 및 자동 GPU 가속",
+    "Qwen3·Gemma 3·EXAONE 3.5·DeepSeek-R1 즉시 실행",
+    "기본 데스크톱 채팅 UI 및 로컬 OpenAI 호환 API 제공",
+    "인터넷 차단 환경에서도 외부 전송 없는 완벽한 보안"
   ]}
-  ctaText="쿠팡에서 Mac mini M4 가격 확인"
-  href="https://www.coupang.com/np/search?q=%EB%A7%A5%EB%AF%B8%EB%8B%88+M4+24GB"
-  provider="coupang"
+  ctaText="Ollama 공식 사이트에서 무료 다운로드"
+  href="https://ollama.com/download"
+  provider="official"
 />
 
 <AffiliateCard
-  title="NVIDIA GeForce RTX 4060 Ti 16GB / RTX 5060 Ti 16GB 이상 그래픽카드"
-  subtitle="기존 윈도우 데스크톱에서 CUDA 초고속 추론으로 8B~14B 로컬 LLM을 즉시 가속"
-  badge="윈도우 PC 업그레이드"
-  priceNote="60만~90만 원대 (라인업별 상이)"
+  title="Apple MacBook Pro 14 (M4 Pro / M5 · 통합 메모리 구성)"
+  subtitle="고대역폭 통합 메모리와 Metal 가속으로 14B~32B 로컬 LLM을 조용하고 빠르게 구동하는 휴대용 AI 머신"
+  badge="로컬 LLM 추천 노트북"
+  priceNote="국내 정발 · 로켓배송"
   highlights={[
-    "16GB 대용량 VRAM으로 Qwen3 14B·Gemma 3 12B 풀 GPU 오프로드 가능",
-    "Ollama Windows 설치 즉시 NVIDIA CUDA 자동 가속 적용",
-    "8GB VRAM 카드 대비 긴 컨텍스트(KV 캐시) 처리 여유 확보",
-    "로컬 LLM뿐 아니라 스테이블 디퓨전·영상 편집 가속까지 동시 활용"
+    "CPU·GPU가 메모리를 공유하는 통합 메모리로 대형 로컬 모델 로딩에 유리",
+    "M4 Pro 기준 273GB/s 대역폭으로 Ollama 토큰 생성 속도 대폭 향상",
+    "Ollama macOS 네이티브 Metal 가속 및 저발열·저소음 구동",
+    "국내 정식 발매 및 쿠팡 로켓배송으로 빠른 수령·AS 지원"
   ]}
-  ctaText="쿠팡에서 16GB VRAM 그래픽카드 보기"
-  href="https://www.coupang.com/np/search?q=RTX+16GB+%EA%B7%B8%EB%9E%98%ED%94%BD%EC%B9%B4%EB%93%9C"
+  ctaText="쿠팡에서 실시간 가격·로켓배송 확인"
+  href="https://link.coupang.com/a/iXBmGi9UvA"
   provider="coupang"
 />
 
