@@ -1,94 +1,113 @@
 ---
-title: "2026 AI 코딩 툴 4종 비교: Cursor·Windsurf·Claude Code·Copilot 요금 한도와 실전 세팅"
-description: "2026년 11월 기준 Cursor, Windsurf, Claude Code, GitHub Copilot의 실제 사용량 제한(주간 풀·롤링 쿼터·5시간 리셋), 요금 폭탄 주의점, CLAUDE.md·규칙 파일 세팅법을 정리했습니다."
+title: "2026 AI 코딩 툴 심층 비교: 원리·모델별 Cursor·Windsurf·Claude Code·Copilot"
+description: "인라인 자동완성(FIM), RAG 멀티파일 편집, 자율 터미널 루프의 동작 원리 차이부터 Cursor, Windsurf, Claude Code, GitHub Copilot의 모델·한도·작업별 승자와 CLAUDE.md 세팅법까지 비교했습니다."
 pubDate: 2026-11-24
 updatedDate: 2026-11-25
 category: "dev-coding"
 tags: ["AI코딩", "Cursor", "Windsurf", "ClaudeCode", "GitHubCopilot", "개발생산성"]
 cover: "/images/covers/ai-coding-tools-2026.svg"
-coverAlt: "2026년 AI 코딩 툴 4종 사용량 한도 및 요금 구조 비교 커버"
+coverAlt: "2026년 AI 코딩 툴 4종 동작 원리와 개발 시나리오별 성능 비교 커버"
 featured: false
 draft: false
 affiliateType: "general"
 tldr:
-  - "2026년 AI 코딩 툴 선택의 핵심은 월 기본료($10~$20)가 아니라 '한도를 다 썼을 때 어떻게 동작하느냐(추가 과금 vs 5시간 대기 vs 일간·주간 롤링 리셋)'입니다."
-  - "Cursor는 서드파티 모델(Claude·GPT·Gemini)을 API 정가 선불 크레딧으로 차감하므로 Auto Top-up 설정을 확인하지 않으면 예상 외 추가 요금이 발생할 수 있습니다."
-  - "Claude Code는 5시간 롤링 한도가 빠르게 닳는 대신 대규모 멀티파일 리팩토링에 강하며, 프로젝트 루트에 CLAUDE.md를 두면 불필요한 파일 탐색 토큰을 크게 줄일 수 있습니다."
+  - "AI 코딩 툴은 '타이핑 중 한 줄 예측(FIM)'·'IDE 내 멀티파일 편집(RAG 인덱싱)'·'터미널 자율 실행 루프(에이전트)' 세 가지 아키텍처로 나뉘며, 4개 도구는 각각 강점이 있는 레이어가 다릅니다."
+  - "단순 월 $10~$20 기본료보다 초과 시 동작 방식이 중요합니다. Cursor는 서드파티 모델 API 크레딧 차감(Auto Top-up 주의), Windsurf는 일간·주간 롤링 쿼터, Claude Code는 5시간 롤링 리셋, Copilot은 월간 Premium Request 풀을 씁니다."
+  - "대규모 리팩토링·원인 불명 디버깅은 Claude Code, 빠른 UI·멀티파일 편집은 Cursor/Windsurf, JetBrains IDE 유지와 기업 보안 컴플라이언스는 GitHub Copilot이 가장 안정적입니다."
 faqs:
-  - question: "비전공자나 바이브 코딩 입문자에게 Cursor와 Claude Code 중 어느 쪽이 덜 막히나요?"
-    answer: "화면에서 파일 트리와 코드 변경 Diff를 눈으로 보고 클릭으로 수락·거절할 수 있는 Cursor 또는 Windsurf가 진입 장벽이 낮습니다. 터미널 로그는 에러 파악에 익숙하지 않으면 불안감을 주기 쉽습니다."
-  - question: "Claude Code를 쓰다가 'limit reached'가 너무 빨리 뜹니다. 어떻게 줄이나요?"
-    answer: "Claude Code는 폴더 전체를 반복 탐색할 때 토큰을 가장 많이 씁니다. 프로젝트 루트에 CLAUDE.md로 핵심 폴더 구조·빌드 명령을 적어두고, 작업 하나가 끝나면 /clear로 대화 컨텍스트를 비워야 5시간 한도를 오래 쓸 수 있습니다."
-  - question: "IntelliJ나 PyCharm 같은 JetBrains IDE를 못 버리는데 어떤 도구가 맞나요?"
-    answer: "IDE 플러그인 호환성은 GitHub Copilot이 가장 안정적입니다. 만약 자율 에이전트 기능이 추가로 필요하다면 JetBrains를 그대로 두고 터미널 탭에서 Claude Code를 병행하는 조합이 가장 매끄럽습니다."
+  - question: "Cursor나 Windsurf에서 Claude 모델을 쓰는 것과 터미널에서 Claude Code를 직접 쓰는 건 뭐가 다른가요?"
+    answer: "같은 Claude 모델을 쓰더라도 '도구(Harness)와 컨텍스트 수집 방식'이 다릅니다. Cursor는 코드베이스를 미리 벡터 인덱싱해 빠르게 Diff UI를 띄우는 데 강하고, Claude Code는 직접 쉘 명령어·검색(grep)·테스트 실행을 반복하며 통과할 때까지 자율적으로 수정하는 루프에 최적화되어 있습니다."
+  - question: "Claude Code를 쓰다 보면 5시간 한도('limit reached')에 너무 빨리 걸립니다."
+    answer: "에이전트가 불필요한 폴더를 매번 뒤지거나 이전 대화 기록이 수만 토큰씩 쌓였기 때문입니다. 프로젝트 루트에 CLAUDE.md로 핵심 경로·빌드 명령을 고정하고, 기능 하나가 끝날 때마다 /clear로 세션을 초기화하면 한도 유지 시간이 2배 이상 늘어납니다."
+  - question: "비전공자나 코딩 입문자는 4개 중 무엇으로 시작해야 덜 막히나요?"
+    answer: "화면에서 파일 구조와 수정 내역(초록/빨강 Diff)을 눈으로 보며 클릭으로 수락·취소할 수 있는 Cursor 또는 Windsurf가 터미널 로그 중심인 Claude Code보다 심리적 장벽이 훨씬 낮습니다."
 ---
 
 import Callout from '../../components/Callout.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import AdSlot from '../../components/AdSlot.astro';
 
-AI 코딩 도구를 한 달 써보면 결국 똑같은 불만이 나옵니다. **“월 $20 결제했는데 왜 중순도 안 돼서 한도가 바닥나고 느려지죠?”** 2026년 들어 Cursor, Windsurf, Claude Code, GitHub Copilot 네 곳 모두 단순 월 정액에서 **주간 풀·롤링 쿼터·프리미엄 요청 크레딧** 체계로 과금 구조를 세분화했기 때문입니다.
+“Cursor가 좋다더라, 아니 Claude Code가 더 세다더라”는 얘기가 매일 엇갈리는 이유는 **사람마다 코딩할 때 AI에게 맡기는 작업 레이어가 다르기 때문**입니다. 코드를 직접 치면서 다음 3줄을 0.2초 만에 받아 적는 작업과, 파일 25개를 고치고 테스트를 돌려 통과시키는 작업은 애초에 필요한 엔진 구조 자체가 다릅니다.
 
-2026년 11월 공식 요금 구조를 기준으로 4개 도구의 **실제 사용량 제한 메커니즘, 쓰다 보면 부딪히는 한계, 그리고 토큰 소모를 줄이는 실전 규칙 파일 세팅법**을 정리했습니다.
+2026년 11월 기준으로 **AI 코딩 툴의 3가지 동작 원리**부터 짚고, **Cursor · Windsurf · Claude Code · GitHub Copilot** 4종이 탑재 모델·컨텍스트 처리·사용량 한도·5가지 실전 개발 시나리오에서 어떻게 갈리는지 깊이 비교했습니다.
 
-## 1. AI 코딩 툴 4종 요금 · 사용량 한도 구조 비교 (2026년 11월 기준)
+## 1. AI 코딩 툴의 3가지 동작 레이어 (왜 하나만 쓰면 아쉬울까?)
 
-| 도구명 | 형태 | 개인 기본/프로 요금 | 상위 플랜 | 한도(Rate Limit) 및 초과 시 동작 |
+현재 시장의 코딩 AI 기능은 크게 3단계 아키텍처로 나뉩니다.
+
+1. **레이어 1 — FIM(Fill-in-the-Middle) 인라인 자동완성:** 커서 앞뒤 수백 줄만 초경량 모델에 던져 100~300ms 안에 다음 줄·함수 본문을 예측합니다. 개발자가 직접 타이핑하는 속도를 끌어올리는 영역이며, **Cursor Tab과 GitHub Copilot**이 가장 빠릅니다.
+2. **레이어 2 — 코드베이스 인덱싱(RAG) 기반 멀티파일 편집:** 프로젝트 전체를 벡터로 색인해 두고, “결제 완료 시 이메일 발송 로직 붙여줘”라고 지시하면 관련 파일 3~8개를 찾아 화면에 Diff(변경 전후 비교)를 띄워줍니다. **Cursor Composer와 Windsurf Cascade**의 주력 무대입니다.
+3. **레이어 3 — 자율 에이전트 루프(Agentic Loop):** AI가 직접 터미널에서 `grep`으로 코드를 추적하고, 파일을 수정한 뒤 `npm test`나 `pytest`를 실행해 **실패 로그가 사라질 때까지 스스로 재시도**합니다. **Claude Code**가 이 영역에서 가장 높은 완성도를 보입니다.
+
+## 2. 4대 AI 코딩 툴 아키텍처 · 탑재 모델 · 한도 구조 비교
+
+| 비교 항목 | Cursor | Windsurf | Claude Code | GitHub Copilot |
 | :--- | :--- | :--- | :--- | :--- |
-| **Cursor** | VS Code 기반 AI IDE | Free / Plus($8~$20) / Premium($30) | Super($100) / Ultra($200) | 자체 모델 주간 풀 + **서드파티(Claude·GPT·Gemini)는 API 정가 선불 크레딧 차감**, 소진 시 추가 충전 또는 주간 리셋 대기 |
-| **Windsurf** | 에이전트 IDE (Cognition 계열) | Free / **Pro($20)** | Max($200) / Teams($40) | Tab 자동완성 무제한, Cascade 에이전트는 **일간·주간 롤링 쿼터** 적용 + 초과 시 API 종량제, 급격한 호출 시 429 제한 |
-| **Claude Code** | 터미널(CLI) 자율 에이전트 | **Claude Pro($20) 포함** (무료 미지원) | Max($100) / Ultra($200) | **5시간 롤링 윈도우 + 주간 상한**, 도달 시 리셋 시각 안내 후 일시 정지 |
-| **GitHub Copilot** | IDE 확장 (VS Code·JetBrains) | Free / **Pro($10)** / Pro+($39) | Business / Enterprise | 인라인 자동완성 고속 무제한급, Chat·에이전트는 **월간 Premium Request 풀** 차감, 관리자 지출 상한(Spending Cap) 설정 가능 |
+| **실행 형태** | VS Code 포크 전용 IDE | VS Code 포크 에이전트 IDE | **터미널(CLI) 자율 에이전트** | **IDE 플러그인** (VS Code·JetBrains·Neovim) |
+| **선택 가능 모델** | 자체 모델(Composer 등) + Claude·GPT·Gemini | 자체 SWE/Cascade 모델 + 최신 프론티어 모델 | **Anthropic Claude (Opus·Sonnet·Haiku)** 전용 | GPT·Claude·Gemini 멀티 모델 선택 |
+| **컨텍스트 수집 방식** | 코드베이스 벡터 인덱싱 + `@파일` 지정 | 자동 컨텍스트 탐색(Cascade) | 실시간 파일 검색(`grep`/AST) + 쉘 테스트 루프 | 열린 탭 + 워크스페이스 인덱스 + GitHub PR 연동 |
+| **개인 요금제** | Free / Plus($8~$20) / Premium($30) / Super($100) / Ultra($200) | Free / Pro($20) / Max($200) | **Claude Pro($20)** / Max($100) / Ultra($200) | Free / **Pro($10)** / Pro+($39) |
+| **한도(Rate Limit) 구조** | 자체 모델 주간 풀 + **서드파티는 API 정가 선불 크레딧 차감** | Tab 무제한 + Cascade **일간·주간 롤링 쿼터** (버스트 시 429) | **5시간 롤링 윈도우 + 주간 상한** (도달 시 리셋 대기) | 인라인 무제한급 + **월간 Premium Request 풀** + 지출 상한 |
 
-## 2. 도구별 실전 강점과 “쓰면서 겪는 함정”
+## 3. 실전 개발 작업 5가지 시나리오별 승자와 실패 패턴
 
-### ① Cursor: 빠른 Tab 예측과 멀티파일 편집, 하지만 크레딧 관리 필수
-VS Code 설정과 확장을 그대로 가져오면서 다음 커서 위치까지 예측하는 Tab 완성 속도가 뛰어납니다.
-- **주의할 함정:** 서드파티 최상위 모델(Claude Opus, GPT 추론 모델 등)을 기본값으로 켜둔 채 큰 파일을 계속 던지면 포함 크레딧이 빠르게 빠집니다. `Auto Top-up(자동 충전)`이 켜져 있으면 의도치 않게 추가 청구가 쌓일 수 있으므로 대시보드에서 **월 지출 상한을 먼저 걸어두어야 합니다.**
+요금표보다 중요한 건 <strong>“실제 업무에서 어떤 작업을 던졌을 때 누가 이기고, 누가 망가지는가”</strong>입니다.
 
-### ② Windsurf: 자동 컨텍스트 탐색과 일간·주간 롤링 쿼터
-기존 고정 월 크레딧에서 **일간·주간 롤링 쿼터**로 바뀌면서, 월초에 한 번에 다 써버리고 보름 넘게 굶는 문제가 줄었습니다. 일일이 `@파일명`을 찍지 않아도 관련 파일을 알아서 끌어오는 Cascade 흐름이 매끄럽습니다.
-- **주의할 함정:** 짧은 시간에 에이전트 작업을 연속으로 몰아치면 단기 버스트 제한(HTTP 429)에 걸려 잠시 멈출 수 있습니다.
+### ① 0→1 신규 기능·UI 빠른 프로토타이핑 → **Cursor / Windsurf**
+- **왜 유리한가:** 프론트엔드 컴포넌트나 API 엔드포인트를 새로 만들 때는 AI가 짠 코드를 눈으로 바로 훑고 마음에 안 드는 블록만 Reject(거절)하는 속도가 중요합니다. Cursor의 Tab 예측(커서 이동 위치까지 자동 점프)과 Diff 수락 UX는 터미널보다 훨씬 직관적입니다.
+- **자주 겪는 실패:** 컨텍스트에 불필요한 파일을 너무 많이 묶으면 기존 디자인 토큰이나 Tailwind 클래스를 무시하고 임의 스타일을 덮어쓰는 경우가 잦습니다.
+
+### ② 남이 짠 5만 줄 레거시 코드에서 원인 불명 버그 추적 → **Claude Code**
+- **왜 유리한가:** 레거시 버그는 관련 파일이 어디 있는지 개발자 본인도 모르는 경우가 많습니다. Claude Code는 에러 스택 트레이스만 던져도 호출 체인을 끝까지 `grep`으로 따라가며 재현 테스트를 직접 돌려 원인을 좁힙니다.
+- **자주 겪는 실패:** Claude Pro($20) 요금제에서 탐색 범위가 너무 넓어지면 버그 2~3개 잡다가 5시간 한도에 걸려 작업 흐름이 끊길 수 있습니다.
+
+### ③ 20개 이상 파일에 걸친 타입·폴더 구조 대규모 리팩토링 → **Claude Code (1위) / Cursor (2위)**
+- **왜 유리한가:** 대규모 리팩토링은 수정보다 <strong>“수정 직후 타입 체크(<code>tsc</code>)와 빌드가 통과하는지 끝까지 검증하는 끈기”</strong>가 핵심입니다. Claude Code는 컴파일 에러가 0건이 될 때까지 루프를 멈추지 않아 마무리 완성도가 높습니다.
 
 <AdSlot position="postInArticle" format="fluid" />
 
-### ③ Claude Code: 대규모 리팩토링·디버깅 강자, 5시간 한도가 관건
-터미널에서 직접 테스트를 돌리고 실패 로그를 읽어 통과할 때까지 고치는 자율 루프 완성도가 높습니다. 이미 [Claude Pro($20)](/posts/2026-ai-subscription-comparison/)를 쓰고 있다면 추가 구독 없이 바로 쓸 수 있는 점도 큰 이점입니다.
-- **주의할 함정:** 에이전트가 레포지토리 파일을 수십 개씩 읽고 테스트를 반복하면 일반 웹 채팅보다 토큰이 5~10배 빨리 소모됩니다. Pro($20) 단독으로 하루 8시간 풀타임 에이전트 코딩을 돌리기에는 5시간 한도가 빡빡합니다.
+### ④ Java·Kotlin·Spring / Python 백엔드 (IntelliJ · PyCharm 필수 환경) → **GitHub Copilot (+ 터미널 Claude Code)**
+- **왜 유리한가:** Cursor와 Windsurf는 VS Code 기반이라 IntelliJ의 강력한 리팩토링·디버거·Gradle 통합을 포기해야 합니다. JetBrains IDE를 그대로 유지하면서 인라인 완성과 PR 리뷰를 붙이려면 <strong>GitHub Copilot Pro($10)</strong>가 현실적인 표준입니다. 여기에 무거운 작업만 터미널 탭에서 Claude Code를 켜면 IDE 전환 없이 두 장점을 다 얻을 수 있습니다.
 
-### ④ GitHub Copilot: JetBrains 호환·기업 보안 표준, 가장 낮은 진입가
-월 $10(Pro)에 VS Code뿐 아니라 **IntelliJ, PyCharm, WebStorm, Neovim**을 그대로 쓸 수 있고, 기업용 Business/Enterprise는 코드 학습 제외 정책과 조직별 지출 상한 관리가 가장 탄탄합니다.
-- **주의할 함정:** 월간 Premium Request 할당량을 아끼려면 단순 반복 보일러플레이트는 기본 인라인 완성에 맡기고, 고급 모델 호출은 복잡한 설계·디버깅에만 아껴 써야 합니다.
+### ⑤ 보안 감사가 엄격한 대기업·금융·SI 사내 프로젝트 → **GitHub Copilot Business/Enterprise**
+- **왜 유리한가:** 코드 학습 제외 보장, SSO, IP 면책(Indemnity), 조직 단위 관리자 지출 상한(Spending Cap)까지 엔터프라이즈 보안팀 승인을 통과한 레퍼런스가 가장 많습니다. 만약 사내망에서 외부 클라우드 전송 자체가 금지돼 있다면 [로컬 LLM(Ollama) + VS Code 연동](/posts/2026-local-llm-ollama-setup-guide/)이 유일한 대안입니다.
 
-## 3. 토큰·크레딧 낭비를 절반으로 줄이는 규칙 파일 세팅 예시
+## 4. 한도 소진과 요금 폭탄을 막는 실전 규칙 파일 세팅
 
-어떤 도구를 쓰든 에이전트가 `node_modules`나 무관한 폴더를 뒤지거나 스타일을 제멋대로 바꾸면 크레딧만 날아갑니다. 프로젝트 루트에 **`CLAUDE.md`** (Cursor는 `.cursor/rules/`) 파일을 15줄만 넣어두어도 불필요한 탐색과 재시도가 확 줄어듭니다.
+AI 코딩 툴의 크레딧을 가장 많이 태우는 원인은 **AI가 `node_modules`·빌드 산출물을 훑거나, 엉뚱한 패키지 버전으로 코드를 짰다가 다시 고치는 재시도 루프**입니다. 프로젝트 루트에 아래처럼 15줄짜리 **`CLAUDE.md`**(Cursor는 `.cursor/rules/project.mdc`)를 넣어두면 탐색 토큰과 실수율이 눈에 띄게 줄어듭니다.
 
 ```markdown
-# Project Rules
-- Stack: Astro 5 + TypeScript + Tailwind CSS v4
-- Build & Test: `npm run build` (수정 후 반드시 1회 검증)
-- Directory: 콘텐츠는 `src/content/posts/`, 공용 UI는 `src/components/`만 수정
-- Rules:
-  1. 요청하지 않은 파일 포맷팅·패키지 업그레이드 금지
-  2. 코드 수정 전 변경할 파일 목록과 계획을 3줄로 먼저 보고
-  3. 작업 완료 후 불필요한 console.log 제거
+# Project Context & Rules
+- Stack: TypeScript 5 + Next.js / Astro + Tailwind CSS v4
+- Verify Command: 수정 후 반드시 `npm run build` 실행해 오류 0건 확인
+- Key Paths: 페이지 `src/pages/`, 공용 UI `src/components/`, API `src/api/`
+- Hard Rules:
+  1. 요청하지 않은 파일 포맷팅·의존성 업그레이드 금지
+  2. 3개 이상 파일 수정 전, 변경 계획과 대상 파일 목록을 3줄로 먼저 보고
+  3. 테스트 실패 시 임시 우회(skip/any 타입) 대신 근본 원인 수정
 ```
 
-<Callout type="tip" title="실무 개발자가 비용을 아끼는 하이브리드 조합">
-  단순 자동완성과 빠른 수정은 <strong>GitHub Copilot($10)</strong> 또는 <strong>로컬 LLM(Ollama)</strong>으로 처리하고, 복잡한 아키텍처 변경이나 원인을 알기 어려운 버그만 <strong>Claude Code($20)</strong>나 <strong>Cursor</strong>에 맡기면 월 $30 예산으로 하루 종일 한도 스트레스 없이 개발할 수 있습니다. 오프라인 로컬 구성은 [2026 로컬 LLM 구성 가이드](/posts/2026-local-llm-ollama-setup-guide/)를 참고하세요.
+<Callout type="warning" title="Cursor 사용 시 결제 대시보드에서 꼭 확인할 설정 1가지">
+  Cursor에서 Claude Opus나 최신 GPT 추론 모델 같은 서드파티 모델을 켜면 API 정가 기준으로 선불 크레딧이 차감됩니다. <strong>Auto Top-up(자동 충전)</strong>이 켜져 있으면 크레딧이 떨어져도 경고 없이 카드가 추가 결제될 수 있으므로, 첫 세팅 시 반드시 <strong>월 지출 상한(Usage Limit)</strong>을 설정해 두세요.
 </Callout>
+
+## 5. 개발자 유형별 최종 선택 가이드
+
+1. **월 $10 최소 예산 / JetBrains(IntelliJ·PyCharm) 사용자:** `GitHub Copilot Pro ($10)`
+2. **UI·프론트엔드·1인 사이드 프로젝트 빠른 출시:** `Cursor` 또는 `Windsurf Pro ($20)` (비전공자 입문 흐름은 [바이브 코딩 입문 로드맵](/posts/2026-vibe-coding-beginner-guide/) 참고)
+3. **이미 [Claude Pro($20)](/posts/2026-ai-subscription-comparison/)를 구독 중이거나 대규모 리팩토링·백엔드 디버깅 비중이 큰 개발자:** `Claude Code`
+4. **하루 6시간 이상 코딩하는 현업 개발자 최적 조합 (월 $30):** 일상 타이핑·자동완성은 `GitHub Copilot ($10)` + 복잡한 기능 구현·버그 추적은 `Claude Code (Claude Pro $20)`
 
 <AffiliateCard
   title="Cursor — VS Code 기반 AI 코드 에디터"
-  subtitle="기존 VS Code 환경을 유지하며 Tab 자동완성과 멀티파일 Diff 편집에 집중할 때"
-  badge="에디터 통합 1순위"
+  subtitle="초고속 Tab 자동완성과 멀티파일 Diff UI로 프론트엔드·풀스택 개발 속도를 끌어올릴 때"
+  badge="IDE 통합 1순위"
   priceNote="Free / Plus($8~$20) / Premium($30)"
   highlights={[
-    "VS Code 확장·단축키 1분 마이그레이션",
-    "수정 전후 Diff를 시각적으로 비교하며 부분 승인 가능",
-    "자체 모델 주간 풀 + 서드파티 모델 선택 지원",
-    "팁: 사용 전 대시보드에서 월 지출 상한 설정 권장"
+    "기존 VS Code 확장 프로그램·단축키 1분 만에 마이그레이션",
+    "수정 전후 Diff를 블록 단위로 검토하며 부분 승인·거절",
+    "자체 모델 주간 풀 + Claude·GPT·Gemini 자유 전환",
+    "주의: 서드파티 모델 사용 시 월 지출 상한 설정 권장"
   ]}
   ctaText="Cursor 공식 요금표 확인"
   href="https://www.cursor.com/pricing"
@@ -97,13 +116,13 @@ VS Code 설정과 확장을 그대로 가져오면서 다음 커서 위치까지
 
 <AffiliateCard
   title="GitHub Copilot Pro"
-  subtitle="월 $10로 VS Code·JetBrains 전 제품군과 기업용 보안 정책까지 지원"
+  subtitle="월 $10의 낮은 진입가로 VS Code와 JetBrains 전 제품군, 기업 보안 정책까지 커버"
   badge="JetBrains · 기업 표준"
   priceNote="Free / Pro($10) / Pro+($39)"
   highlights={[
-    "IntelliJ · PyCharm · WebStorm · VS Code 공식 지원",
-    "빠른 인라인 자동완성과 월간 Premium Request 분리 운영",
-    "관리자 지출 상한(Spending Cap) 및 코드 학습 제외 정책",
+    "IntelliJ · PyCharm · WebStorm · VS Code · Neovim 공식 지원",
+    "빠른 인라인 자동완성 + 월간 Premium Request 분리 운영",
+    "조직 관리자 지출 상한(Spending Cap) 및 코드 학습 제외",
     "학생(GitHub Education) 인증 시 무료 사용 가능"
   ]}
   ctaText="GitHub Copilot 공식 플랜 확인"
@@ -113,7 +132,7 @@ VS Code 설정과 확장을 그대로 가져오면서 다음 커서 위치까지
 
 ## 참고 출처
 
-- [Cursor 공식 요금 및 크레딧 안내 (cursor.com)](https://www.cursor.com/pricing)
+- [Cursor 공식 요금 및 크레딧 구조 안내 (cursor.com)](https://www.cursor.com/pricing)
 - [Windsurf 공식 사이트 (windsurf.com)](https://windsurf.com/)
 - [Anthropic Claude Code 공식 문서 (docs.anthropic.com)](https://docs.anthropic.com/en/docs/claude-code/overview)
-- [GitHub Copilot 공식 플랜 및 요청 한도 (github.com)](https://github.com/features/copilot/plans)
+- [GitHub Copilot 공식 플랜 및 Premium Request 정책 (github.com)](https://github.com/features/copilot/plans)

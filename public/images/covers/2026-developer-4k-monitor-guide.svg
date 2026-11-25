@@ -19,8 +19,8 @@
   <rect x="76" y="72" width="152" height="36" rx="8" fill="#10B981" fill-opacity="0.18" stroke="#10B981" stroke-opacity="0.55"/>
   <text x="152" y="96" text-anchor="middle" fill="#6EE7B7" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">하드웨어 · 스펙</text>
   <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">HARDWARE SPEC · 2026</text>
-  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="37" font-weight="900" letter-spacing="-1.2">2026 개발자·맥북용 4K USB-C 모니터 4종</text>
-  <text x="76" y="302" fill="#6EE7B7" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="34" font-weight="800" letter-spacing="-0.8">27UP850K·32UP830K·32UP550N·뷰피니티 S8</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="36" font-weight="900" letter-spacing="-1.2">2026 개발자·맥북용 4K USB-C 모니터 심층</text>
+  <text x="76" y="302" fill="#6EE7B7" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="36" font-weight="800" letter-spacing="-0.8">HiDPI 원리·IPS vs VA·4종 단일 모델 스펙</text>
   <line x1="76" y1="354" x2="216" y2="354" stroke="#10B981" stroke-width="3" stroke-linecap="round"/>
   <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
   

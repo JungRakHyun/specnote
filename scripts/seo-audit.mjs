@@ -82,14 +82,18 @@ for (const file of files) {
     }
   }
 
-  // 4. 본문 분량 (Thin Content 방지)
+  const category = getField(fm, 'category');
+
+  // 4. 본문 분량 (Thin Content 방지 + 테크 가이드 심층 분량 검사)
   const plainBody = body
     .replace(/^import\s+.*$/gm, '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/```[\s\S]*?```/g, ' ')
     .replace(/\s+/g, '');
   if (plainBody.length < 1100) {
-    issues.push(`본문 분량이 부족합니다 (공백 제외 ${plainBody.length}자, 애드센스 권장 1,200자 이상)`);
+    issues.push(`본문 분량이 부족합니다 (공백 제외 ${plainBody.length}자, 최소 1,200자 이상)`);
+  } else if (category !== 'apps' && plainBody.length < 2200) {
+    warnings.push(`테크 가이드 심층 분량이 부족합니다 (공백 제외 ${plainBody.length}자, 원리·세부 모델·사용자별 추천 포함 2,500~3,500자+ 권장)`);
   }
 
   // 5. H2 소제목 구조
