@@ -54,6 +54,14 @@ const schemas = Array.isArray(jsonLd)
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={withBase('/icons/apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('/manifest.webmanifest')} />
+    <meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0F172A" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content={SITE.koName} />
     <link rel="canonical" href={canonicalURL} />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.koName} RSS`} href={withBase('/rss.xml')} />
 
@@ -146,6 +154,91 @@ const schemas = Array.isArray(jsonLd)
         btn?.addEventListener('click', () => {
           const isDark = document.documentElement.classList.toggle('dark');
           localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+      })();
+    </script>
+
+    <!-- iOS Safari 홈 화면 추가 안내 토스트 -->
+    <div
+      id="ios-install-toast"
+      role="dialog"
+      aria-label="아이폰 앱 설치 안내"
+      class="fixed bottom-4 left-1/2 z-50 hidden w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 shadow-xl"
+    >
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="text-xs font-extrabold text-blue-700 dark:text-blue-400">iPhone / iPad 앱 설치</div>
+          <p class="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+            Safari 하단 <strong>공유 버튼(□↑)</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택하면 앱처럼 바로 실행할 수 있습니다.
+          </p>
+        </div>
+        <button
+          type="button"
+          id="ios-install-close"
+          aria-label="닫기"
+          class="rounded-lg px-2 py-1 text-xs font-bold text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+        >
+          ✕
+        </button>
+      </div>
+    </div>
+
+    <!-- PWA Service Worker & Install Prompt Handler -->
+    <script is:inline define:vars={{ swUrl: withBase('/sw.js'), swScope: withBase('/') }}>
+      (() => {
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', () => {
+            navigator.serviceWorker.register(swUrl, { scope: swScope }).catch(() => {});
+          });
+        }
+
+        const installBtn = document.getElementById('pwa-install-btn');
+        const iosToast = document.getElementById('ios-install-toast');
+        const iosClose = document.getElementById('ios-install-close');
+        if (!installBtn) return;
+
+        const isStandalone =
+          window.matchMedia('(display-mode: standalone)').matches ||
+          window.navigator.standalone === true;
+        if (isStandalone) return;
+
+        let deferredPrompt = null;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        if (isIOS) {
+          installBtn.classList.remove('hidden');
+          installBtn.classList.add('inline-flex');
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          installBtn.classList.remove('hidden');
+          installBtn.classList.add('inline-flex');
+        });
+
+        installBtn.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+              installBtn.classList.add('hidden');
+              installBtn.classList.remove('inline-flex');
+            }
+            deferredPrompt = null;
+          } else if (isIOS && iosToast) {
+            iosToast.classList.remove('hidden');
+          }
+        });
+
+        iosClose?.addEventListener('click', () => {
+          iosToast?.classList.add('hidden');
+        });
+
+        window.addEventListener('appinstalled', () => {
+          deferredPrompt = null;
+          installBtn.classList.add('hidden');
+          installBtn.classList.remove('inline-flex');
         });
       })();
     </script>

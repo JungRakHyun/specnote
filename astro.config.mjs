@@ -19,6 +19,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
+      filter: (page) => !page.includes('/tags/'),
       changefreq: 'daily',
       priority: 0.7,
       lastmod: new Date(),
