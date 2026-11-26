@@ -137,6 +137,18 @@ for (const file of files) {
     warnings.push('공식 출처/참고 외부 링크가 없습니다 (공식 가격표·문서·스펙 링크 최소 1~2개 권장)');
   }
 
+  // 11. FAQ 예/아니오 질문 두괄식 직답 여부 검사
+  const faqMatches = [...fm.matchAll(/-\s*question:\s*"([^"]+)"\r?\n\s*answer:\s*"([^"]+)"/g)];
+  const ynQuestionRegex =
+    /(수\s*있나요|할\s*수\s*있나요|되나요|괜찮나요|괜찮을까요|충분할까요|차이가\s*(?:실제로\s*)?(?:큰가요|있나요|없나요)|기능이\s*있나요|어렵지\s*않나요|편한가요|초기화해야\s*하나요|로그인을\s*해야\s*하나요|사라지나요|출시되었나요|끝나나요|차감되나요|유지되나요|실행되나요|그런가요|더\s*좋나요)\?/;
+  const directAnswerStartRegex =
+    /^(네[,.!\s]|아니요[,.!\s]|가능합니다|불가능합니다|부족합니다|충분합니다|목적에\s*따라|상황에\s*따라|조건부로)/;
+  for (const [, q, a] of faqMatches) {
+    if (ynQuestionRegex.test(q) && !directAnswerStartRegex.test(a.trim())) {
+      warnings.push(`FAQ 회피 답변 감지 ("${q.slice(0, 28)}...") → 첫 문장을 "네/아니요/불가능합니다" 직답으로 시작하세요.`);
+    }
+  }
+
   if (issues.length === 0 && warnings.length === 0) {
     console.log(`✅ ${file} — 통과 (${plainBody.length}자, H2 ${h2Matches.length}개, 출처 ${externalUrls.length}건)`);
   } else {

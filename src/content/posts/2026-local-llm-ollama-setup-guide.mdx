@@ -16,11 +16,11 @@ tldr:
   - "한국어 문서는 LG EXAONE 3.5(7.8B), 올라운더·코딩은 Qwen3(8B/14B/32B), 이미지 분석은 Gemma 3(12B), 깊은 논리 추론은 DeepSeek-R1(14B/32B)이 각 영역에서 뚜렷한 강점을 보입니다."
 faqs:
   - question: "외장 그래픽카드(GPU)가 없는 일반 윈도우 노트북에서도 로컬 LLM을 돌릴 수 있나요?"
-    answer: "시스템 RAM이 16GB 이상이면 CPU만으로도 exaone3.5:2.4b(약 1.6GB)나 gemma3:4b(약 3.3GB) 같은 초경량 모델을 실행할 수 있습니다. 다만 CPU는 메모리 대역폭이 좁아 답변 속도가 느리므로, 실무에 쓸 만한 8B~32B 모델을 쾌적하게 돌리려면 전용 GPU(VRAM 8~24GB)나 애플 실리콘 통합 메모리가 필요합니다."
+    answer: "네, 2B~4B급 초경량 모델에 한해 가능합니다. 시스템 RAM이 16GB 이상이면 CPU만으로도 exaone3.5:2.4b(약 1.6GB)나 gemma3:4b(약 3.3GB)를 실행할 수 있습니다. 다만 CPU는 메모리 대역폭이 좁아 답변 속도가 느리므로, 실무에 쓸 만한 8B~32B 모델을 쾌적하게 돌리려면 전용 GPU(VRAM 8~24GB)나 애플 실리콘 통합 메모리가 필요합니다."
   - question: "Ollama로 긴 문서를 붙여넣었는데 앞내용을 다 잊어버립니다. 모델이 멍청해서 그런가요?"
-    answer: "모델 한계가 아니라 Ollama의 기본 설정 때문입니다. Ollama는 메모리를 아끼기 위해 기본 컨텍스트 길이(num_ctx)를 4096토큰(한글 약 2,000~2,500자)으로 잘라 실행합니다. 본문 4번의 Modelfile 예시처럼 num_ctx를 16384~32768로 올려주어야 긴 문서를 끝까지 기억합니다."
+    answer: "아니요, 모델 성능이 아니라 Ollama의 기본 설정 때문입니다. Ollama는 메모리를 아끼기 위해 기본 컨텍스트 길이(num_ctx)를 4096토큰(한글 약 2,000~2,500자)으로 잘라 실행합니다. 본문 4번의 Modelfile 예시처럼 num_ctx를 16384~32768로 올려주어야 긴 문서를 끝까지 기억합니다."
   - question: "모델을 몇 개 받으니 C드라이브 용량이 꽉 찼습니다. D드라이브로 옮길 수 있나요?"
-    answer: "Windows PowerShell에서 사용자 환경변수 OLLAMA_MODELS를 D:\\ollama-models로 지정하고 Ollama를 재시작하면 이후 내려받는 모든 모델이 D드라이브에 저장됩니다."
+    answer: "네, 옮길 수 있습니다. Windows PowerShell에서 사용자 환경변수 OLLAMA_MODELS를 D:\\ollama-models로 지정하고 Ollama를 재시작하면 이후 내려받는 모든 모델이 D드라이브에 저장됩니다."
 ---
 
 import Callout from '../../components/Callout.astro';
