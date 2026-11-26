@@ -19,8 +19,8 @@
   <rect x="76" y="72" width="152" height="36" rx="8" fill="#3B82F6" fill-opacity="0.18" stroke="#3B82F6" stroke-opacity="0.55"/>
   <text x="152" y="96" text-anchor="middle" fill="#93C5FD" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">AI 툴 분석</text>
   <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">AI TOOLS · 2026</text>
-  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">2026 AI 유료 구독 심층 비교</text>
-  <text x="76" y="302" fill="#93C5FD" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="33" font-weight="800" letter-spacing="-0.8">세부 모델(GPT·Claude·Gemini·Perplexity)</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">2026 AI 구독 심층 비교</text>
+  <text x="76" y="302" fill="#93C5FD" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="34" font-weight="800" letter-spacing="-0.8">GPT-6.2·Gemini 4 Neon·Claude 5.5·Fable</text>
   <line x1="76" y1="354" x2="216" y2="354" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
   <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
   
@@ -40,11 +40,11 @@
   <rect x="76" y="534" width="131" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
   <text x="141.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#AI요금제</text>
   <rect x="219" y="534" width="126" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
-  <text x="282" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#ChatGPT</text>
-  <rect x="357" y="534" width="115" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
-  <text x="414.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Claude</text>
-  <rect x="484" y="534" width="115" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
-  <text x="541.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Gemini</text>
+  <text x="282" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#GPT-6.2</text>
+  <rect x="357" y="534" width="172" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="443" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Gemini4Neon</text>
+  <rect x="541" y="534" width="149" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#3B82F6" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="615.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Claude5.5</text>
   <g transform="translate(952, 537)">
     <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
     <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
