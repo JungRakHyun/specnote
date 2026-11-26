@@ -144,7 +144,8 @@ for (const file of files) {
   const directAnswerStartRegex =
     /^(네[,.!\s]|아니요[,.!\s]|가능합니다|불가능합니다|부족합니다|충분합니다|목적에\s*따라|상황에\s*따라|조건부로)/;
   for (const [, q, a] of faqMatches) {
-    if (ynQuestionRegex.test(q) && !directAnswerStartRegex.test(a.trim())) {
+    const isWhQuestion = /어떤|무엇|어디|언제|어떻게|왜|어느/.test(q);
+    if (!isWhQuestion && ynQuestionRegex.test(q) && !directAnswerStartRegex.test(a.trim())) {
       warnings.push(`FAQ 회피 답변 감지 ("${q.slice(0, 28)}...") → 첫 문장을 "네/아니요/불가능합니다" 직답으로 시작하세요.`);
     }
   }
