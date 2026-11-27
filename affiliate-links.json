@@ -45,6 +45,51 @@
       "url": "https://link.coupang.com/a/iXB9PTaKC4",
       "provider": "coupang",
       "rocketDelivery": true
+    },
+    {
+      "id": "samsung-galaxy-book6-pro-16",
+      "name": "삼성전자 갤럭시 북6 프로 16 (NT960XJG · 국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["갤럭시 북6 프로", "NT960XJG", "삼성 AI 노트북", "코어 울트라 시리즈 3"],
+      "url": "https://link.coupang.com/a/i0FxFm4y60",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "lg-gram-pro-ai-16",
+      "name": "LG전자 그램 Pro AI 16 (16Z95U / 16Z90U · 국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["LG 그램 프로 AI", "16Z95U", "16Z90U", "초경량 AI 노트북"],
+      "url": "https://link.coupang.com/a/i0FEQbvjps",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "lenovo-yoga-slim-7i-ultra",
+      "name": "레노버 요가 슬림 7i 울트라 아우라 에디션 (83QK001JKR · 국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["요가 슬림 7i 울트라", "83QK001JKR", "아우라 에디션", "975g 노트북"],
+      "url": "https://link.coupang.com/a/i0FYB1dNJs",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "hp-omnibook-5-14",
+      "name": "HP 옴니북 5 14 (14-hm0021AU · 국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["HP 옴니북 5", "14-hm0021AU", "라이젠 AI 5 430", "가성비 AI 노트북"],
+      "url": "https://link.coupang.com/a/i0F1nsQ0fk",
+      "provider": "coupang",
+      "rocketDelivery": true
+    },
+    {
+      "id": "asus-zenbook-a-copilot",
+      "name": "ASUS 젠북 A16 / A14 (UX3607OA / UX3407QA · 국내 정발)",
+      "category": "tech-gear",
+      "keywords": ["ASUS 젠북 A16", "UX3607OA", "젠북 A14", "UX3407QA", "스냅드래곤 노트북"],
+      "url": "https://link.coupang.com/a/i0F5rlRKAS",
+      "provider": "coupang",
+      "rocketDelivery": true
     }
   ]
 }
