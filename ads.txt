@@ -1,0 +1,1 @@
+# Google AdSense 승인 후 src/config/site.ts의 adsense.clientId를 입력하면 자동으로 ads.txt가 채워집니다.

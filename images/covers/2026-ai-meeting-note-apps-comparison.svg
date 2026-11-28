@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#081523"/>
+      <stop offset="100%" stop-color="#16263A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.86" cy="0.2" r="0.52">
+      <stop offset="0%" stop-color="#0EA5E9" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#0EA5E9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+  <rect x="0" y="0" width="10" height="675" fill="#0EA5E9"/>
+  <g stroke="#334155" stroke-opacity="0.16">
+    <path d="M0 135H1200M0 270H1200M0 405H1200M0 540H1200"/>
+    <path d="M240 0V675M480 0V675M720 0V675M960 0V675"/>
+  </g>
+  <rect x="76" y="72" width="152" height="36" rx="8" fill="#0EA5E9" fill-opacity="0.18" stroke="#0EA5E9" stroke-opacity="0.55"/>
+  <text x="152" y="96" text-anchor="middle" fill="#7DD3FC" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">실전 자동화</text>
+  <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">WORKFLOW · 2026</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="52" font-weight="900" letter-spacing="-1.2">2026 AI 회의록 앱 심층 비교</text>
+  <text x="76" y="302" fill="#7DD3FC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="44" font-weight="800" letter-spacing="-0.8">클로바노트·다글로·노션 AI·티로</text>
+  <line x1="76" y1="354" x2="216" y2="354" stroke="#0EA5E9" stroke-width="3" stroke-linecap="round"/>
+  <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
+  
+  <g transform="translate(868, 152)">
+    <rect width="260" height="310" rx="16" fill="#091524" stroke="#0EA5E9" stroke-opacity="0.38" stroke-width="1.5"/>
+    <rect x="40" y="36" width="180" height="50" rx="12" fill="#10253F" stroke="#0EA5E9" stroke-opacity="0.7"/>
+    <circle cx="64" cy="61" r="8" fill="#0EA5E9"/>
+    <rect x="84" y="56" width="108" height="10" rx="5" fill="#E2E8F0"/>
+    <path d="M130 86V128" stroke="#0EA5E9" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="40" y="128" width="180" height="50" rx="12" fill="#10253F" stroke="#7DD3FC" stroke-opacity="0.7"/>
+    <circle cx="64" cy="153" r="8" fill="#7DD3FC"/>
+    <rect x="84" y="148" width="92" height="10" rx="5" fill="#CBD5E1"/>
+    <path d="M130 178V220" stroke="#0EA5E9" stroke-width="2" stroke-dasharray="4 4"/>
+    <rect x="40" y="220" width="180" height="54" rx="12" fill="#0EA5E9" fill-opacity="0.16" stroke="#0EA5E9"/>
+    <circle cx="64" cy="247" r="8" fill="#34D399"/>
+    <rect x="84" y="242" width="114" height="10" rx="5" fill="#FFFFFF"/>
+  </g>
+  <line x1="76" y1="498" x2="1128" y2="498" stroke="#334155" stroke-opacity="0.45"/>
+  
+  <rect x="76" y="534" width="131" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#0EA5E9" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="141.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#AI회의록</text>
+  <rect x="219" y="534" width="149" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#0EA5E9" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="293.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#클로바노트</text>
+  <rect x="380" y="534" width="108" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#0EA5E9" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="434" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#다글로</text>
+  <rect x="500" y="534" width="110" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#0EA5E9" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="555" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#노션AI</text>
+  <g transform="translate(952, 537)">
+    <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="6" y="12.5" width="16" height="3" rx="1.5" fill="#0EA5E9"/>
+    <rect x="6" y="18" width="12" height="3" rx="1.5" fill="#7DD3FC"/>
+    <text x="40" y="20" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800" letter-spacing="1.4">SPECNOTE</text>
+  </g>
+</svg>

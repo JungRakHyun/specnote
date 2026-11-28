@@ -1,0 +1,42 @@
+{
+  "id": "/specnote/",
+  "name": "스펙노트 (SpecNote) — 숫자와 스펙으로 끝내는 AI · IT 비교 매거진",
+  "short_name": "스펙노트",
+  "description": "최신 AI 요금제, 코딩 도구, 노트북·IT 기기 스펙을 공식 데이터와 실사용 기준으로 비교 정리하는 테크 리뷰 매거진 스펙노트입니다.",
+  "lang": "ko-KR",
+  "start_url": "/specnote/",
+  "scope": "/specnote/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#F8F9FB",
+  "theme_color": "#0F172A",
+  "categories": [
+    "technology",
+    "news",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/specnote/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/specnote/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/specnote/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

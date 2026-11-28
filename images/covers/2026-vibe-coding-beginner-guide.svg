@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D111D"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.86" cy="0.2" r="0.52">
+      <stop offset="0%" stop-color="#818CF8" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+  <rect x="0" y="0" width="10" height="675" fill="#818CF8"/>
+  <g stroke="#334155" stroke-opacity="0.16">
+    <path d="M0 135H1200M0 270H1200M0 405H1200M0 540H1200"/>
+    <path d="M240 0V675M480 0V675M720 0V675M960 0V675"/>
+  </g>
+  <rect x="76" y="72" width="152" height="36" rx="8" fill="#818CF8" fill-opacity="0.18" stroke="#818CF8" stroke-opacity="0.55"/>
+  <text x="152" y="96" text-anchor="middle" fill="#C7D2FE" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="15" font-weight="800" letter-spacing="0.8">개발 · 로컬 AI</text>
+  <text x="248" y="96" fill="#64748B" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="14" font-weight="700" letter-spacing="1.4">DEV &amp; LOCAL AI · 2026</text>
+  <text x="76" y="232" fill="#F8FAFC" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="39" font-weight="900" letter-spacing="-1.2">바이브 코딩(Vibe Coding) 심층 로드맵</text>
+  <text x="76" y="302" fill="#C7D2FE" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif" font-size="32" font-weight="800" letter-spacing="-0.8">노코드와의 차이·툴 선택·무료 배포와 보안 한계</text>
+  <line x1="76" y1="354" x2="216" y2="354" stroke="#818CF8" stroke-width="3" stroke-linecap="round"/>
+  <text x="76" y="402" fill="#94A3B8" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="22" font-weight="500">공식 가격 · 실측 스펙 · 한계와 대안까지 검증</text>
+  
+  <g transform="translate(868, 152)">
+    <rect width="260" height="310" rx="16" fill="#0B1220" stroke="#818CF8" stroke-opacity="0.38" stroke-width="1.5"/>
+    <circle cx="24" cy="24" r="5" fill="#EF4444" fill-opacity="0.7"/>
+    <circle cx="42" cy="24" r="5" fill="#F59E0B" fill-opacity="0.7"/>
+    <circle cx="60" cy="24" r="5" fill="#10B981" fill-opacity="0.7"/>
+    <line x1="0" y1="46" x2="260" y2="46" stroke="#334155" stroke-opacity="0.5"/>
+    <rect x="24" y="72" width="110" height="10" rx="5" fill="#818CF8" fill-opacity="0.85"/>
+    <rect x="24" y="98" width="190" height="8" rx="4" fill="#475569"/>
+    <rect x="24" y="120" width="160" height="8" rx="4" fill="#334155"/>
+    <rect x="24" y="154" width="84" height="10" rx="5" fill="#C7D2FE" fill-opacity="0.8"/>
+    <rect x="24" y="180" width="206" height="8" rx="4" fill="#475569"/>
+    <rect x="24" y="202" width="144" height="8" rx="4" fill="#334155"/>
+    <rect x="24" y="242" width="212" height="42" rx="10" fill="#818CF8" fill-opacity="0.14" stroke="#818CF8" stroke-opacity="0.4"/>
+    <rect x="40" y="259" width="128" height="8" rx="4" fill="#818CF8"/>
+  </g>
+  <line x1="76" y1="498" x2="1128" y2="498" stroke="#334155" stroke-opacity="0.45"/>
+  
+  <rect x="76" y="534" width="149" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#818CF8" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="150.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#바이브코딩</text>
+  <rect x="237" y="534" width="110" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#818CF8" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="292" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#AI코딩</text>
+  <rect x="359" y="534" width="170" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#818CF8" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="444" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#비전공자코딩</text>
+  <rect x="541" y="534" width="115" height="38" rx="19" fill="#0F172A" fill-opacity="0.9" stroke="#818CF8" stroke-opacity="0.45" stroke-width="1.2"/>
+  <text x="598.5" y="559" text-anchor="middle" fill="#E2E8F0" font-family="'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="16" font-weight="700">#Cursor</text>
+  <g transform="translate(952, 537)">
+    <rect width="28" height="28" rx="7" fill="#FFFFFF" fill-opacity="0.1"/>
+    <rect x="6" y="7" width="10" height="3" rx="1.5" fill="#FFFFFF"/>
+    <rect x="6" y="12.5" width="16" height="3" rx="1.5" fill="#818CF8"/>
+    <rect x="6" y="18" width="12" height="3" rx="1.5" fill="#C7D2FE"/>
+    <text x="40" y="20" fill="#CBD5E1" font-family="'Pretendard', 'Malgun Gothic', sans-serif" font-size="17" font-weight="800" letter-spacing="1.4">SPECNOTE</text>
+  </g>
+</svg>
