@@ -32,11 +32,21 @@ window.ZAP = window.ZAP || {};
     orbitalTimer: 6,
     orbitAngle: 0,
 
-    // Swarm Rush wave event!
+    // Swarm Rush & Special Mid-Air Interactive Events!
     swarmRushCooldown: 24,
     swarmRushActive: false,
     swarmRushTimer: 0,
     swarmRushDuration: 10,
+
+    eventCooldown: 16,
+    floodTimer: 4.5,        // Periodic "와르르!" cascading wave flood bursts (Edge Flood / 360 Convergence / Hatch Nest!)
+    solarFlareTimer: 3.5,   // T10 Solar Extinction Core automatic corona flares!
+    breach: null,
+    capacitors: [],
+    superMagnetTimer: 0,
+    ionSkyBeams: [],
+    meshSparks: [],
+    bgmAcc: 0,
 
     // Combo & Overdrive
     combo: 0,
@@ -54,15 +64,17 @@ window.ZAP = window.ZAP || {};
     particles: [],
     bolts: [],
     rings: [],
+    flashes: [],       // Crisp 2-frame manga asymmetric impact star-flashes!
+    smokeWisps: [],    // Sculpted rising Bezier S-curve ink smoke wisps!
     texts: [],
-    fallingDebris: [], // Tumbling wings & toasted sparks falling through mid-air!
-    missiles: [],      // C-01 Blood Homing Missiles
-    drones: [],        // C-05 Autonomous Mini Zapper Drones
+    fallingDebris: [],
+    missiles: [],
+    drones: [],
     orbitalBeams: [],
     uvLamps: [],
     coils: [],
     turrets: [],
-    airSpecs: [],      // Drifting mid-air dust specks for airborne depth
+    airSpecs: [],
 
     boss: null,
     bossReadyNotified: false,
@@ -170,7 +182,10 @@ window.ZAP = window.ZAP || {};
       this.mosquitoes = [];
       this.boss = null;
       this.bossReadyNotified = false;
-      for (let i = 0; i < 16; i++) {
+      const stage = window.ZAP.State.getStage();
+      // Stage 1 starts calm & intimate (9 mosquitoes); later stages open bustling!
+      const initCount = stage.id === 0 ? 9 : Math.min(36, Math.floor(stage.baseCap * 0.35));
+      for (let i = 0; i < initCount; i++) {
         this.spawnMosquito('normal', rand(95, this.width - 95), rand(95, this.height - 95));
       }
     },
@@ -185,11 +200,19 @@ window.ZAP = window.ZAP || {};
       this.swarmRushActive = false;
       this.swarmRushTimer = 0;
       this.swarmRushCooldown = 24;
+      this.eventCooldown = 16;
+      this.breach = null;
+      this.capacitors = [];
+      this.superMagnetTimer = 0;
+      this.ionSkyBeams = [];
+      this.meshSparks = [];
       this.empTimer = 0;
       this.orbs = [];
       this.bolts = [];
       this.particles = [];
       this.rings = [];
+      this.flashes = [];
+      this.smokeWisps = [];
       this.texts = [];
       this.fallingDebris = [];
       this.missiles = [];
@@ -212,7 +235,7 @@ window.ZAP = window.ZAP || {};
       this.bossReadyNotified = false;
       this.seedInitialSwarm();
       const stage = state.getStage();
-      this._toast(`STAGE ${stage.id + 1} · ${stage.name} 진입 (환산 ×${window.ZAP.formatNum(stage.popScale)})`);
+      this._toast(`STAGE ${stage.id + 1} · ${stage.name} (${stage.unlockSummary})`, 'gold');
     },
 
     setCursor(x, y) {
@@ -486,10 +509,140 @@ window.ZAP = window.ZAP || {};
       this.swarmRushTimer = this.swarmRushDuration;
       window.ZAP.Audio.playSwarmRush();
       const stats = window.ZAP.State.getStats();
-      // Immediately drop 2 tight aerial clusters + a volatile Bomb Mosquito!
       this.spawnSwarmCluster(stats.swarmBonusSize + 2);
       this.spawnMosquito('bomb', rand(150, this.width - 150), rand(130, this.height - 130));
       this._toast(`SWARM RUSH! 모기 대습격 (${this.swarmRushDuration}초간 볼트 ×${stats.swarmRushVoltMult.toFixed(1)})`, 'boss');
+    },
+
+    // CASCADING "와르르!" WAVE FLOOD SPAWNER (Edge Flood River / 360 Convergence / Hatch Nest Burst!)
+    spawnCascadingFlood(maxPop) {
+      const stage = window.ZAP.State.getStage();
+      const stats = window.ZAP.State.getStats();
+      const room = maxPop - this.mosquitoes.length;
+      if (room < 6) return;
+
+      const targetCount = Math.min(room, Math.floor((stage.floodSize || 12) * stats.floodScale));
+      const pattern = Math.random();
+
+      if (pattern < 0.42) {
+        // Pattern A: Edge Flood River — mosquitoes pour in a dense flowing stream from one edge!
+        const fromLeft = Math.random() < 0.5;
+        const baseY = rand(110, this.height - 110);
+        const dirX = fromLeft ? 1 : -1;
+        for (let i = 0; i < targetCount; i++) {
+          const kind = i === Math.floor(targetCount / 2) && Math.random() < 0.45 ? 'bomb' : (Math.random() < 0.14 ? 'fat' : 'swarm');
+          const sx = (fromLeft ? -14 : this.width + 14) - dirX * rand(0, 95);
+          const sy = clamp(baseY + rand(-68, 68), 60, this.height - 60);
+          this.spawnMosquito(kind, sx, sy);
+          const m = this.mosquitoes[this.mosquitoes.length - 1];
+          if (m) {
+            m.vx = dirX * rand(135, 215);
+            m.vy = rand(-42, 42);
+          }
+        }
+      } else if (pattern < 0.74) {
+        // Pattern B: Hatch Nest Burst — erupts outward in a dense buzzing cloud!
+        const cx = rand(130, this.width - 130);
+        const cy = rand(110, this.height - 110);
+        this.rings.push({
+          x: cx, y: cy, r: 8, maxR: 82, life: 0.4, maxLife: 0.4, color: '#e5383b', width: 2.6, isSpiky: true,
+        });
+        for (let i = 0; i < targetCount; i++) {
+          const ang = (i / targetCount) * Math.PI * 2 + rand(-0.2, 0.2);
+          const r = rand(4, 34);
+          const kind = i === 0 && Math.random() < 0.5 ? 'bomb' : (Math.random() < 0.15 ? 'fat' : 'swarm');
+          this.spawnMosquito(kind, cx + Math.cos(ang) * r, cy + Math.sin(ang) * r);
+          const m = this.mosquitoes[this.mosquitoes.length - 1];
+          if (m) {
+            m.vx = Math.cos(ang) * rand(90, 175);
+            m.vy = Math.sin(ang) * rand(90, 175);
+          }
+        }
+      } else {
+        // Pattern C: 360° Perimeter Convergence — streams pour in simultaneously from all 4 sides!
+        for (let i = 0; i < targetCount; i++) {
+          const kind = Math.random() < 0.06 ? 'bomb' : Math.random() < 0.14 ? 'fat' : 'swarm';
+          this.spawnMosquito(kind);
+        }
+      }
+    },
+
+    // Interactive Mid-Air Event #1: Window Crack Breach — pours a tight single-file river of mosquitoes!
+    spawnWindowBreach() {
+      const fromLeft = Math.random() < 0.5;
+      const y = rand(140, this.height - 140);
+      this.breach = {
+        x: fromLeft ? 16 : this.width - 16,
+        y,
+        dirX: fromLeft ? 1 : -1,
+        timer: 7.5,
+        spawnAcc: 0,
+      };
+      window.ZAP.Audio.playSwarmRush();
+      this._toast('창문 틈새 개방! 모기 행렬 입구에서 일망타진하세요!', 'boss');
+    },
+
+    // Interactive Mid-Air Event #2: Drifting 220V Overcharge Capacitor Orb!
+    spawnCapacitor() {
+      const fromLeft = Math.random() < 0.5;
+      this.capacitors.push({
+        x: fromLeft ? -20 : this.width + 20,
+        y: rand(140, this.height - 140),
+        vx: (fromLeft ? 1 : -1) * rand(58, 86),
+        vy: rand(-16, 16),
+        r: 18,
+        phase: rand(0, Math.PI * 2),
+        life: 16,
+      });
+      this._toast('⚡ 220V 과충전 구슬 출현! 터치해 화면 전체 감전!', 'gold');
+    },
+
+    // Interactive Mid-Air Event #3: Golden V-Formation Parade (5 Golden Mosquitoes)!
+    spawnGoldenParade() {
+      const fromLeft = Math.random() < 0.5;
+      const baseY = rand(160, this.height - 160);
+      const startX = fromLeft ? -25 : this.width + 25;
+      const dir = fromLeft ? 1 : -1;
+      for (let i = 0; i < 5; i++) {
+        const offsetIdx = i - 2; // -2, -1, 0, 1, 2
+        const gx = startX - dir * Math.abs(offsetIdx) * 34;
+        const gy = baseY + offsetIdx * 28;
+        this.spawnMosquito('golden', gx, gy);
+        const added = this.mosquitoes[this.mosquitoes.length - 1];
+        if (added) {
+          added.vx = dir * 165;
+          added.vy = rand(-12, 12);
+          added.curveRate = 0;
+          added.turnTimer = 2.4;
+        }
+      }
+      window.ZAP.Audio.playGoldenParade();
+      this._toast('★ 황금 모기 V편대 출현! 지금 가로채세요!', 'gold');
+    },
+
+    detonateCapacitor(cap) {
+      const stats = window.ZAP.State.getStats();
+      window.ZAP.Audio.playCapacitorBlast();
+      this.addShake(13);
+      this.screenFlash = 0.25;
+      this.superMagnetTimer = 4.0;
+
+      if (!this.feverActive) {
+        this.fever = Math.min(100, this.fever + 35);
+        if (this.fever >= 100) this.activateFever();
+      }
+
+      this.rings.push({
+        x: cap.x, y: cap.y, r: 16, maxR: Math.max(this.width, this.height) * 0.65,
+        life: 0.48, maxLife: 0.48, color: '#ffca00', width: 5.5, isSpiky: true,
+      });
+      this.spawnText(cap.x, cap.y - 24, '220V 전격 해방!!', '#ffca00', 22, true);
+
+      // Blast chain lightning from the Capacitor to EVERY mosquito on screen!
+      const targets = this.mosquitoes.filter((m) => !m.dead);
+      for (const m of targets) {
+        this.damageMosquito(m, stats.baseDamage * 4.5, true, 'electric', cap.x, cap.y, false);
+      }
     },
 
     getComboMultiplier() {
@@ -504,38 +657,117 @@ window.ZAP = window.ZAP || {};
 
     spawnText(x, y, text, color = '#141414', size = 13, isComic = false) {
       if (!window.ZAP.State.data.settings.showNumbers) return;
-      if (this.texts.length > 75) this.texts.shift();
+      // Smart density throttle: prevent noisy text piles during 100-kill floods!
+      const maxTexts = isComic ? 26 : 18;
+      if (this.texts.length >= maxTexts) {
+        if (!isComic) return;
+        this.texts.shift();
+      }
+      // Subtle anti-overlap jitter if another text is right on top
+      let tx = x + rand(-12, 12);
+      let ty = y + rand(-8, 8);
+      const last = this.texts[this.texts.length - 1];
+      if (last && Math.hypot(last.x - tx, last.y - ty) < 26) {
+        ty -= 18;
+        tx += rand(-18, 18);
+      }
       this.texts.push({
-        x: x + rand(-10, 10),
-        y: y + rand(-6, 6),
-        vy: isComic ? rand(-35, -55) : rand(-50, -76),
+        x: tx,
+        y: ty,
+        vy: isComic ? rand(-32, -52) : rand(-46, -68),
         text,
         color,
         size,
         isComic,
-        rot: isComic ? rand(-0.16, 0.16) : 0,
-        life: isComic ? 0.58 : 0.65,
-        maxLife: isComic ? 0.58 : 0.65,
+        rot: isComic ? rand(-0.14, 0.14) : 0,
+        age: 0,
+        life: isComic ? 0.56 : 0.52,
+        maxLife: isComic ? 0.56 : 0.52,
       });
     },
 
-    spawnBolt(x1, y1, x2, y2, color = '#ffca00', width = 2.6) {
-      if (this.bolts.length > 95) this.bolts.shift();
-      const segs = 5;
-      const pts = [{ x: x1, y: y1 }];
-      const dx = x2 - x1;
-      const dy = y2 - y1;
-      const dist = Math.hypot(dx, dy) || 1;
-      const nx = -dy / dist;
-      const ny = dx / dist;
-      const jitter = Math.min(22, dist * 0.16);
-      for (let i = 1; i < segs; i++) {
-        const t = i / segs;
-        const offset = rand(-jitter, jitter);
-        pts.push({ x: x1 + dx * t + nx * offset, y: y1 + dy * t + ny * offset });
+    spawnFlash(x, y, size = 18, color = '#ffca00', kind = 'star') {
+      if (this.flashes.length > 42) this.flashes.shift();
+      this.flashes.push({
+        x, y, size, color, kind,
+        rot: rand(0, Math.PI * 2),
+        life: 0.11,
+        maxLife: 0.11,
+      });
+    },
+
+    spawnSmokeWisp(x, y, scale = 1) {
+      if (this.smokeWisps.length > 36) this.smokeWisps.shift();
+      this.smokeWisps.push({
+        x: x + rand(-4, 4),
+        y: y + rand(-4, 4),
+        vx: rand(-10, 10),
+        vy: rand(-38, -22),
+        amp: rand(5, 11) * scale,
+        phase: rand(0, Math.PI * 2),
+        len: rand(14, 24) * scale,
+        life: rand(0.55, 0.85),
+        maxLife: 0.85,
+      });
+    },
+
+    // AAA Fractal Midpoint-Displacement Lightning with Organic Side Forks!
+    _buildFractalPath(x1, y1, x2, y2, depth = 3, spread = 0.24) {
+      let pts = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+      let curSpread = spread;
+      for (let d = 0; d < depth; d++) {
+        const next = [pts[0]];
+        for (let i = 0; i < pts.length - 1; i++) {
+          const a = pts[i];
+          const b = pts[i + 1];
+          const mx = (a.x + b.x) * 0.5;
+          const my = (a.y + b.y) * 0.5;
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const len = Math.hypot(dx, dy) || 1;
+          const nx = -dy / len;
+          const ny = dx / len;
+          const off = (Math.random() - 0.5) * 2 * len * curSpread;
+          next.push({ x: mx + nx * off, y: my + ny * off });
+          next.push(b);
+        }
+        pts = next;
+        curSpread *= 0.62;
       }
-      pts.push({ x: x2, y: y2 });
-      this.bolts.push({ pts, color, width, life: 0.14, maxLife: 0.14 });
+      return pts;
+    },
+
+    spawnBolt(x1, y1, x2, y2, color = '#ffca00', width = 2.8) {
+      if (this.bolts.length > 75) this.bolts.shift();
+      const dist = Math.hypot(x2 - x1, y2 - y1);
+      const depth = dist > 110 ? 3 : 2;
+      const pts = this._buildFractalPath(x1, y1, x2, y2, depth, 0.23);
+
+      // Generate 1-2 crisp forked micro-branches off midpoint vertices!
+      const forks = [];
+      if (dist > 55 && pts.length >= 5) {
+        const forkCount = dist > 160 ? 2 : 1;
+        for (let f = 0; f < forkCount; f++) {
+          const idx = 1 + Math.floor(Math.random() * (pts.length - 2));
+          const origin = pts[idx];
+          const baseAng = Math.atan2(y2 - y1, x2 - x1) + (Math.random() < 0.5 ? 1 : -1) * rand(0.45, 1.05);
+          const fLen = dist * rand(0.18, 0.34);
+          const fx = origin.x + Math.cos(baseAng) * fLen;
+          const fy = origin.y + Math.sin(baseAng) * fLen;
+          forks.push(this._buildFractalPath(origin.x, origin.y, fx, fy, 2, 0.25));
+        }
+      }
+
+      this.bolts.push({
+        pts,
+        forks,
+        color,
+        width,
+        endX: x2,
+        endY: y2,
+        life: 0.16,
+        maxLife: 0.16,
+      });
     },
 
     // Airborne mid-air debris: fluttering wings & toasted falling sparks (NO flat wall-stain look!)
@@ -583,9 +815,21 @@ window.ZAP = window.ZAP || {};
       m.hitFlash = 0.11;
 
       if (sourceKind === 'electric' || sourceKind === 'laser' || sourceKind === 'plasma') {
-        m.electricShock = 0.14; // Electric X-ray shock silhouette!
+        m.electricShock = 0.16;
         const boltColor = isCrit ? '#ffca00' : sourceKind === 'laser' ? '#e5383b' : '#0096c7';
         this.spawnBolt(srcX, srcY, m.x, m.y, boltColor, isCrit ? 3.2 : 2.3);
+        // Tier 6 Orbital Ion fires crisp vertical sky-beams straight onto hit mosquitoes!
+        if (weapon.tier >= 6 && sourceKind === 'plasma') {
+          if (this.ionSkyBeams.length < 24) {
+            this.ionSkyBeams.push({ x: m.x, y: m.y, life: 0.16, maxLife: 0.16 });
+          }
+        }
+        // Tier 3-4 Electric Racket sparks right inside the wire mesh!
+        if (weapon.tier >= 3 && weapon.tier <= 4 && this.meshSparks.length < 20) {
+          this.meshSparks.push({ x: m.x, y: m.y, life: 0.14, maxLife: 0.14 });
+        }
+      } else if (sourceKind === 'spray') {
+        m.dizzyTimer = 0.55; // Dizzy spiral above sprayed mosquitoes!
       } else if (sourceKind === 'slap' || sourceKind === 'smack') {
         this.rings.push({
           x: m.x, y: m.y, r: 4, maxR: isCrit ? 26 : 17, life: 0.15, maxLife: 0.15,
@@ -678,9 +922,9 @@ window.ZAP = window.ZAP || {};
         }
       }
 
-      // Fever charge
-      if (!this.feverActive) {
-        const gain = (m.type === 'boss' ? 45 : m.type === 'golden' ? 24 : m.type === 'bomb' ? 14 : m.type === 'fat' ? 6 : 2.3) * stats.feverChargeMult;
+      // Fever charge — only activates once Step 2 (Stage 2 or T4 Electric Racket) is reached!
+      if (state.isOverdriveUnlocked() && !this.feverActive) {
+        const gain = (m.type === 'boss' ? 45 : m.type === 'golden' ? 24 : m.type === 'bomb' ? 14 : m.type === 'fat' ? 6 : 2.1) * stats.feverChargeMult;
         this.fever = Math.min(100, this.fever + gain);
         if (this.fever >= 100) this.activateFever();
       }
@@ -711,19 +955,20 @@ window.ZAP = window.ZAP || {};
         this._toast(`${stage.bossName} 출현 준비 완료! 우측 하단 보스 버튼을 누르세요`, 'boss');
       }
 
-      // Mid-air falling wings & toasted ash instead of flat wall stains!
+      // Mid-air falling wings, impact manga flash & sculpted rising S-curve smoke!
       const debrisKind = weapon.tier >= 3 ? 'scorch' : 'slap';
       this.spawnMidAirDebris(m.x, m.y, debrisKind, m.type === 'fat', m.type === 'boss' ? 2.2 : 1);
 
+      // Crisp 2-frame manga asymmetric impact star flash!
+      const flashCol = m.type === 'golden' ? '#ffca00'
+        : m.type === 'fat' || m.type === 'bomb' ? '#e5383b'
+        : weapon.tier >= 3 ? (isCrit ? '#ffca00' : '#38bdf8')
+        : '#ffffff';
+      const flashKind = weapon.tier === 2 ? 'puff' : weapon.tier >= 3 ? 'cross' : 'star';
+      this.spawnFlash(m.x, m.y, (m.type === 'boss' ? 56 : isCrit ? 24 : 15), flashCol, flashKind);
+
       if (weapon.tier >= 3) {
-        for (let s = 0; s < 3; s++) {
-          this.particles.push({
-            x: m.x + rand(-5, 5), y: m.y + rand(-4, 4),
-            vx: rand(-14, 14), vy: rand(-46, -22),
-            r: rand(2.5, 5), life: rand(0.45, 0.72), maxLife: 0.72,
-            color: '#555555', kind: 'smoke',
-          });
-        }
+        this.spawnSmokeWisp(m.x, m.y, m.type === 'boss' ? 1.8 : 1.0);
       }
 
       // Special: Volatile BOMB MOSQUITO Chain Detonation!
@@ -774,27 +1019,38 @@ window.ZAP = window.ZAP || {};
       if (m.type === 'golden') totalVolts *= stats.goldenRewardMult;
       if (m.type === 'boss') totalVolts *= stats.bossVoltMult;
 
+      // Smart Orb Merging: keeps 60fps butter-smooth even when vaporizing 100 mosquitoes/sec!
       const extraFatOrbs = m.type === 'fat' ? stats.bloodBurstLevel * 2 : 0;
-      const orbCount = (m.type === 'boss' ? 24 : m.type === 'golden' ? 10 : m.type === 'bomb' ? 7 : m.type === 'fat' ? 5 : 1) + extraFatOrbs;
+      const rawOrbCount = (m.type === 'boss' ? 24 : m.type === 'golden' ? 10 : m.type === 'bomb' ? 7 : m.type === 'fat' ? 5 : 1) + extraFatOrbs;
+      const orbCount = this.orbs.length > 75 ? 1 : rawOrbCount;
       const perOrb = Math.max(1, totalVolts / orbCount);
-      for (let i = 0; i < orbCount; i++) {
-        const a = rand(0, Math.PI * 2);
-        const spd = rand(55, m.type === 'boss' ? 250 : 155);
-        this.orbs.push({
-          x: m.x, y: m.y,
-          vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
-          value: perOrb,
-          color: m.type === 'golden' ? '#f59e0b' : m.type === 'boss' ? '#7c3aed' : '#ffca00',
-          r: m.type === 'boss' ? 5.5 : m.type === 'golden' ? 5 : 4,
-          age: 0,
-        });
+
+      if (this.orbs.length >= 115 && m.type !== 'boss' && m.type !== 'golden') {
+        // Merge directly into the newest orb to prevent visual/CPU spam while keeping every Volt!
+        const last = this.orbs[this.orbs.length - 1];
+        last.value += totalVolts;
+        last.r = Math.min(7.5, last.r + 0.25);
+      } else {
+        for (let i = 0; i < orbCount; i++) {
+          const a = rand(0, Math.PI * 2);
+          const spd = rand(55, m.type === 'boss' ? 250 : 155);
+          this.orbs.push({
+            x: m.x, y: m.y,
+            vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+            value: perOrb,
+            color: m.type === 'golden' ? '#f59e0b' : m.type === 'boss' ? '#7c3aed' : '#ffca00',
+            r: m.type === 'boss' ? 5.5 : m.type === 'golden' ? 5 : orbCount === 1 && rawOrbCount > 1 ? 5.2 : 4,
+            age: 0,
+          });
+        }
       }
 
-      // Burst particles
-      const burstCount = m.type === 'boss' ? 38 : isCrit || m.type === 'golden' || m.type === 'bomb' ? 12 : 6;
+      // Crisp velocity-stretched shard sparks (instead of generic round dots!)
+      const burstCount = m.type === 'boss' ? 32 : isCrit || m.type === 'golden' || m.type === 'bomb' ? 10 : 5;
+      const pKind = weapon.tier === 2 ? 'mist' : 'shard';
       for (let i = 0; i < burstCount; i++) {
         const a = rand(0, Math.PI * 2);
-        const spd = rand(45, m.type === 'boss' ? 360 : 175);
+        const spd = rand(85, m.type === 'boss' ? 420 : 250);
         const col = m.type === 'golden'
           ? '#f59e0b'
           : m.type === 'fat' || m.type === 'bomb'
@@ -805,9 +1061,10 @@ window.ZAP = window.ZAP || {};
         this.particles.push({
           x: m.x, y: m.y,
           vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
-          r: rand(1.8, m.type === 'boss' ? 5 : 3.4),
-          life: rand(0.18, m.type === 'boss' ? 0.7 : 0.38),
-          maxLife: 0.45, color: col, kind: 'spark',
+          r: rand(2.0, m.type === 'boss' ? 5 : 3.2),
+          len: rand(7, m.type === 'boss' ? 22 : 14),
+          life: rand(0.15, m.type === 'boss' ? 0.55 : 0.32),
+          maxLife: 0.36, color: col, kind: pKind,
         });
       }
 
@@ -936,8 +1193,8 @@ window.ZAP = window.ZAP || {};
         }
       }
 
-      // Contract C-04: Overdrive Engine auto-charges Fever above 50 combo!
-      if (!this.feverActive && state.hasContract('overdriveEngine') && this.combo >= 50) {
+      // Contract C-04: Overdrive Engine auto-charges Fever above 50 combo (once Overdrive is unlocked!)
+      if (state.isOverdriveUnlocked() && !this.feverActive && state.hasContract('overdriveEngine') && this.combo >= 50) {
         this.fever = Math.min(100, this.fever + dt * 12);
         if (this.fever >= 100) this.activateFever();
       }
@@ -968,44 +1225,166 @@ window.ZAP = window.ZAP || {};
         }
       }
 
-      // Swarm Rush timer!
+      // Subtle procedural ambient BGM groove (speeds up gently in Swarm Rush / Overdrive!)
+      if (this.hasInteracted) {
+        const bgmInterval = this.feverActive ? 0.145 : this.swarmRushActive ? 0.175 : 0.22;
+        this.bgmAcc += dt;
+        if (this.bgmAcc >= bgmInterval) {
+          this.bgmAcc -= bgmInterval;
+          const intensity = this.feverActive ? 2 : this.swarmRushActive ? 1 : 0;
+          window.ZAP.Audio.playBgmStep(intensity);
+        }
+      }
+
+      if (this.superMagnetTimer > 0) this.superMagnetTimer = Math.max(0, this.superMagnetTimer - dt);
+
+      // Stair-Step Interactive Mid-Air Events:
+      // Stage 1-2: Calm! No mid-air event chaos yet.
+      // Stage 3+: Window/Wetland Breach streams unlock!
+      // Stage 4+: 220V Overcharge Capacitors & Golden V-Formation Parades unlock!
+      const stIdx = state.data.stageIndex;
+      if (stIdx >= 2) {
+        this.eventCooldown -= dt;
+        if (this.eventCooldown <= 0) {
+          this.eventCooldown = rand(20, 28);
+          if (stIdx === 2) {
+            if (!this.breach) this.spawnWindowBreach();
+          } else {
+            const pick = Math.random();
+            if (pick < 0.42 && this.capacitors.length === 0) this.spawnCapacitor();
+            else if (pick < 0.76 && !this.breach) this.spawnWindowBreach();
+            else this.spawnGoldenParade();
+          }
+        }
+      }
+
+      // Update Window Breach Stream
+      if (this.breach) {
+        this.breach.timer -= dt;
+        this.breach.spawnAcc += dt;
+        if (this.breach.spawnAcc >= 0.22 && this.mosquitoes.length < stats.maxMosquitoes + 45) {
+          this.breach.spawnAcc = 0;
+          const kind = Math.random() < 0.12 ? 'bomb' : Math.random() < 0.22 ? 'fat' : 'swarm';
+          this.spawnMosquito(kind, this.breach.x, this.breach.y + rand(-18, 18));
+          const added = this.mosquitoes[this.mosquitoes.length - 1];
+          if (added) {
+            added.vx = this.breach.dirX * rand(135, 195);
+            added.vy = rand(-38, 38);
+          }
+        }
+        if (this.breach.timer <= 0) this.breach = null;
+      }
+
+      // Update 220V Overcharge Capacitors (touch with cursor to blast!)
+      const capCheckR = stats.zapRadius * (this.feverActive ? 1.4 : 1);
+      for (let i = this.capacitors.length - 1; i >= 0; i--) {
+        const cap = this.capacitors[i];
+        cap.life -= dt;
+        cap.phase += dt * 5;
+        cap.x += cap.vx * dt;
+        cap.y += (cap.vy + Math.sin(cap.phase) * 24) * dt;
+        if (this.mouse.active && Math.hypot(cap.x - this.mouse.x, cap.y - this.mouse.y) <= capCheckR + cap.r) {
+          this.detonateCapacitor(cap);
+          this.capacitors.splice(i, 1);
+          continue;
+        }
+        if (cap.life <= 0 || cap.x < -60 || cap.x > this.width + 60) {
+          this.capacitors.splice(i, 1);
+        }
+      }
+
+      // Swarm Rush timer — Unlocks at Step 4 (Stage 4 Amazon Rainforest+)!
       if (this.swarmRushActive) {
         this.swarmRushTimer -= dt;
         if (this.swarmRushTimer <= 0) {
           this.swarmRushActive = false;
           this.swarmRushCooldown = stats.swarmRushInterval;
         }
-      } else if (state.data.totalKills >= 18) {
+      } else if (state.data.stageIndex >= 3) {
         this.swarmRushCooldown -= dt;
         if (this.swarmRushCooldown <= 0) {
           this.startSwarmRush();
         }
       }
 
-      // 1. Spawning
+      // 1. Stair-Step Batch Spawning (S1 calm normal+fat -> S2 +clusters & golden -> S3 +bombs & floods -> S4+ mega floods!)
       const spawnMult = (this.feverActive ? 2.0 : 1) * (this.swarmRushActive ? 2.6 : 1);
+      const maxPop = Math.min(540, stats.maxMosquitoes + (this.feverActive ? 35 : 0) + (this.swarmRushActive ? 65 : 0));
+
       this.spawnTimer -= dt * spawnMult;
-      const maxPop = stats.maxMosquitoes + (this.feverActive ? 24 : 0) + (this.swarmRushActive ? 38 : 0);
-      if (this.spawnTimer <= 0 && this.mosquitoes.length < maxPop) {
-        this.spawnTimer = stats.spawnInterval;
+      let spawnedThisFrame = 0;
+      while (this.spawnTimer <= 0 && this.mosquitoes.length < maxPop && spawnedThisFrame < 10) {
+        this.spawnTimer += stats.spawnInterval;
+        spawnedThisFrame++;
         const r = Math.random();
-        if (r < (this.swarmRushActive ? stats.swarmChance + 0.22 : stats.swarmChance) && this.mosquitoes.length < maxPop - 6) {
-          this.spawnSwarmCluster(stats.swarmBonusSize);
-        } else if (r < stats.swarmChance + 0.032 * stats.rareLuckMult) {
+        const allowCluster = stIdx >= 1;
+        const allowGolden = stIdx >= 1;
+        const allowBomb = stIdx >= 2;
+        const clusterProb = allowCluster ? (this.swarmRushActive ? stats.swarmChance + 0.22 : stats.swarmChance) : 0;
+
+        if (clusterProb > 0 && r < clusterProb && this.mosquitoes.length < maxPop - 8) {
+          this.spawnSwarmCluster(stats.swarmBonusSize + Math.floor(stIdx * 2));
+        } else if (allowGolden && r < clusterProb + 0.03 * stats.rareLuckMult) {
           this.spawnMosquito('golden');
-        } else if (r < stats.swarmChance + 0.085 * stats.rareLuckMult) {
+        } else if (allowBomb && r < clusterProb + 0.085 * stats.rareLuckMult) {
           this.spawnMosquito('bomb');
-        } else if (r < stats.swarmChance + 0.19 * stats.rareLuckMult) {
+        } else if (r < clusterProb + 0.17 * stats.rareLuckMult) {
           this.spawnMosquito('fat');
         } else {
           this.spawnMosquito('normal');
         }
       }
+      if (this.spawnTimer < -0.5) this.spawnTimer = 0;
 
-      // 2. Active Cursor Weapon Tick & Swing Vortex Pull!
-      const effectiveRadius = stats.zapRadius * (this.feverActive ? 1.4 : 1);
+      // Periodic "와르르!" Cascading Flood Waves — Starts gently at S2, explodes into massive floods at S3~S6!
+      if (stIdx >= 1 && (state.getStage().floodSize || 0) > 0) {
+        this.floodTimer -= dt * (this.swarmRushActive ? 2.5 : this.feverActive ? 1.5 : 1);
+        if (this.floodTimer <= 0 && this.mosquitoes.length < maxPop - 8) {
+          this.floodTimer = stats.floodInterval;
+          this.spawnCascadingFlood(maxPop);
+        }
+      }
+
+      // 2. Active Cursor Weapon Tick, Swing Vortex Pull, T9 Black-Hole Gravity & T10 Solar Flares!
+      const effectiveRadius = stats.zapRadius * (this.feverActive ? 1.38 : 1);
       const tickInterval = 1 / (stats.ticksPerSec * (this.feverActive ? 1.35 : 1));
       this.zapTimer -= dt;
+
+      // Tier 9 (Black Hole) & Tier 10 (Solar Core): Passive Gravitational Pull sucking swarms into your cursor!
+      if (weapon.tier >= 8 && this.mouse.active) {
+        const bhRadius = effectiveRadius * 2.1;
+        const bhPull = weapon.tier >= 9 ? 460 : 340;
+        for (const m of this.mosquitoes) {
+          if (m.dead || m.type === 'boss') continue;
+          const dx = this.mouse.x - m.x;
+          const dy = this.mouse.y - m.y;
+          const d = Math.hypot(dx, dy) || 1;
+          if (d < bhRadius && d > 14) {
+            const f = bhPull * (1 - d / bhRadius);
+            m.vx += (dx / d) * f * dt * 4.2;
+            m.vy += (dy / d) * f * dt * 4.2;
+          }
+        }
+      }
+
+      // Tier 10 (Solar Extinction Core): Automatic Periodic Solar Corona Flare!
+      if (weapon.tier >= 9 && this.mouse.active) {
+        this.solarFlareTimer -= dt;
+        if (this.solarFlareTimer <= 0) {
+          this.solarFlareTimer = 3.2;
+          const flareR = effectiveRadius * 1.9;
+          this.rings.push({
+            x: this.mouse.x, y: this.mouse.y, r: 20, maxR: flareR,
+            life: 0.4, maxLife: 0.4, color: '#ffca00', width: 5, isSpiky: true,
+          });
+          this.addShake(7);
+          for (const m of this.mosquitoes) {
+            if (!m.dead && Math.hypot(m.x - this.mouse.x, m.y - this.mouse.y) <= flareR) {
+              this.damageMosquito(m, stats.baseDamage * 3.0, true, 'plasma', this.mouse.x, this.mouse.y, false);
+            }
+          }
+        }
+      }
 
       if (weapon.tier === 2 && this.mouse.active && Math.random() < 0.5) {
         const a = rand(-0.6, 0.6) - Math.PI * 0.75;
@@ -1210,6 +1589,7 @@ window.ZAP = window.ZAP || {};
         m.hoverPhase += dt * (m.type === 'boss' ? 4.5 : 8.5);
         if (m.hitFlash > 0) m.hitFlash -= dt;
         if (m.electricShock > 0) m.electricShock -= dt;
+        if (m.dizzyTimer > 0) m.dizzyTimer -= dt;
         if (m.slowTimer > 0) m.slowTimer -= dt;
 
         if (m.type === 'boss') {
@@ -1327,14 +1707,22 @@ window.ZAP = window.ZAP || {};
         const dy = collectY - o.y;
         const dist = Math.hypot(dx, dy) || 1;
 
-        if (o.age > 0.14 && (dist <= stats.magnetRadius || o.age > 2.2)) {
-          const pullSpd = stats.magnetSpeed * (1 + o.age * 0.9);
+        const activeMagnetR = this.superMagnetTimer > 0 ? 3000 : stats.magnetRadius;
+        if (o.age > 0.14 && (dist <= activeMagnetR || o.age > 2.2)) {
+          const pullSpd = (this.superMagnetTimer > 0 ? stats.magnetSpeed * 1.9 : stats.magnetSpeed) * (1 + o.age * 0.9);
           o.vx += (dx / dist) * pullSpd * dt * 6;
           o.vy += (dy / dist) * pullSpd * dt * 6;
         }
 
         o.x += o.vx * dt;
         o.y += o.vy * dt;
+
+        // Track short comet tail when vacuuming fast!
+        if (o.age > 0.14) {
+          if (!o.trail) o.trail = [];
+          o.trail.push({ x: o.x, y: o.y });
+          if (o.trail.length > 5) o.trail.shift();
+        }
 
         if (dist < 28 || o.age > 5.5) {
           state.data.volts += o.value;
@@ -1382,6 +1770,14 @@ window.ZAP = window.ZAP || {};
         this.bolts[i].life -= dt;
         if (this.bolts[i].life <= 0) this.bolts.splice(i, 1);
       }
+      for (let i = this.ionSkyBeams.length - 1; i >= 0; i--) {
+        this.ionSkyBeams[i].life -= dt;
+        if (this.ionSkyBeams[i].life <= 0) this.ionSkyBeams.splice(i, 1);
+      }
+      for (let i = this.meshSparks.length - 1; i >= 0; i--) {
+        this.meshSparks[i].life -= dt;
+        if (this.meshSparks[i].life <= 0) this.meshSparks.splice(i, 1);
+      }
       for (let i = this.rings.length - 1; i >= 0; i--) {
         const r = this.rings[i];
         r.life -= dt;
@@ -1389,11 +1785,24 @@ window.ZAP = window.ZAP || {};
         r.r = r.maxR * (1 - Math.pow(1 - p, 3));
         if (r.life <= 0) this.rings.splice(i, 1);
       }
+      for (let i = this.flashes.length - 1; i >= 0; i--) {
+        this.flashes[i].life -= dt;
+        if (this.flashes[i].life <= 0) this.flashes.splice(i, 1);
+      }
+      for (let i = this.smokeWisps.length - 1; i >= 0; i--) {
+        const sw = this.smokeWisps[i];
+        sw.life -= dt;
+        sw.x += sw.vx * dt;
+        sw.y += sw.vy * dt;
+        sw.phase += dt * 7;
+        if (sw.life <= 0) this.smokeWisps.splice(i, 1);
+      }
       for (let i = this.texts.length - 1; i >= 0; i--) {
         const t = this.texts[i];
+        t.age = (t.age || 0) + dt;
         t.life -= dt;
         t.y += t.vy * dt;
-        t.vy *= Math.pow(0.25, dt);
+        t.vy *= Math.pow(0.22, dt);
         if (t.life <= 0) this.texts.splice(i, 1);
       }
       for (const sp of this.airSpecs) {

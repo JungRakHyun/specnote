@@ -16,11 +16,14 @@ window.ZAP = window.ZAP || {};
 
     resize() {
       this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = window.innerWidth;
-      const h = window.innerHeight;
+      const parent = this.canvas.parentElement;
+      const rect = parent ? parent.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight };
+      const w = Math.max(320, Math.floor(rect.width));
+      const h = Math.max(320, Math.floor(rect.height));
       this.canvas.width = Math.floor(w * this.dpr);
       this.canvas.height = Math.floor(h * this.dpr);
       this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+      return { width: w, height: h };
     },
 
     _palette() {
@@ -94,59 +97,130 @@ window.ZAP = window.ZAP || {};
         ctx.restore();
       }
 
-      // 3. UV Lamps, Coils, Turrets
+      // 3. UV Lamps, Coils, Turrets & Window Breach Rift
       for (const lamp of eng.uvLamps) this._drawUVLamp(ctx, lamp, eng.time, pal);
       for (const coil of eng.coils) this._drawCoil(ctx, coil, pal);
       for (const turret of eng.turrets) this._drawTurret(ctx, turret, pal);
+      if (eng.breach) this._drawWindowBreach(ctx, eng.breach, eng.time, pal);
 
-      // 4. Orbital Plasma Beams
+      // 4. Orbital Plasma Beams & Sculpted Tier 7+ Vertical Sky-Ion Strikes
       for (const b of eng.orbitalBeams) {
         ctx.save();
-        ctx.fillStyle = pal.dark ? 'rgba(255, 225, 53, 0.22)' : 'rgba(255, 202, 0, 0.28)';
+        const beamGrad = ctx.createLinearGradient(b.x - b.width, 0, b.x + b.width, 0);
+        beamGrad.addColorStop(0, 'rgba(255, 202, 0, 0)');
+        beamGrad.addColorStop(0.3, pal.dark ? 'rgba(255, 225, 53, 0.25)' : 'rgba(255, 202, 0, 0.34)');
+        beamGrad.addColorStop(0.5, pal.surface);
+        beamGrad.addColorStop(0.7, pal.dark ? 'rgba(255, 225, 53, 0.25)' : 'rgba(255, 202, 0, 0.34)');
+        beamGrad.addColorStop(1, 'rgba(255, 202, 0, 0)');
+        ctx.fillStyle = beamGrad;
         ctx.fillRect(b.x - b.width, 0, b.width * 2, h);
-        ctx.fillStyle = pal.surface;
-        ctx.fillRect(b.x - b.width * 0.26, 0, b.width * 0.52, h);
         ctx.strokeStyle = pal.ink;
-        ctx.lineWidth = 2.5;
+        ctx.lineWidth = 2.0;
         ctx.beginPath();
-        ctx.moveTo(b.x - b.width * 0.28, 0); ctx.lineTo(b.x - b.width * 0.28, h);
-        ctx.moveTo(b.x + b.width * 0.28, 0); ctx.lineTo(b.x + b.width * 0.28, h);
+        ctx.moveTo(b.x - b.width * 0.22, 0); ctx.lineTo(b.x - b.width * 0.22, h);
+        ctx.moveTo(b.x + b.width * 0.22, 0); ctx.lineTo(b.x + b.width * 0.22, h);
+        ctx.stroke();
+        ctx.restore();
+      }
+      for (const sb of eng.ionSkyBeams) {
+        const a = Math.max(0, sb.life / sb.maxLife);
+        ctx.save();
+        ctx.globalAlpha = a;
+        // Soft tapered sky corona
+        const bw = 16 * a;
+        const g = ctx.createLinearGradient(sb.x - bw, 0, sb.x + bw, 0);
+        g.addColorStop(0, 'rgba(255, 202, 0, 0)');
+        g.addColorStop(0.5, 'rgba(255, 202, 0, 0.42)');
+        g.addColorStop(1, 'rgba(255, 202, 0, 0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(sb.x - bw, 0, bw * 2, sb.y);
+        // Razor ink-cased central ion lance
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 4.8 * a;
+        ctx.beginPath();
+        ctx.moveTo(sb.x, 0); ctx.lineTo(sb.x, sb.y);
+        ctx.stroke();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.8 * a;
+        ctx.stroke();
+        // Ground-contact splash ring & cross flare!
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.ellipse(sb.x, sb.y, (1 - a) * 24 + 6, (1 - a) * 8 + 2.5, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
 
-      // 5. Tumbling Detached Wings & Toasted Mid-Air Ash
+      // 5. Tumbling 3D-Flipping Veined Wings & Sculpted S-Curve Rising Ink Smoke Wisps
       for (const fd of eng.fallingDebris) {
         this._drawFallingDebris(ctx, fd, pal);
       }
+      for (const sw of eng.smokeWisps) {
+        this._drawSmokeWisp(ctx, sw, pal);
+      }
 
-      // 6. Shockwave & Comic Impact Rings
+      // 6. Double-Edge Kinetic Shock-Rings (Leading ink edge + accent echo + tapered burst rays!)
       for (const r of eng.rings) {
         const alpha = Math.max(0, r.life / r.maxLife);
+        const col = r.color === '#141414' ? pal.ink : r.color;
         ctx.save();
         ctx.globalAlpha = alpha;
-        ctx.strokeStyle = r.color === '#141414' ? pal.ink : r.color;
+        // Leading crisp outer arc
+        ctx.strokeStyle = col;
         ctx.lineWidth = r.width * alpha + 0.8;
-        if (r.isSpiky) {
-          const rays = 10;
-          ctx.beginPath();
-          for (let i = 0; i < rays; i++) {
-            const a = (i / rays) * Math.PI * 2;
-            const r1 = r.r * 0.65;
-            const r2 = r.r * (i % 2 === 0 ? 1.12 : 0.92);
-            ctx.moveTo(r.x + Math.cos(a) * r1, r.y + Math.sin(a) * r1);
-            ctx.lineTo(r.x + Math.cos(a) * r2, r.y + Math.sin(a) * r2);
-          }
-          ctx.stroke();
-        }
         ctx.beginPath();
         ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
         ctx.stroke();
+
+        // Trailing subtle inner echo ring
+        if (r.r > 18) {
+          ctx.globalAlpha = alpha * 0.42;
+          ctx.strokeStyle = pal.ink;
+          ctx.lineWidth = Math.max(0.8, r.width * alpha * 0.45);
+          ctx.beginPath();
+          ctx.arc(r.x, r.y, r.r * 0.84, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        // Tapered manga kinetic spikes (only for spiky impact/blast pulses!)
+        if (r.isSpiky && r.r > 12) {
+          ctx.globalAlpha = alpha * 0.85;
+          ctx.fillStyle = col;
+          const rays = 12;
+          for (let i = 0; i < rays; i++) {
+            const a = (i / rays) * Math.PI * 2 + (i % 2) * 0.08;
+            const r1 = r.r * 0.86;
+            const r2 = r.r * (i % 2 === 0 ? 1.18 : 1.04);
+            const spread = 0.045 * alpha;
+            ctx.beginPath();
+            ctx.moveTo(r.x + Math.cos(a - spread) * r1, r.y + Math.sin(a - spread) * r1);
+            ctx.lineTo(r.x + Math.cos(a) * r2, r.y + Math.sin(a) * r2);
+            ctx.lineTo(r.x + Math.cos(a + spread) * r1, r.y + Math.sin(a + spread) * r1);
+            ctx.closePath();
+            ctx.fill();
+          }
+        }
         ctx.restore();
       }
 
-      // 7. Static Volt Diamonds
+      // 7. Static Volt Diamonds with Sleek Tapered Vacuum Comet-Tails!
       for (const o of eng.orbs) {
+        if (o.trail && o.trail.length > 1) {
+          ctx.save();
+          ctx.lineCap = 'round';
+          for (let i = 1; i < o.trail.length; i++) {
+            const frac = i / o.trail.length;
+            ctx.strokeStyle = o.color;
+            ctx.globalAlpha = frac * 0.55;
+            ctx.lineWidth = frac * o.r * 1.15;
+            ctx.beginPath();
+            ctx.moveTo(o.trail[i - 1].x, o.trail[i - 1].y);
+            ctx.lineTo(o.trail[i].x, o.trail[i].y);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
         ctx.save();
         ctx.translate(o.x, o.y);
         ctx.fillStyle = o.color;
@@ -154,23 +228,28 @@ window.ZAP = window.ZAP || {};
         ctx.lineWidth = 1.6;
         ctx.beginPath();
         ctx.moveTo(0, -o.r * 1.35);
-        ctx.lineTo(o.r * 1.1, 0);
+        ctx.lineTo(o.r * 1.05, 0);
         ctx.lineTo(0, o.r * 1.35);
-        ctx.lineTo(-o.r * 1.1, 0);
+        ctx.lineTo(-o.r * 1.05, 0);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
         ctx.restore();
       }
 
-      // 8. Homing Missiles (Contract C-01)
+      // 8. Homing Missiles & Drifting 220V Overcharge Capacitors!
       for (const ms of eng.missiles) {
         this._drawMissile(ctx, ms, pal);
       }
+      for (const cap of eng.capacitors) {
+        this._drawCapacitor(ctx, cap, eng.time, pal);
+      }
 
-      // 9. Truly Airborne Flying Mosquitoes + Striped Adidas Boss!
+      // 9. Truly Airborne Flying Mosquitoes (Smart LOD for 500-mosquito butter-smooth 60fps!) + Boss!
+      const useFastSwarmLOD = eng.mosquitoes.length > 110;
       for (const m of eng.mosquitoes) {
         if (m.type === 'boss') this._drawBoss(ctx, m, eng.time, pal);
+        else if (useFastSwarmLOD && m.type === 'swarm') this._drawFastSwarmMosquito(ctx, m, pal);
         else this._drawFlyingMosquito(ctx, m, eng.time, pal);
       }
 
@@ -179,44 +258,73 @@ window.ZAP = window.ZAP || {};
         this._drawDrone(ctx, dr, eng.time, pal);
       }
 
-      // 11. Particles
+      // 11. Velocity-Stretched Shard Sparks, Watercolor Mist & Manga Impact Star-Flashes!
       for (const p of eng.particles) {
         const alpha = Math.max(0, p.life / p.maxLife);
         ctx.save();
-        ctx.globalAlpha = p.kind === 'mist' ? alpha * 0.42 : p.kind === 'smoke' ? alpha * 0.45 : alpha;
-        if (p.kind === 'smoke') {
-          ctx.strokeStyle = pal.ink;
-          ctx.lineWidth = 1.5;
+        if (p.kind === 'mist') {
+          ctx.globalAlpha = alpha * 0.34;
+          ctx.fillStyle = p.color;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * (1.4 - alpha * 0.5), 0, Math.PI * 1.4);
-          ctx.stroke();
-        } else {
+          ctx.arc(p.x, p.y, p.r * (1.6 - alpha * 0.5), 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.kind === 'shard') {
+          // Razor-sharp velocity-stretched directional needle streak!
+          const ang = Math.atan2(p.vy, p.vx);
+          const spd = Math.hypot(p.vx, p.vy);
+          const len = Math.max(4, (p.len || 10) * alpha * Math.min(1.6, spd / 120 + 0.5));
+          const w2 = Math.max(0.8, p.r * 0.55 * alpha);
+          ctx.translate(p.x, p.y);
+          ctx.rotate(ang);
+          ctx.globalAlpha = alpha;
           ctx.fillStyle = p.color === '#141414' ? pal.ink : p.color;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * (p.kind === 'mist' ? 1.35 - alpha * 0.35 : alpha + 0.25), 0, Math.PI * 2);
+          ctx.moveTo(len, 0);
+          ctx.lineTo(0, -w2);
+          ctx.lineTo(-len * 0.65, 0);
+          ctx.lineTo(0, w2);
+          ctx.closePath();
+          ctx.fill();
+          if (p.color === '#ffca00' || p.color === '#f59e0b') {
+            ctx.strokeStyle = '#141414';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        } else {
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = p.color === '#141414' ? pal.ink : p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * (alpha + 0.25), 0, Math.PI * 2);
           ctx.fill();
         }
         ctx.restore();
       }
 
-      // 12. Ink-Outlined Lightning Bolts
+      // Crisp 2-frame Manga Impact Star-Flashes!
+      for (const fl of eng.flashes) {
+        this._drawImpactFlash(ctx, fl, pal);
+      }
+
+      // 12. AAA Fractal Branching Tapered Lightning Bolts & Wire-Mesh Fry Sparks!
       for (const b of eng.bolts) {
-        const alpha = Math.max(0, b.life / b.maxLife);
+        this._drawFractalBolt(ctx, b, pal);
+      }
+      for (const sp of eng.meshSparks) {
+        const a = Math.max(0, sp.life / sp.maxLife);
         ctx.save();
-        ctx.globalAlpha = alpha;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.translate(sp.x, sp.y);
+        ctx.globalAlpha = a;
+        ctx.fillStyle = '#ffffff';
         ctx.strokeStyle = pal.ink;
-        ctx.lineWidth = b.width * 2.2;
-        this._tracePolyline(ctx, b.pts);
-        ctx.stroke();
-        ctx.strokeStyle = b.color;
-        ctx.lineWidth = b.width * 1.15;
-        this._tracePolyline(ctx, b.pts);
-        ctx.stroke();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = Math.max(0.8, b.width * 0.4);
-        this._tracePolyline(ctx, b.pts);
+        ctx.lineWidth = 1.4;
+        // Sharp 4-point electric needle flare
+        ctx.beginPath();
+        const L = 13 * a + 4;
+        const W = 2.4 * a + 0.8;
+        ctx.moveTo(0, -L); ctx.lineTo(W, -W); ctx.lineTo(L, 0); ctx.lineTo(W, W);
+        ctx.lineTo(0, L); ctx.lineTo(-W, W); ctx.lineTo(-L, 0); ctx.lineTo(-W, -W);
+        ctx.closePath();
+        ctx.fill();
         ctx.stroke();
         ctx.restore();
       }
@@ -241,32 +349,46 @@ window.ZAP = window.ZAP || {};
         }
       }
 
-      // 14. Swing Vortex Subtle Swirl Visual + 7-Tier Cursor Weapon
+      // 14. Sculpted Curved Wind-Vortex Arcs + 10-Tier Cursor Weapon!
       if (eng.mouse.active) {
         if (stats.vortexLevel > 0 && eng.mouse.speed > 14) {
           ctx.save();
           ctx.translate(eng.mouse.x, eng.mouse.y);
-          ctx.rotate(eng.time * 5);
+          ctx.rotate(eng.time * 5.2);
+          const vr = stats.vortexRadius * 0.72;
           ctx.strokeStyle = pal.inkSoft;
-          ctx.lineWidth = 1.4;
-          ctx.setLineDash([12, 16]);
-          ctx.beginPath();
-          ctx.arc(0, 0, stats.vortexRadius * 0.72, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.setLineDash([]);
+          ctx.lineCap = 'round';
+          for (let i = 0; i < 3; i++) {
+            ctx.rotate((Math.PI * 2) / 3);
+            ctx.lineWidth = 2.2;
+            ctx.beginPath();
+            ctx.arc(0, 0, vr, 0, 0.75);
+            ctx.stroke();
+            ctx.lineWidth = 1.1;
+            ctx.beginPath();
+            ctx.arc(0, 0, vr * 0.85, 0.3, 1.0);
+            ctx.stroke();
+          }
           ctx.restore();
         }
         this._drawCursorTrail(ctx, eng.mouse.trail, pal);
         this._drawWeaponCursor(ctx, eng.mouse.x, eng.mouse.y, effR, stats.weapon, eng, pal);
       }
 
-      // 15. Comic Onomatopoeia & Damage/Volt Popups (Crisp black ink casing on yellow/bright comic SFX!)
+      // 15. Elastic Pop-In Comic Typography!
       for (const t of eng.texts) {
         const alpha = Math.max(0, t.life / t.maxLife);
+        // Elastic pop-in curve: 0.45 -> 1.24 -> 1.0 in first 85ms!
+        const age = t.age || 0;
+        let popScale = 1;
+        if (age < 0.05) popScale = 0.5 + (age / 0.05) * 0.74;
+        else if (age < 0.11) popScale = 1.24 - ((age - 0.05) / 0.06) * 0.24;
+
         ctx.save();
         ctx.translate(t.x, t.y);
         if (t.rot) ctx.rotate(t.rot);
-        ctx.globalAlpha = alpha;
+        ctx.scale(popScale, popScale);
+        ctx.globalAlpha = Math.min(1, alpha * 1.45);
         ctx.textAlign = 'center';
         ctx.font = t.isComic
           ? `900 ${t.size}px "Noto Sans KR", sans-serif`
@@ -431,30 +553,199 @@ window.ZAP = window.ZAP || {};
       ctx.restore();
     },
 
+    // 3D-Flipping Veined Detached Wing & Sharp Charred Debris
     _drawFallingDebris(ctx, fd, pal) {
       const alpha = Math.max(0, fd.life / fd.maxLife);
       ctx.save();
       ctx.translate(fd.x, fd.y);
       ctx.rotate(fd.rot);
-      ctx.scale(fd.scale, fd.scale);
-      ctx.globalAlpha = alpha * 0.75;
+      ctx.globalAlpha = alpha * 0.82;
       if (fd.kind === 'wing') {
+        // 3D flutter foreshortening!
+        const flipY = 0.25 + Math.abs(Math.cos(fd.rot * 1.8)) * 0.75;
+        ctx.scale(fd.scale, fd.scale * flipY);
         ctx.fillStyle = pal.wingFill;
         ctx.strokeStyle = pal.ink;
-        ctx.lineWidth = 1.1;
+        ctx.lineWidth = 0.95;
         ctx.beginPath();
-        ctx.ellipse(0, 0, 6.5, 2.2, 0, 0, Math.PI * 2);
+        ctx.moveTo(-7, 0);
+        ctx.quadraticCurveTo(0, -3.2, 7.5, -0.5);
+        ctx.quadraticCurveTo(0, 2.2, -7, 0);
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
-      } else if (fd.kind === 'drop') {
-        ctx.fillStyle = pal.red;
+        ctx.strokeStyle = pal.inkSoft;
+        ctx.lineWidth = 0.6;
         ctx.beginPath();
-        ctx.arc(0, 0, 2.8, 0, Math.PI * 2);
+        ctx.moveTo(-6, 0); ctx.lineTo(6.5, -0.4);
+        ctx.stroke();
+      } else if (fd.kind === 'drop') {
+        ctx.scale(fd.scale, fd.scale);
+        ctx.fillStyle = pal.red;
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 0.9;
+        ctx.beginPath();
+        ctx.moveTo(0, -3.8);
+        ctx.quadraticCurveTo(2.8, 0, 0, 3.2);
+        ctx.quadraticCurveTo(-2.8, 0, 0, -3.8);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.scale(fd.scale, fd.scale);
+        ctx.fillStyle = pal.ink;
+        ctx.beginPath();
+        ctx.moveTo(-3, -1); ctx.lineTo(2, -2.5); ctx.lineTo(3, 1.5); ctx.lineTo(-1.5, 2.5);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+    },
+
+    // Sculpted S-Curve Rising Ink Smoke Ribbon!
+    _drawSmokeWisp(ctx, sw, pal) {
+      const alpha = Math.max(0, sw.life / sw.maxLife);
+      ctx.save();
+      ctx.globalAlpha = alpha * 0.45;
+      ctx.strokeStyle = pal.ink;
+      ctx.lineWidth = Math.max(0.8, 2.0 * alpha);
+      ctx.lineCap = 'round';
+      const w1 = Math.sin(sw.phase) * sw.amp;
+      const w2 = Math.cos(sw.phase * 1.15) * sw.amp;
+      ctx.beginPath();
+      ctx.moveTo(sw.x, sw.y);
+      ctx.bezierCurveTo(
+        sw.x + w1, sw.y - sw.len * 0.35,
+        sw.x - w2, sw.y - sw.len * 0.72,
+        sw.x + w1 * 0.4, sw.y - sw.len
+      );
+      ctx.stroke();
+      ctx.restore();
+    },
+
+    // Crisp 2-Frame Manga Asymmetric Impact Star-Flash!
+    _drawImpactFlash(ctx, fl, pal) {
+      const a = Math.max(0, fl.life / fl.maxLife);
+      const sc = 0.7 + (1 - a) * 0.55;
+      ctx.save();
+      ctx.translate(fl.x, fl.y);
+      ctx.rotate(fl.rot);
+      ctx.scale(sc, sc);
+      ctx.globalAlpha = a;
+
+      if (fl.kind === 'puff') {
+        ctx.strokeStyle = pal.cyan;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(0, 0, fl.size * 0.7, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (fl.kind === 'cross') {
+        // Blinding 4-point electric needle cross + crisp ink border!
+        const L = fl.size * 1.15;
+        const W = fl.size * 0.22;
+        ctx.fillStyle = fl.color;
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(0, -L); ctx.lineTo(W, -W); ctx.lineTo(L, 0); ctx.lineTo(W, W);
+        ctx.lineTo(0, L); ctx.lineTo(-W, W); ctx.lineTo(-L, 0); ctx.lineTo(-W, -W);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(0, 0, W * 0.9, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        ctx.fillStyle = pal.ink;
-        ctx.fillRect(-2, -2, 4, 4);
+        // Asymmetric spiky manga slap/kill impact star!
+        ctx.fillStyle = fl.color;
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        const spikes = 7;
+        for (let i = 0; i < spikes * 2; i++) {
+          const ang = (i / (spikes * 2)) * Math.PI * 2;
+          const r = i % 2 === 0 ? fl.size * (0.85 + (i % 4 === 0 ? 0.35 : 0)) : fl.size * 0.32;
+          if (i === 0) ctx.moveTo(Math.cos(ang) * r, Math.sin(ang) * r);
+          else ctx.lineTo(Math.cos(ang) * r, Math.sin(ang) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
       }
+      ctx.restore();
+    },
+
+    // AAA Fractal Branching Tapered Lightning Renderer!
+    _drawFractalBolt(ctx, b, pal) {
+      const alpha = Math.max(0, b.life / b.maxLife);
+      const pts = b.pts;
+      if (!pts || pts.length < 2) return;
+
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // 1. Subtle electric halo aura (gives electric energy without muddy neon blur!)
+      ctx.globalAlpha = alpha * 0.32;
+      ctx.strokeStyle = b.color;
+      ctx.lineWidth = b.width * 4.2;
+      this._tracePolyline(ctx, pts);
+      ctx.stroke();
+
+      // 2. Tapered main bolt segments (thick origin -> razor tip!)
+      ctx.globalAlpha = alpha;
+      const segCount = pts.length - 1;
+      for (let i = 0; i < segCount; i++) {
+        const taper = 1 - (i / segCount) * 0.58;
+        // Dark ink contour
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = Math.max(1.8, b.width * 2.15 * taper);
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[i + 1].x, pts[i + 1].y);
+        ctx.stroke();
+
+        // Vivid electric color layer
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = Math.max(1.1, b.width * 1.25 * taper);
+        ctx.stroke();
+
+        // White-hot inner core
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = Math.max(0.6, b.width * 0.45 * taper);
+        ctx.stroke();
+      }
+
+      // 3. Organic micro-branch forks!
+      if (b.forks && b.forks.length > 0) {
+        for (const fpts of b.forks) {
+          ctx.globalAlpha = alpha * 0.85;
+          ctx.strokeStyle = '#141414';
+          ctx.lineWidth = Math.max(1.4, b.width * 1.1);
+          this._tracePolyline(ctx, fpts);
+          ctx.stroke();
+          ctx.strokeStyle = b.color;
+          ctx.lineWidth = Math.max(0.8, b.width * 0.65);
+          ctx.stroke();
+        }
+      }
+
+      // 4. Crisp 4-point impact spark glint at contact endpoint!
+      if (b.endX !== undefined) {
+        ctx.translate(b.endX, b.endY);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = 1.2;
+        const s = (b.width * 2.4 + 3) * alpha;
+        ctx.beginPath();
+        ctx.moveTo(0, -s); ctx.lineTo(s * 0.25, -s * 0.25); ctx.lineTo(s, 0); ctx.lineTo(s * 0.25, s * 0.25);
+        ctx.lineTo(0, s); ctx.lineTo(-s * 0.25, s * 0.25); ctx.lineTo(-s, 0); ctx.lineTo(-s * 0.25, -s * 0.25);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
       ctx.restore();
     },
 
@@ -516,18 +807,30 @@ window.ZAP = window.ZAP || {};
       ctx.restore();
     },
 
+    // UV Lamp with Smooth Expanding UV Light Ripples (ZERO cheap dashed circles!)
     _drawUVLamp(ctx, lamp, time, pal) {
-      const pulse = 1 + Math.sin(time * 3.8 + lamp.phase) * 0.05;
+      const maxR = lamp.radius * 0.68;
       ctx.save();
-      ctx.strokeStyle = 'rgba(124, 58, 237, 0.32)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([6, 6]);
+      const grad = ctx.createRadialGradient(lamp.x, lamp.y, 4, lamp.x, lamp.y, maxR);
+      grad.addColorStop(0, 'rgba(124, 58, 237, 0.16)');
+      grad.addColorStop(0.6, 'rgba(124, 58, 237, 0.05)');
+      grad.addColorStop(1, 'rgba(124, 58, 237, 0)');
+      ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.arc(lamp.x, lamp.y, lamp.radius * pulse * 0.65, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.fillStyle = 'rgba(124, 58, 237, 0.08)';
+      ctx.arc(lamp.x, lamp.y, maxR, 0, Math.PI * 2);
       ctx.fill();
+
+      // Two gently breathing concentric solid UV light waves
+      for (let w = 0; w < 2; w++) {
+        const p = (time * 0.55 + lamp.phase * 0.3 + w * 0.5) % 1;
+        ctx.strokeStyle = 'rgba(124, 58, 237, 0.42)';
+        ctx.globalAlpha = (1 - p) * 0.7;
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        ctx.arc(lamp.x, lamp.y, 18 + p * (maxR - 18), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
 
       ctx.fillStyle = pal.surface;
       ctx.strokeStyle = pal.ink;
@@ -543,18 +846,31 @@ window.ZAP = window.ZAP || {};
       ctx.restore();
     },
 
+    // Mosquito Coil with Swirling Emerald Smoke Ribbons (ZERO cheap dashed circles!)
     _drawCoil(ctx, coil, pal) {
       ctx.save();
       ctx.translate(coil.x, coil.y);
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.36)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 5]);
+      const grad = ctx.createRadialGradient(0, 0, 8, 0, 0, coil.radius);
+      grad.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+      grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+      ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(0, 0, coil.radius, 0, Math.PI * 2);
       ctx.fill();
-      ctx.stroke();
-      ctx.setLineDash([]);
+
+      // 3 smooth curving emerald smoke ribbon arcs rotating around perimeter
+      ctx.save();
+      ctx.rotate(-coil.angle * 0.65);
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.48)';
+      ctx.lineWidth = 1.8;
+      ctx.lineCap = 'round';
+      for (let i = 0; i < 3; i++) {
+        ctx.rotate((Math.PI * 2) / 3);
+        ctx.beginPath();
+        ctx.arc(0, 0, coil.radius * 0.94, 0, 1.05);
+        ctx.stroke();
+      }
+      ctx.restore();
 
       ctx.rotate(coil.angle);
       ctx.strokeStyle = pal.ink;
@@ -605,6 +921,50 @@ window.ZAP = window.ZAP || {};
       ctx.restore();
     },
 
+    // Ultra-fast LOD Mosquito Glyph for 150~500 simultaneous "와르르" swarm floods (identical ink silhouette, 5x faster!)
+    _drawFastSwarmMosquito(ctx, m, pal) {
+      const hoverY = Math.sin(m.hoverPhase) * 3.0;
+      const facingLeft = m.vx < -4;
+      const sc = m.radius / 11.5;
+      const flap = Math.sin(m.wingPhase);
+      const col = m.hitFlash > 0 ? pal.red : pal.ink;
+
+      ctx.save();
+      ctx.translate(m.x, m.y + hoverY);
+      ctx.scale(facingLeft ? -sc : sc, sc);
+
+      ctx.strokeStyle = col;
+      ctx.fillStyle = col;
+      ctx.lineCap = 'round';
+
+      // Hair-thin 3-leg airborne silhouette + needle proboscis + narrow abdomen
+      ctx.lineWidth = 0.9;
+      ctx.beginPath();
+      // Front, mid, curled hind legs
+      ctx.moveTo(3, 0); ctx.lineTo(9, -2); ctx.lineTo(12, 9);
+      ctx.moveTo(1, 0); ctx.lineTo(-2, 14);
+      ctx.moveTo(-1, 0); ctx.lineTo(-8, -3); ctx.lineTo(-18, 8); ctx.lineTo(-23, 6);
+      // Long proboscis & slender abdomen
+      ctx.moveTo(6, 0); ctx.lineTo(16, 4);
+      ctx.moveTo(-1, -1); ctx.lineTo(-15, 4.5);
+      ctx.stroke();
+
+      // Tiny humpback thorax dot
+      ctx.beginPath();
+      ctx.arc(1.5, -1.6, 2.7, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Narrow fluttering wing stroke
+      ctx.strokeStyle = m.electricShock > 0 ? pal.volt : pal.inkSoft;
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      ctx.moveTo(1, -3.5);
+      ctx.lineTo(-14, -6 - flap * 4.5);
+      ctx.stroke();
+
+      ctx.restore();
+    },
+
     // ================= ICONIC SLENDER, LONG-LEGGED AIRBORNE MOSQUITO =================
     _drawFlyingMosquito(ctx, m, time, pal) {
       const hoverY = Math.sin(m.hoverPhase) * 3.8;
@@ -639,7 +999,9 @@ window.ZAP = window.ZAP || {};
       ctx.restore();
 
       ctx.save();
-      ctx.translate(drawX, drawY);
+      const jitterX = m.electricShock > 0 ? (Math.random() - 0.5) * 4.5 : 0;
+      const jitterY = m.electricShock > 0 ? (Math.random() - 0.5) * 4.5 : 0;
+      ctx.translate(drawX + jitterX, drawY + jitterY);
       const sc = (m.radius / 12.2) * (m.depthScale || 1);
       ctx.scale(facingLeft ? -sc : sc, sc);
       ctx.rotate(facingLeft ? -tilt : tilt);
@@ -668,17 +1030,24 @@ window.ZAP = window.ZAP || {};
         ctx.restore();
       }
 
-      // Volatile BOMB Mosquito pulsing danger halo
+      // Volatile BOMB Mosquito: Crisp Radial Static-Heat Warning Sparks (NO dashed circle!)
       if (m.type === 'bomb') {
-        const bp = 1 + Math.sin(time * 14 + m.hoverPhase) * 0.14;
+        const bp = 1 + Math.sin(time * 14 + m.hoverPhase) * 0.16;
         ctx.save();
+        ctx.translate(-6, 2);
+        ctx.rotate(time * 2.2);
         ctx.strokeStyle = pal.red;
-        ctx.lineWidth = 1.4;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.arc(-6, 2, 13.5 * bp, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.lineWidth = 1.35;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2;
+          const r1 = 10.5 * bp;
+          const r2 = 14.5 * bp;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(a) * r1, Math.sin(a) * r1);
+          ctx.lineTo(Math.cos(a) * r2, Math.sin(a) * r2);
+          ctx.stroke();
+        }
         ctx.restore();
       }
 
@@ -905,6 +1274,23 @@ window.ZAP = window.ZAP || {};
 
       ctx.restore();
 
+      // Dizzy spiral above sprayed mosquitoes!
+      if (m.dizzyTimer > 0) {
+        ctx.save();
+        ctx.translate(drawX, drawY - m.radius - 10);
+        ctx.rotate(time * 9);
+        ctx.strokeStyle = pal.cyan;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        for (let t = 0; t < Math.PI * 3.5; t += 0.35) {
+          const r = t * 0.75;
+          if (t === 0) ctx.moveTo(Math.cos(t) * r, Math.sin(t) * r);
+          else ctx.lineTo(Math.cos(t) * r, Math.sin(t) * r);
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
       // Crisp HP bar only when damaged on special types
       if (m.hp < m.maxHp && (m.type === 'fat' || m.type === 'golden' || m.type === 'bomb')) {
         const bw = m.radius * 2.1;
@@ -933,35 +1319,76 @@ window.ZAP = window.ZAP || {};
       ctx.fill();
       ctx.restore();
 
-      // Boss Telegraphed Crimson Dash Aim-Line!
+      // Boss Telegraphed Crimson Hazard Lane + Animated Sliding Chevrons + Diamond Target Lock!
       if (m.dashTelegraph > 0) {
+        const dx = m.dashTargetX - drawX;
+        const dy = m.dashTargetY - drawY;
+        const dist = Math.hypot(dx, dy) || 1;
+        const ang = Math.atan2(dy, dx);
         ctx.save();
+        ctx.translate(drawX, drawY);
+        ctx.rotate(ang);
+        // Tapered translucent crimson corridor
+        ctx.fillStyle = 'rgba(229, 56, 59, 0.11)';
+        ctx.beginPath();
+        ctx.moveTo(0, -14); ctx.lineTo(dist, -5);
+        ctx.lineTo(dist, 5); ctx.lineTo(0, 14);
+        ctx.closePath();
+        ctx.fill();
+        // Thin solid guiding rails
+        ctx.strokeStyle = 'rgba(229, 56, 59, 0.55)';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(0, -14); ctx.lineTo(dist, -5);
+        ctx.moveTo(0, 14); ctx.lineTo(dist, 5);
+        ctx.stroke();
+        // Animated sliding chevrons (`▸ ▸ ▸`)
         ctx.strokeStyle = pal.red;
         ctx.lineWidth = 2.2;
-        ctx.setLineDash([7, 6]);
-        ctx.beginPath();
-        ctx.moveTo(drawX, drawY);
-        ctx.lineTo(m.dashTargetX, m.dashTargetY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        // Target lock ring at destination
-        ctx.beginPath();
-        ctx.arc(m.dashTargetX, m.dashTargetY, 14 + m.dashTelegraph * 16, 0, Math.PI * 2);
-        ctx.stroke();
+        const slide = (time * 180) % 36;
+        for (let cx = slide; cx < dist - 14; cx += 36) {
+          ctx.beginPath();
+          ctx.moveTo(cx - 6, -7); ctx.lineTo(cx + 4, 0); ctx.lineTo(cx - 6, 7);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Rotating crimson diamond target lock at destination
+        ctx.save();
+        ctx.translate(m.dashTargetX, m.dashTargetY);
+        ctx.rotate(time * 3);
+        const s = 12 + m.dashTelegraph * 14;
+        ctx.strokeStyle = pal.red;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(-s / 2, -s / 2, s, s);
         ctx.restore();
       }
 
       ctx.save();
       ctx.translate(drawX, drawY);
 
-      const pulse = 1 + Math.sin(time * 7) * 0.07;
+      // Boss Architectural Corner-Lock Reticle (ZERO cheap dashed circle!)
+      const pulse = 1 + Math.sin(time * 6) * 0.05;
+      const br = m.radius * 1.46 * pulse;
+      ctx.save();
+      ctx.rotate(time * 0.45);
       ctx.strokeStyle = pal.red;
-      ctx.lineWidth = 2;
-      ctx.setLineDash([8, 6]);
-      ctx.beginPath();
-      ctx.arc(0, 0, m.radius * 1.48 * pulse, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'square';
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+        ctx.beginPath();
+        ctx.arc(0, 0, br, a - 0.24, a + 0.24);
+        ctx.stroke();
+        // Inward precision lock tick
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * (br - 7), Math.sin(a) * (br - 7));
+        ctx.lineTo(Math.cos(a) * (br + 3), Math.sin(a) * (br + 3));
+        ctx.stroke();
+        ctx.lineWidth = 2.4;
+      }
+      ctx.restore();
 
       if (facingLeft) ctx.scale(-1, 1);
       ctx.rotate(Math.max(-0.2, Math.min(0.2, m.vy * 0.0016)));
@@ -1174,21 +1601,10 @@ window.ZAP = window.ZAP || {};
       ctx.save();
       ctx.translate(x, y);
 
-      // Clean Minimalist Range Ring
-      ctx.save();
-      ctx.strokeStyle = fever ? pal.red : weapon.tier >= 3 ? pal.ink : pal.inkSoft;
-      ctx.lineWidth = fever ? 2.4 : 1.4;
-      ctx.setLineDash(weapon.tier >= 3 ? [7, 5] : [4, 6]);
-      ctx.lineDashOffset = -eng.time * (weapon.tier >= 3 ? 34 : 14);
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      if (fever) {
-        ctx.fillStyle = 'rgba(255, 202, 0, 0.1)';
-        ctx.fill();
+      // Custom Sculpted Weapon-Class Range Field (ZERO cheap dashed debug circles!)
+      if (radius > 4) {
+        this._drawWeaponRangeField(ctx, radius, weapon, eng, pal);
       }
-      ctx.restore();
 
       if (weapon.tier === 0) {
         ctx.rotate(tilt);
@@ -1212,6 +1628,21 @@ window.ZAP = window.ZAP || {};
           this._drawAnatomicalHand(ctx, pal.handFill, pal.ink, 1);
         }
       } else if (weapon.tier === 1) {
+        // Fast-swipe comic motion swoosh arc behind plastic swatter!
+        if (eng.mouse.speed > 18) {
+          ctx.save();
+          const swAng = Math.atan2(eng.mouse.vy, eng.mouse.vx) + Math.PI;
+          ctx.strokeStyle = pal.inkSoft;
+          ctx.lineWidth = 2.4;
+          ctx.beginPath();
+          ctx.arc(0, 0, 42, swAng - 0.6, swAng + 0.6);
+          ctx.stroke();
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          ctx.arc(0, 0, 50, swAng - 0.4, swAng + 0.4);
+          ctx.stroke();
+          ctx.restore();
+        }
         const squash = 1 - slap * 0.24;
         ctx.rotate(tilt - 0.12 + slap * 0.28);
         ctx.scale(1 + slap * 0.15, squash);
@@ -1460,15 +1891,23 @@ window.ZAP = window.ZAP || {};
         ctx.arc(0, 0, 9.5 + Math.sin(eng.time * 16) * 1.4, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
-      } else {
-        ctx.fillStyle = pal.dark ? 'rgba(255, 225, 53, 0.12)' : 'rgba(255, 202, 0, 0.18)';
-        ctx.fillRect(-14, -y, 28, y);
-        ctx.strokeStyle = pal.inkSoft;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(-14, -y); ctx.lineTo(-14, 0);
-        ctx.moveTo(14, -y); ctx.lineTo(14, 0);
-        ctx.stroke();
+      } else if (weapon.tier === 6) {
+        // ---- TIER 7: 궤도 이온 포격기 (Sculpted Soft Radiant Sky-Beam Column!) ----
+        if (radius > 4) {
+          const colW = 24;
+          const colGrad = ctx.createLinearGradient(-colW, 0, colW, 0);
+          colGrad.addColorStop(0, 'rgba(255, 202, 0, 0)');
+          colGrad.addColorStop(0.5, pal.dark ? 'rgba(255, 225, 53, 0.14)' : 'rgba(255, 202, 0, 0.2)');
+          colGrad.addColorStop(1, 'rgba(255, 202, 0, 0)');
+          ctx.fillStyle = colGrad;
+          ctx.fillRect(-colW, -y, colW * 2, y);
+          // Delicate central laser sighting hairline
+          ctx.strokeStyle = pal.dark ? 'rgba(255, 255, 255, 0.28)' : 'rgba(20, 20, 20, 0.16)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(0, -y); ctx.lineTo(0, -14);
+          ctx.stroke();
+        }
 
         ctx.save();
         ctx.rotate(eng.time * 1.3);
@@ -1499,14 +1938,449 @@ window.ZAP = window.ZAP || {};
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = pal.inkSoft;
-        ctx.font = '800 9px "JetBrains Mono", sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(`X:${Math.round(x)} Y:${Math.round(y)}`, 42, -26);
-        ctx.fillStyle = pal.red;
-        ctx.fillText('ION LOCK', 42, -15);
+        if (radius > 4) {
+          ctx.fillStyle = pal.inkSoft;
+          ctx.font = '800 9px "JetBrains Mono", sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(`X:${Math.round(x)} Y:${Math.round(y)}`, 42, -26);
+          ctx.fillStyle = pal.red;
+          ctx.fillText('ION LOCK', 42, -15);
+        }
+      } else if (weapon.tier === 7) {
+        // ---- TIER 8: 성층권 전자기 링 (Counter-Rotating Dual EMP Ring + 4 Tesla Electrodes!) ----
+        ctx.save();
+        ctx.rotate(eng.time * 1.8);
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 3.4;
+        ctx.beginPath();
+        ctx.arc(0, 0, 36, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = pal.cyan;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([12, 8]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 4 Electrode pods arcing around the ring
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          const ex = Math.cos(a) * 36;
+          const ey = Math.sin(a) * 36;
+          ctx.fillStyle = pal.volt;
+          ctx.strokeStyle = pal.ink;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(ex, ey, 6.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Inner counter-rotating octagon
+        ctx.save();
+        ctx.rotate(-eng.time * 2.5);
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let i = 0; i < 8; i++) {
+          const a = (i / 8) * Math.PI * 2;
+          if (i === 0) ctx.moveTo(Math.cos(a) * 20, Math.sin(a) * 20);
+          else ctx.lineTo(Math.cos(a) * 20, Math.sin(a) * 20);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = pal.cyan;
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.arc(0, 0, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else if (weapon.tier === 8) {
+        // ---- TIER 9: 반물질 살충 블랙홀 (Pitch-Black Singularity + Tilted Accretion Disk + Gravity Spiral!) ----
+        // Swirling gravitational pull arcs
+        ctx.save();
+        ctx.rotate(-eng.time * 3.2);
+        ctx.strokeStyle = pal.inkSoft;
+        ctx.lineWidth = 1.6;
+        for (let i = 0; i < 4; i++) {
+          ctx.rotate(Math.PI / 2);
+          ctx.beginPath();
+          ctx.arc(10, 0, 28, 0.2, 1.55);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Tilted bright violet-white accretion ring
+        ctx.save();
+        ctx.rotate(-0.32 + Math.sin(eng.time * 2) * 0.08);
+        ctx.strokeStyle = pal.ink;
+        ctx.lineWidth = 5.5;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 38, 12, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.strokeStyle = '#a78bfa';
+        ctx.lineWidth = 2.6;
+        ctx.stroke();
+        ctx.restore();
+
+        // Pitch-black singularity event horizon
+        ctx.fillStyle = '#09090b';
+        ctx.strokeStyle = pal.volt;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.arc(0, 0, 17, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        // ---- TIER 10: 태양열 멸종 코어 (12-Ray Geometric Solar Mandala!) ----
+        ctx.save();
+        ctx.rotate(eng.time * 1.4);
+        ctx.fillStyle = pal.volt;
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        const rays = 12;
+        for (let i = 0; i < rays * 2; i++) {
+          const a = (i / (rays * 2)) * Math.PI * 2;
+          const r = i % 2 === 0 ? 40 : 22;
+          if (i === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+          else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+
+        // Counter-rotating crimson inner corona ring
+        ctx.save();
+        ctx.rotate(-eng.time * 2.6);
+        ctx.strokeStyle = pal.red;
+        ctx.lineWidth = 2.6;
+        ctx.setLineDash([7, 5]);
+        ctx.beginPath();
+        ctx.arc(0, 0, 26, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        // Blazing white-ink sun core
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = '#141414';
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.arc(0, 0, 13 + Math.sin(eng.time * 16) * 1.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
       }
 
+      ctx.restore();
+    },
+
+    // ================= AAA SCULPTED WEAPON-CLASS RANGE FIELD (ZERO CHEAP DASHED CIRCLES!) =================
+    _drawWeaponRangeField(ctx, radius, weapon, eng, pal) {
+      const fever = eng.feverActive;
+      const t = eng.time;
+      ctx.save();
+
+      // 1. Subtle radial presence tint (super clean paper wash — heavier golden aura in Overdrive!)
+      const grad = ctx.createRadialGradient(0, 0, radius * 0.25, 0, 0, radius);
+      if (fever) {
+        grad.addColorStop(0, 'rgba(255, 202, 0, 0.02)');
+        grad.addColorStop(0.75, 'rgba(255, 202, 0, 0.09)');
+        grad.addColorStop(1, 'rgba(229, 56, 59, 0.16)');
+      } else if (weapon.tier === 2) {
+        grad.addColorStop(0, 'rgba(0, 150, 199, 0.01)');
+        grad.addColorStop(0.78, 'rgba(0, 150, 199, 0.07)');
+        grad.addColorStop(1, 'rgba(0, 150, 199, 0.02)');
+      } else if (weapon.tier >= 8) {
+        grad.addColorStop(0, 'rgba(124, 58, 237, 0.06)');
+        grad.addColorStop(0.8, 'rgba(20, 20, 20, 0.05)');
+        grad.addColorStop(1, 'rgba(20, 20, 20, 0)');
+      } else {
+        grad.addColorStop(0, 'rgba(20, 20, 20, 0)');
+        grad.addColorStop(0.84, pal.dark ? 'rgba(243, 242, 236, 0.03)' : 'rgba(20, 20, 20, 0.025)');
+        grad.addColorStop(1, pal.dark ? 'rgba(243, 242, 236, 0.07)' : 'rgba(20, 20, 20, 0.06)');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Tier-Specific Graphic Boundary Design!
+      if (weapon.tier <= 1) {
+        // Tier 1-2 (맨손 / 파리채): Hairline soft ring + 4 crisp minimalist rotating corner brackets
+        ctx.strokeStyle = pal.inkFaint;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.rotate(t * 0.55);
+        ctx.strokeStyle = fever ? pal.red : pal.inkSoft;
+        ctx.lineWidth = 2.0;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, a - 0.18, a + 0.18);
+          ctx.stroke();
+        }
+      } else if (weapon.tier === 2) {
+        // Tier 3 (살충 스프레이): Organic breathing mist vapor arcs!
+        ctx.rotate(t * 0.4);
+        ctx.strokeStyle = 'rgba(0, 150, 199, 0.36)';
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 6; i++) {
+          const a = (i / 6) * Math.PI * 2;
+          const wobble = Math.sin(t * 3 + i * 1.3) * 3.5;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius + wobble, a, a + 0.52);
+          ctx.stroke();
+        }
+      } else if (weapon.tier <= 5) {
+        // Tier 4-6 (전기모기채 / 테슬라채 / 플라즈마 돔): Sleek double electromagnetic ring + dancing perimeter sparks!
+        ctx.strokeStyle = fever ? 'rgba(229, 56, 59, 0.45)' : pal.inkSoft;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // 4 Rotating solid high-voltage accent segments
+        ctx.save();
+        ctx.rotate(t * 1.1);
+        ctx.strokeStyle = fever ? pal.red : pal.ink;
+        ctx.lineWidth = 2.4;
+        ctx.lineCap = 'round';
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius, a - 0.25, a + 0.25);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Live crackling micro-arcs hugging the circumference!
+        ctx.strokeStyle = pal.volt;
+        ctx.lineWidth = 1.8;
+        for (let k = 0; k < 2; k++) {
+          const baseA = t * 3.2 + k * Math.PI + Math.sin(t * 17 + k) * 0.4;
+          ctx.beginPath();
+          for (let s = 0; s <= 4; s++) {
+            const a = baseA + s * 0.09;
+            const rJit = radius + (s === 0 || s === 4 ? 0 : (Math.random() - 0.5) * 9);
+            const px = Math.cos(a) * rJit;
+            const py = Math.sin(a) * rJit;
+            if (s === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+      } else {
+        // Tier 7-10 (궤도 이온포 / 전자기 링 / 블랙홀 / 태양 코어): Precision Architectural Drafting Compass!
+        ctx.strokeStyle = fever ? 'rgba(229, 56, 59, 0.35)' : pal.inkSoft;
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Precision degree ticks every 30°
+        ctx.save();
+        ctx.rotate(t * 0.25);
+        ctx.strokeStyle = fever ? pal.red : pal.inkSoft;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (let i = 0; i < 12; i++) {
+          const a = (i / 12) * Math.PI * 2;
+          const tickLen = i % 3 === 0 ? 9 : 4.5;
+          ctx.moveTo(Math.cos(a) * (radius - tickLen), Math.sin(a) * (radius - tickLen));
+          ctx.lineTo(Math.cos(a) * radius, Math.sin(a) * radius);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        // Counter-rotating bold technical caliper arcs (clean solid beveled geometry!)
+        ctx.save();
+        ctx.rotate(-t * 0.85);
+        ctx.strokeStyle = fever ? pal.red : pal.ink;
+        ctx.lineWidth = 2.6;
+        ctx.lineCap = 'butt';
+        for (let i = 0; i < 4; i++) {
+          const a = (i / 4) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(0, 0, radius + 3, a - 0.22, a + 0.22);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 3. Overdrive Signature Serrated Energy Ticks (Replaces cheap red dashed circle!)
+      if (fever) {
+        ctx.save();
+        ctx.rotate(-t * 2.2);
+        ctx.strokeStyle = pal.red;
+        ctx.lineWidth = 2.0;
+        const spikes = 24;
+        ctx.beginPath();
+        for (let i = 0; i < spikes; i++) {
+          const a = (i / spikes) * Math.PI * 2;
+          const out = i % 2 === 0 ? 8 : 4;
+          ctx.moveTo(Math.cos(a) * (radius + 2), Math.sin(a) * (radius + 2));
+          ctx.lineTo(Math.cos(a) * (radius + 2 + out), Math.sin(a) * (radius + 2 + out));
+        }
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.restore();
+    },
+
+    // Interactive Event: Open Window Crack pouring a river of mosquitoes!
+    _drawWindowBreach(ctx, breach, time, pal) {
+      ctx.save();
+      ctx.translate(breach.x, breach.y);
+      const pulse = 1 + Math.sin(time * 10) * 0.12;
+      ctx.strokeStyle = pal.red;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, -48);
+      ctx.lineTo(breach.dirX * 8, -20);
+      ctx.lineTo(-breach.dirX * 4, 0);
+      ctx.lineTo(breach.dirX * 10, 22);
+      ctx.lineTo(0, 48);
+      ctx.stroke();
+
+      // Animated directional inflow chevrons (`» »`)
+      for (let i = 0; i < 3; i++) {
+        const off = ((time * 48 + i * 20) % 60) * breach.dirX;
+        const alpha = 1 - Math.abs(off) / 60;
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(off - 6 * breach.dirX, -10 * pulse);
+        ctx.lineTo(off + 4 * breach.dirX, 0);
+        ctx.lineTo(off - 6 * breach.dirX, 10 * pulse);
+        ctx.stroke();
+      }
+      ctx.restore();
+    },
+
+    // Interactive Event: Spinning 220V Overcharge Capacitor Orb!
+    _drawCapacitor(ctx, cap, time, pal) {
+      ctx.save();
+      ctx.translate(cap.x, cap.y);
+      const pulse = 1 + Math.sin(time * 12 + cap.phase) * 0.1;
+
+      // Outer dashed spark ring
+      ctx.save();
+      ctx.rotate(time * 3);
+      ctx.strokeStyle = pal.ink;
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(0, 0, (cap.r + 7) * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Yellow-ink high-voltage sphere
+      ctx.fillStyle = pal.volt;
+      ctx.strokeStyle = '#141414';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, cap.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Bold lightning bolt inside + "220V" tag below
+      ctx.fillStyle = '#141414';
+      ctx.beginPath();
+      ctx.moveTo(2, -10); ctx.lineTo(-7, 2); ctx.lineTo(-1, 2);
+      ctx.lineTo(-3, 10); ctx.lineTo(7, -2); ctx.lineTo(1, -2);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = '900 9px "JetBrains Mono", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = pal.ink;
+      ctx.fillText('220V', 0, cap.r + 16);
+      ctx.restore();
+    },
+
+    // Public Helper: Draw live crisp miniature mosquito portrait inside Codex cards!
+    drawCodexPortrait(canvas, speciesId) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = 92, h = 62;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const pal = this._palette();
+
+      ctx.clearRect(0, 0, w, h);
+      const mock = {
+        type: speciesId,
+        x: w * 0.52,
+        y: h * 0.48,
+        vx: 90,
+        vy: -8,
+        radius: speciesId === 'boss' ? 17 : speciesId === 'swarm' ? 9.5 : speciesId === 'fat' ? 14 : 12.5,
+        hp: 100,
+        maxHp: 100,
+        wingPhase: 0.4,
+        hoverPhase: 0.5,
+        depthScale: speciesId === 'boss' ? 0.55 : 1.15,
+        hitFlash: 0,
+        electricShock: 0,
+        dizzyTimer: 0,
+        trail: [],
+      };
+
+      if (speciesId === 'boss') {
+        ctx.save();
+        ctx.translate(w * 0.52, h * 0.5);
+        ctx.scale(0.56, 0.56);
+        mock.x = 0; mock.y = 0;
+        this._drawBoss(ctx, mock, 1.0, pal);
+        ctx.restore();
+      } else if (speciesId === 'swarm') {
+        for (const [ox, oy] of [[-14, -6], [6, 8], [16, -9]]) {
+          this._drawFlyingMosquito(ctx, { ...mock, x: w * 0.5 + ox, y: h * 0.46 + oy, radius: 7.5 }, 1.0, pal);
+        }
+      } else {
+        this._drawFlyingMosquito(ctx, mock, 1.0, pal);
+      }
+    },
+
+    // Public Helper: Draw live crisp miniature weapon illustration inside the 7-Tier Roadmap!
+    drawWeaponThumb(canvas, tierIdx) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = 66, h = 54;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const pal = this._palette();
+      const weapon = window.ZAP.CONFIG.WEAPON_TIERS[tierIdx];
+      if (!weapon) return;
+
+      ctx.clearRect(0, 0, w, h);
+      const fakeEng = {
+        time: 0.6,
+        feverActive: false,
+        mouse: { vx: 0, vy: 0, speed: 0, slapAnim: 0 },
+      };
+      ctx.save();
+      ctx.translate(w / 2, tierIdx === 1 || tierIdx === 3 || tierIdx === 4 ? h * 0.44 : h * 0.52);
+      const scaleMap = [0.68, 0.52, 0.62, 0.48, 0.5, 0.54, 0.48, 0.46, 0.48, 0.45];
+      const sc = scaleMap[tierIdx] || 0.5;
+      ctx.scale(sc, sc);
+      this._drawWeaponCursor(ctx, 0, 0, 0, weapon, fakeEng, pal);
       ctx.restore();
     },
   };

@@ -14,6 +14,8 @@ window.ZAP = window.ZAP || {};
     noiseBuffer: null,
     volume: 0.65,
     muted: false,
+    bgmEnabled: true,
+    bgmStep: 0,
     lastZapAt: 0,
     lastOrbAt: 0,
     lastArcAt: 0,
@@ -57,6 +59,79 @@ window.ZAP = window.ZAP || {};
       if (this.master) {
         this.master.gain.setTargetAtTime(this.muted ? 0 : this.volume, this.ctx.currentTime, 0.02);
       }
+    },
+
+    setBgmEnabled(enabled) {
+      this.bgmEnabled = !!enabled;
+    },
+
+    // Minimalist hypnotic pentatonic ambient step (Round & Round Inc. / Mini Metro calm-to-hype vibe!)
+    playBgmStep(intensity = 0) {
+      if (!this.ctx || this.muted || !this.bgmEnabled) return;
+      const now = this.ctx.currentTime;
+      const step = this.bgmStep++ % 16;
+
+      // Soft warm pentatonic bass root on beats 0 and 8
+      if (step === 0 || step === 8) {
+        const bassNotes = [130.81, 146.83, 164.81, 110.0]; // C3, D3, E3, A2
+        const phrase = Math.floor(this.bgmStep / 32) % bassNotes.length;
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(bassNotes[phrase], now);
+        g.gain.setValueAtTime(0.055 + intensity * 0.02, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        osc.connect(g);
+        g.connect(this.master);
+        osc.start(now);
+        osc.stop(now + 0.58);
+      }
+
+      // Delicate glassy marimba pluck pattern (sparse when calm, livelier in Rush/Overdrive!)
+      const pattern = intensity >= 1
+        ? [0, -1, 2, 4, 3, -1, 5, 2, 0, 4, 2, -1, 6, 4, 3, 2]
+        : [0, -1, -1, 2, -1, -1, 4, -1, 3, -1, -1, 2, -1, 5, -1, -1];
+      const noteIdx = pattern[step];
+      if (noteIdx >= 0) {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'triangle';
+        const freq = PENTATONIC[noteIdx] * (intensity >= 2 ? 1 : 0.5);
+        osc.frequency.setValueAtTime(freq, now);
+        g.gain.setValueAtTime(0.036 + intensity * 0.012, now);
+        g.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+        osc.connect(g);
+        g.connect(this.master);
+        osc.start(now);
+        osc.stop(now + 0.26);
+      }
+    },
+
+    // Sparkling Golden V-Formation Parade fanfare!
+    playGoldenParade() {
+      if (!this.ctx || this.muted) return;
+      const now = this.ctx.currentTime;
+      const notes = [783.99, 1046.5, 1318.51, 1567.98];
+      notes.forEach((f, i) => {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        const t = now + i * 0.065;
+        osc.frequency.setValueAtTime(f, t);
+        g.gain.setValueAtTime(0.13, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+        osc.connect(g);
+        g.connect(this.master);
+        osc.start(t);
+        osc.stop(t + 0.3);
+      });
+    },
+
+    // Massive 220V Capacitor Screen-Clear Discharge!
+    playCapacitorBlast() {
+      if (!this.ctx || this.muted) return;
+      this.playBombBlast();
+      this.playFeverStart();
     },
 
     // Weapon-adaptive hit/kill sound

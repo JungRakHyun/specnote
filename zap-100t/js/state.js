@@ -53,6 +53,7 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
       settings: {
         volume: 0.65,
         muted: false,
+        bgm: true,
         shake: true,
         showNumbers: true,
         theme: 'light',
@@ -115,6 +116,28 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
       localStorage.removeItem(SAVE_KEY);
       this.data = createDefaultState();
       this.save();
+    },
+
+    exportSave() {
+      this.save();
+      try {
+        return btoa(unescape(encodeURIComponent(JSON.stringify(this.data))));
+      } catch (e) {
+        return '';
+      }
+    },
+
+    importSave(code) {
+      try {
+        const json = decodeURIComponent(escape(atob(code.trim())));
+        const parsed = JSON.parse(json);
+        if (!parsed || typeof parsed !== 'object' || typeof parsed.totalKills !== 'number') return false;
+        localStorage.setItem(SAVE_KEY, JSON.stringify(parsed));
+        this.load();
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
 
     getSkillLevel(id) {
@@ -190,18 +213,48 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
       return window.ZAP.CONFIG.WEAPON_TIERS[lv + 1] || null;
     },
 
-    isNodeUnlocked(id) {
-      const node = this.nodeMap[id];
-      if (!node) return false;
-      if (!node.requires || node.requires.length === 0) return true;
-      return node.requires.some((reqId) => this.getSkillLevel(reqId) > 0);
+    // Stair-step feature unlock checks!
+    isOverdriveUnlocked() {
+      return this.data.unlockedStage >= 1 || this.getSkillLevel('weaponTier') >= 3;
+    },
+    isClusterUnlocked() {
+      return this.data.stageIndex >= 1 || this.data.unlockedStage >= 1;
+    },
+    isBombAndFloodUnlocked() {
+      return this.data.stageIndex >= 2 || this.data.unlockedStage >= 2;
+    },
+    isSwarmRushUnlocked() {
+      return this.data.stageIndex >= 3 || this.data.unlockedStage >= 3;
     },
 
-    getNodeCost(id) {
+    getNodeLockReason(id) {
       const node = this.nodeMap[id];
-      if (!node) return { volts: Infinity, cores: 0 };
-      const lv = this.getSkillLevel(id);
-      if (lv >= node.maxLevel) return { volts: Infinity, cores: 0 };
+      if (!node) return '';
+      if (node.minWeaponTier !== undefined && this.getSkillLevel('weaponTier') < node.minWeaponTier) {
+        const reqW = window.ZAP.CONFIG.WEAPON_TIERS[node.minWeaponTier];
+        return `${reqW.tag} ${reqW.name} 진화 필요`;
+      }
+      if (node.minStage !== undefined && this.data.unlockedStage < node.minStage) {
+        const reqS = window.ZAP.CONFIG.STAGES[node.minStage];
+        return `STAGE ${node.minStage + 1} (${reqS.name}) 해금 필요`;
+      }
+      if (node.requires && node.requires.length > 0) {
+        const ok = node.requires.some((reqId) => this.getSkillLevel(reqId) > 0);
+        if (!ok) {
+          const names = node.requires.map((r) => this.nodeMap[r]?.name || r).join(' 또는 ');
+          return `선행 강화: ${names}`;
+        }
+      }
+      return '';
+    },
+
+    isNodeUnlocked(id) {
+      return this.getNodeLockReason(id) === '';
+    },
+
+    getNodeCostAt(id, lv) {
+      const node = this.nodeMap[id];
+      if (!node || lv >= node.maxLevel) return { volts: Infinity, cores: 0 };
 
       let volts;
       if (Array.isArray(node.customCosts) && node.customCosts[lv] !== undefined) {
@@ -211,6 +264,10 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
       }
       const cores = node.coreCost ? (lv === 0 ? node.coreCost : Math.ceil(node.coreCost * (lv + 1) * 0.7)) : 0;
       return { volts, cores };
+    },
+
+    getNodeCost(id) {
+      return this.getNodeCostAt(id, this.getSkillLevel(id));
     },
 
     canAffordNode(id) {
@@ -270,64 +327,72 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
       const mb = this.getMilestoneBonuses();
 
       const baseDamage = 13 * weapon.dmgMult * Math.pow(1.42, s('voltage')) * prestigeMult * mb.dmg;
-      const zapRadius = 44 + weapon.radiusBonus + s('radius') * 14;
-      const ticksPerSec = 4.4 + weapon.tickBonus + s('tickRate') * 2.2;
-      const critChance = Math.min(0.9, 0.1 + s('crit') * 0.07 + mb.crit + (weapon.tier >= 4 ? 0.08 : 0));
-      const critMult = 2.4 + s('crit') * 0.38;
-      const feverDuration = 7.5 + s('feverMastery') * 1.6;
-      const feverChargeMult = 1 + s('feverMastery') * 0.28;
+      const zapRadius = 42 + weapon.radiusBonus + s('radius') * 13;
+      const ticksPerSec = 4.2 + weapon.tickBonus + s('tickRate') * 2.0;
+      const critChance = Math.min(0.9, 0.08 + s('crit') * 0.07 + mb.crit + (weapon.tier >= 4 ? 0.08 : 0) + (weapon.tier >= 7 ? 0.1 : 0));
+      const critMult = 2.2 + s('crit') * 0.4;
+      const feverDuration = 7.0 + s('feverMastery') * 1.6;
+      const feverChargeMult = 1 + s('feverMastery') * 0.26;
 
       const vortexLevel = s('swingVortex');
-      const vortexRadius = vortexLevel > 0 ? 160 + vortexLevel * 42 : 0;
-      const vortexStrength = vortexLevel > 0 ? 110 * (1 + vortexLevel * 0.45) : 0;
+      const vortexRadius = vortexLevel > 0 ? 165 + vortexLevel * 42 : 0;
+      const vortexStrength = vortexLevel > 0 ? 115 * (1 + vortexLevel * 0.45) : 0;
 
-      const builtInChains = weapon.tier >= 6 ? 4 : weapon.tier >= 5 ? 3 : weapon.tier >= 4 ? 2 : weapon.tier >= 3 ? 1 : 0;
+      // Built-in weapon tier chains start cleanly at T4 (220V Electric Mosquito Racket)!
+      const builtInChains = weapon.tier >= 9 ? 9 : weapon.tier >= 8 ? 7 : weapon.tier >= 7 ? 6 : weapon.tier >= 6 ? 4 : weapon.tier >= 5 ? 3 : weapon.tier >= 4 ? 2 : weapon.tier >= 3 ? 1 : 0;
       const chainJumps = s('chainCount') + builtInChains;
-      const chainRange = 120 + s('chainCount') * 18 + (weapon.tier >= 4 ? 25 : 0);
-      const chainDmgRatio = 0.68 + s('chainSplit') * 0.16;
-      const chainBranches = 1 + Math.floor(s('chainSplit') * 0.65);
+      const chainRange = 125 + s('chainCount') * 18 + (weapon.tier >= 4 ? 30 : 0) + (weapon.tier >= 7 ? 45 : 0);
+      const chainDmgRatio = 0.66 + s('chainSplit') * 0.16;
+      const chainBranches = 1 + Math.floor(s('chainSplit') * 0.65) + (weapon.tier >= 7 ? 1 : 0);
       const chainCritLevel = s('chainCrit');
-      const deathNovaChance = s('deathNova') * 0.15;
-      const deathNovaRadius = 80 + s('deathNova') * 18;
+      const deathNovaChance = s('deathNova') * 0.14;
+      const deathNovaRadius = 85 + s('deathNova') * 18;
 
       const empRadius = 120 + weapon.radiusBonus * 0.9 + s('empPulse') * 34;
-      const empCooldown = Math.max(0.6, 2.3 - s('empPulse') * 0.28 - weapon.tier * 0.07);
-      const empDamage = baseDamage * (2.8 + s('empPulse') * 0.75);
+      const empCooldown = Math.max(0.55, 2.3 - s('empPulse') * 0.24 - weapon.tier * 0.07);
+      const empDamage = baseDamage * (2.6 + s('empPulse') * 0.72);
 
       const uvLampCount = s('uvLamp');
-      const uvPullStrength = 48 + s('uvLamp') * 36;
+      const uvPullStrength = 52 + s('uvLamp') * 40;
       const coilCount = s('coil');
-      const coilSlow = Math.min(0.72, 0.22 + s('coil') * 0.1);
+      const coilSlow = Math.min(0.74, 0.22 + s('coil') * 0.1);
       const turretCount = s('turret');
       const orbitTeslaCount = s('orbitTesla');
       const bloodBurstLevel = s('bloodBurst');
 
-      const voltMult = Math.pow(1.48, s('voltGain')) * stage.voltMult * prestigeMult * mb.volt;
-      const magnetRadius = s('magnet') >= 6 ? 2500 : 160 + s('magnet') * 90;
-      const magnetSpeed = 500 + s('magnet') * 150;
-      const rareLuckMult = 1 + s('goldenLuck') * 0.45;
-      const goldenRewardMult = 16 + s('goldenLuck') * 7;
-      const comboMaxMult = 3.2 + s('comboCap') * 1.8;
-      const comboDecayTime = 2.6 + s('comboCap') * 0.48;
+      // Smoothed stair-step economy curve so each stage has lasting satisfaction
+      const voltMult = Math.pow(1.34, s('voltGain')) * stage.voltMult * prestigeMult * mb.volt;
+      const magnetRadius = s('magnet') >= 6 ? 2500 : 160 + s('magnet') * 95;
+      const magnetSpeed = 520 + s('magnet') * 155;
+      const rareLuckMult = 1 + s('goldenLuck') * 0.4;
+      const goldenRewardMult = 14 + s('goldenLuck') * 6;
+      const comboMaxMult = 2.0 + s('comboCap') * 1.2;
+      const comboDecayTime = 2.5 + s('comboCap') * 0.45;
       const bossDamageMult = 1 + s('bossHunter') * 0.45;
       const bossVoltMult = 1 + s('bossHunter') * 0.7;
 
-      const maxMosquitoes = 26 + s('spawnRate') * 16;
-      const spawnInterval = Math.max(0.055, 0.64 / (1 + s('spawnRate') * 0.34));
-      const swarmChance = 0.14 + s('swarmCluster') * 0.12;
-      const swarmBonusSize = s('swarmCluster') * 2;
-      const swarmRushInterval = Math.max(18, 38 - s('swarmRushUpgrade') * 4);
-      const swarmRushVoltMult = 2 + s('swarmRushUpgrade') * 0.8;
+      // Stair-step density: S1 stays calm (16~30), S2 ramps (54~110), S3~S6 pour in huge waves (125~520!)
+      const stageCap = stage.baseCap || 16;
+      const stageDensity = stage.densityMult || 0.65;
+      const spawnCapPerLv = stage.id === 0 ? 4 : stage.id === 1 ? 8 : 14;
+      const maxMosquitoes = Math.min(520, stageCap + s('spawnRate') * spawnCapPerLv);
+      const spawnInterval = Math.max(0.02, 0.72 / (stageDensity * (1 + s('spawnRate') * 0.3)));
+      const swarmChance = stage.id === 0 ? 0 : Math.min(0.62, 0.12 + s('swarmCluster') * 0.08 + (stage.id - 1) * 0.06);
+      const swarmBonusSize = s('swarmCluster') * 3;
+      const floodScale = 1 + s('swarmCluster') * 0.32;
+      const floodInterval = Math.max(4.0, 11.5 - stage.id * 1.15 - s('swarmCluster') * 0.4);
+      const swarmRushInterval = Math.max(16, 38 - s('swarmRushUpgrade') * 3.5);
+      const swarmRushVoltMult = 2 + s('swarmRushUpgrade') * 0.85;
 
       const omegaMult = this.hasContract('omegaScale') ? 10 : 1;
       const popPerKill = Math.max(
         1,
-        Math.floor(stage.popScale * Math.pow(1.9, s('popBoost')) * prestigeMult * mb.popMult * omegaMult)
+        Math.floor(stage.popScale * Math.pow(2.0, s('popBoost')) * prestigeMult * mb.popMult * omegaMult)
       );
       const coreDropBonus = this.hasContract('omegaScale') ? 1 : 0;
 
       const orbitalLevel = s('orbitalBeam');
-      const orbitalCooldown = Math.max(4, 10 - orbitalLevel * 1.8);
+      const orbitalCooldown = Math.max(3.5, 10 - orbitalLevel * 1.6);
 
       return {
         weapon,
@@ -371,6 +436,8 @@ window.ZAP.formatExactPop = function formatExactPop(n) {
         spawnInterval,
         swarmChance,
         swarmBonusSize,
+        floodScale,
+        floodInterval,
         swarmRushInterval,
         swarmRushVoltMult,
         popPerKill,

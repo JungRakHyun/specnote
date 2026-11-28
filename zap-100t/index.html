@@ -11,181 +11,212 @@
 </head>
 <body>
   <div id="app">
-    <!-- Open-Air Interactive Game Canvas -->
-    <canvas id="game-canvas"></canvas>
+    <!-- ================= LEFT / MAIN OPEN-AIR PLAYFIELD ================= -->
+    <main id="playfield">
+      <canvas id="game-canvas"></canvas>
+      <div id="fever-vignette" aria-hidden="true"></div>
 
-    <!-- Overdrive Crisp Border -->
-    <div id="fever-vignette" aria-hidden="true"></div>
-
-    <!-- ================= PERIMETER-ONLY HUD (ZERO CENTER CLUTTER!) ================= -->
-
-    <!-- TOP-LEFT CORNER: Resources + Remaining Population + Weapon Evolution -->
-    <aside id="corner-tl" class="hud-corner">
-      <div class="corner-row">
-        <div class="ink-card volt-pill" title="정전기 에너지 (업그레이드 화폐)">
-          <span class="svg-badge volt-badge" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>
-          </span>
-          <div class="stat-body">
-            <span class="stat-label">VOLT</span>
-            <span id="volt-display" class="stat-value mono">0</span>
+      <!-- TOP-LEFT: High-Visibility Volt, Core & Earth Extinction Counter -->
+      <aside id="corner-tl" class="hud-corner">
+        <div class="corner-row">
+          <div class="ink-card volt-pill" title="정전기 에너지 (강화 화폐)">
+            <span class="svg-badge volt-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>
+            </span>
+            <div class="stat-body">
+              <span class="stat-label">VOLT</span>
+              <span id="volt-display" class="stat-value mono">0</span>
+            </div>
+            <span id="vps-display" class="stat-sub mono">+0/s</span>
           </div>
-          <span id="vps-display" class="stat-sub mono">+0/s</span>
+
+          <div class="ink-card core-pill hidden" id="core-pill" title="보스 처치 변이 코어 (특수 계약서 체결)">
+            <span class="svg-badge core-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="12 2 21 7 21 17 12 22 3 17 3 7"/></svg>
+            </span>
+            <div class="stat-body">
+              <span class="stat-label">CORE</span>
+              <span id="core-display" class="stat-value mono">0</span>
+            </div>
+          </div>
         </div>
 
-        <div class="ink-card core-pill hidden" id="core-pill" title="보스 처치 시 획득하는 변이 코어 (특수 계약서 체결)">
-          <span class="svg-badge core-badge" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="12 2 21 7 21 17 12 22 3 17 3 7"/></svg>
-          </span>
-          <div class="stat-body">
-            <span class="stat-label">CORE</span>
-            <span id="core-display" class="stat-value mono">0</span>
+        <div class="corner-row">
+          <div class="ink-card pop-mini-pill" title="전 세계 100조 마리 멸종 카운터 & 현재 공중 모기 수">
+            <span class="pop-mini-label">남은 모기</span>
+            <span id="remaining-display" class="remaining-value mono">100,000,000,000,000</span>
+            <span id="live-swarm-badge" class="live-swarm-badge mono">공중 9</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- TOP-RIGHT: Stage Selector, Theme/Sound/Settings & Boss Progress -->
+      <aside id="corner-tr" class="hud-corner right">
+        <div class="corner-row right">
+          <button id="btn-stage-select" class="ink-btn stage-chip-btn" title="작전 지역 이동 (1~6)">
+            <span id="stage-badge" class="stage-badge">S1 · 자취방 여름밤</span>
+            <span id="scale-badge" class="scale-badge mono">×1</span>
+            <span id="stage-notify-dot" class="notify-dot hidden"></span>
+          </button>
+          <button id="btn-theme" class="ink-btn icon-only" title="라이트 / 다크 잉크 테마 전환">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+          </button>
+          <button id="btn-sound" class="ink-btn icon-only" title="전체 사운드 켜기/끄기">
+            <span id="sound-icon">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
+            </span>
+          </button>
+          <button id="btn-bgm" class="ink-btn icon-only" title="미니멀 배경음(BGM) 켜기/끄기">
+            <span id="bgm-icon" class="mono">♪</span>
+          </button>
+          <button id="btn-help" class="ink-btn icon-only" title="통계 및 설정">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <button id="btn-toggle-dock" class="ink-btn icon-only" title="우측 강화 패널 접기/펼치기">
+            <span id="dock-toggle-icon" class="mono">»</span>
+          </button>
+        </div>
+
+        <div class="corner-row right">
+          <div class="stage-mini-progress">
+            <div class="progress-track">
+              <div id="stage-progress-fill" class="progress-fill"></div>
+              <span id="stage-progress-text" class="progress-text mono">보스 0 / 55</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- TOP-EDGE SLIM EVENT RIBBONS (Boss / Swarm Rush ONLY) -->
+      <div id="top-event-rail">
+        <div id="rush-banner" class="hidden">
+          <span class="rush-tag">SWARM RUSH</span>
+          <span id="rush-desc">모기 대습격 · 볼트 ×2.0</span>
+          <span id="rush-timer" class="mono">10.0s</span>
+        </div>
+        <div id="boss-hud" class="hidden">
+          <div class="boss-header">
+            <span class="boss-tag">BOSS</span>
+            <span id="boss-name">대왕 아디다스 산모기</span>
+            <span id="boss-hp-text" class="mono">170 / 170</span>
+          </div>
+          <div class="boss-hp-track">
+            <div id="boss-hp-fill"></div>
           </div>
         </div>
       </div>
 
-      <div class="corner-row">
-        <button class="ink-card weapon-pill" id="btn-weapon-evolve" title="클릭해 장비 진화! (맨손 → 파리채 → 스프레이 → 전기모기채 → 궤도 이온포)">
-          <span class="weapon-tier-tag mono" id="weapon-icon">T1</span>
-          <div class="stat-body">
-            <span class="stat-label" id="weapon-tier-label">장비 · TIER 1</span>
-            <span id="weapon-name-display" class="stat-value weapon-val">맨손 박수</span>
+      <!-- BOTTOM-LEFT: Toasts + Combo + Overdrive -->
+      <aside id="corner-bl" class="hud-corner bottom">
+        <div id="toast-container"></div>
+
+        <div id="combo-container" class="hidden">
+          <div class="combo-number-row">
+            <span id="combo-count" class="mono">0</span>
+            <span class="combo-tag">COMBO</span>
+            <span id="combo-mult" class="combo-mult mono">×1.0</span>
           </div>
-          <span id="weapon-next-badge" class="weapon-next-badge mono">다음 ⚡20</span>
+          <div class="combo-decay-track">
+            <div id="combo-decay-fill"></div>
+          </div>
+        </div>
+
+        <div class="ink-card fever-widget" id="fever-widget">
+          <div class="fever-label-row">
+            <span class="fever-title">OVERDRIVE</span>
+            <span id="fever-percent" class="mono">S2 해금</span>
+          </div>
+          <div class="fever-track">
+            <div id="fever-fill"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- BOTTOM-RIGHT OF PLAYFIELD: Boss Summon + Pulse Cooldown -->
+      <aside id="corner-br" class="hud-corner bottom right">
+        <div class="corner-row right">
+          <button id="btn-summon-boss" class="boss-cta hidden" title="클릭 또는 B 키로 보스 소환">
+            <span>보스 출현! [B]</span>
+          </button>
+
+          <div class="ink-card emp-indicator" id="emp-indicator" title="클릭: 즉시 강타/펄스 · SPACE: 고압 펄스">
+            <div class="emp-ring">
+              <svg viewBox="0 0 36 36">
+                <circle class="emp-bg" cx="18" cy="18" r="14"></circle>
+                <circle id="emp-progress" class="emp-fg" cx="18" cy="18" r="14"></circle>
+              </svg>
+              <span class="emp-icon mono">⚡</span>
+            </div>
+            <div class="emp-meta">
+              <span class="emp-title" id="emp-title">양손 박수</span>
+              <span class="emp-key mono">CLICK / SPACE</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Subtle Ephemeral Onboarding Hint -->
+      <div id="onboarding-hint">
+        <div class="hint-chip">
+          <span>모기 스쳐 잡기 ·</span>
+          <span class="hint-accent">클릭으로 강타</span>
+          <span>· 우측 패널 즉시 강화</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= ALWAYS-VISIBLE RIGHT UPGRADE DOCK (ROUND & ROUND INC. STYLE!) ================= -->
+    <aside id="upgrade-dock" aria-label="실시간 강화 패널">
+      <!-- Featured Pinned Weapon Evolution Card -->
+      <div class="dock-weapon-box">
+        <button id="btn-weapon-evolve" class="dock-weapon-card" title="클릭해 장비 진화!">
+          <div class="dock-weapon-thumb">
+            <canvas id="dock-weapon-canvas" width="54" height="46"></canvas>
+          </div>
+          <div class="dock-weapon-info">
+            <div class="dock-weapon-top">
+              <span class="weapon-tier-tag mono" id="weapon-icon">T1</span>
+              <span class="stat-label" id="weapon-tier-label">장비 · TIER 1</span>
+            </div>
+            <div id="weapon-name-display" class="dock-weapon-name">맨손 박수</div>
+            <div id="weapon-next-badge" class="dock-weapon-next mono">다음 파리채 · ⚡45</div>
+          </div>
         </button>
       </div>
 
-      <div class="corner-row">
-        <div class="ink-card pop-mini-pill" title="전 세계 100조 마리 멸종 카운터">
-          <span class="pop-mini-label">지구 남은 모기</span>
-          <span id="remaining-display" class="remaining-value mono">100,000,000,000,000</span>
+      <!-- Dock Header: Live Sub-Tabs + Buy Mode (x1 / MAX) + Blueprint Button -->
+      <div class="dock-toolbar">
+        <div class="dock-tabs">
+          <button class="dock-tab active" data-dock-tab="upgrades">
+            <span>강화</span>
+            <span id="dock-upg-badge" class="dock-badge hidden mono">0</span>
+          </button>
+          <button class="dock-tab" data-dock-tab="contracts">
+            <span>계약</span>
+            <span id="dock-contract-badge" class="dock-badge hidden mono">0</span>
+          </button>
         </div>
+        <div class="dock-tools-right">
+          <button id="btn-buy-mode" class="dock-mini-btn mono" title="클릭당 구매 수량 전환 (×1 / MAX)">×1</button>
+          <button id="btn-skill-tree" class="dock-mini-btn tree-open-btn" title="전체 설계도 트리 · 업적 · 도감 (TAB)">
+            <span>도감·트리</span>
+            <span id="affordable-badge" class="hidden">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Scrollable Upgrade / Contract List -->
+      <div id="dock-list" class="dock-list"></div>
+
+      <!-- Dock Bottom Live Spec Strip -->
+      <div class="dock-footer">
+        <div id="dock-spec-strip" class="dock-spec mono">화력 13 · 4.2/s · 치명 8%</div>
+        <span class="dock-hotkeys mono">[E] 빠른강화 · [TAB] 트리</span>
       </div>
     </aside>
 
-    <!-- TOP-RIGHT CORNER: Stage Status + Controls + Compact Boss Progress -->
-    <aside id="corner-tr" class="hud-corner right">
-      <div class="corner-row right">
-        <button id="btn-stage-select" class="ink-btn stage-chip-btn" title="작전 지역 이동 (숫자키 1~6)">
-          <span id="stage-badge" class="stage-badge">S1 · 자취방 여름밤</span>
-          <span id="scale-badge" class="scale-badge mono">×1</span>
-          <span id="stage-notify-dot" class="notify-dot hidden"></span>
-        </button>
-        <button id="btn-theme" class="ink-btn icon-only" title="라이트 / 다크 잉크 테마 전환">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
-        </button>
-        <button id="btn-sound" class="ink-btn icon-only" title="사운드 켜기/끄기">
-          <span id="sound-icon">
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></svg>
-          </span>
-        </button>
-        <button id="btn-help" class="ink-btn icon-only" title="통계 및 설정">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 10 3.09V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
-      </div>
-
-      <div class="corner-row right">
-        <div class="stage-mini-progress">
-          <div class="progress-track">
-            <div id="stage-progress-fill" class="progress-fill"></div>
-            <span id="stage-progress-text" class="progress-text mono">보스 0 / 45</span>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- TOP-EDGE ULTRA-SLIM EVENT RIBBONS (Hidden during normal play!) -->
-    <div id="top-event-rail">
-      <div id="rush-banner" class="hidden">
-        <span class="rush-tag">SWARM RUSH</span>
-        <span id="rush-desc">모기 대습격 · 볼트 ×2.0</span>
-        <span id="rush-timer" class="mono">10.0s</span>
-      </div>
-      <div id="boss-hud" class="hidden">
-        <div class="boss-header">
-          <span class="boss-tag">BOSS</span>
-          <span id="boss-name">대왕 아디다스 산모기</span>
-          <span id="boss-hp-text" class="mono">100 / 100</span>
-        </div>
-        <div class="boss-hp-track">
-          <div id="boss-hp-fill"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BOTTOM-LEFT CORNER: Toasts + Combo + Overdrive Gauge -->
-    <aside id="corner-bl" class="hud-corner bottom">
-      <div id="toast-container"></div>
-
-      <div id="combo-container" class="hidden">
-        <div class="combo-number-row">
-          <span id="combo-count" class="mono">0</span>
-          <span class="combo-tag">COMBO</span>
-          <span id="combo-mult" class="combo-mult mono">×1.0</span>
-        </div>
-        <div class="combo-decay-track">
-          <div id="combo-decay-fill"></div>
-        </div>
-      </div>
-
-      <div class="ink-card fever-widget" id="fever-widget">
-        <div class="fever-label-row">
-          <span class="fever-title">OVERDRIVE</span>
-          <span id="fever-percent" class="mono">0%</span>
-        </div>
-        <div class="fever-track">
-          <div id="fever-fill"></div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- BOTTOM-RIGHT CORNER: Quick-Upgrade + Boss Summon + Pulse Ring + Blueprint CTA -->
-    <aside id="corner-br" class="hud-corner bottom right">
-      <div class="corner-row right">
-        <button id="btn-quick-upgrade" class="quick-buy-chip hidden" title="클릭 또는 E 키로 가장 저렴한 강화 즉시 구매!">
-          <span class="qb-key mono">E</span>
-          <span id="qb-name" class="qb-name">타격 출력 강화</span>
-          <span id="qb-cost" class="qb-cost mono">⚡10</span>
-        </button>
-
-        <button id="btn-summon-boss" class="boss-cta hidden">
-          <span>보스 출현!</span>
-        </button>
-
-        <div class="ink-card emp-indicator" id="emp-indicator" title="클릭: 즉시 강타/펄스 · SPACE: 고압 펄스">
-          <div class="emp-ring">
-            <svg viewBox="0 0 36 36">
-              <circle class="emp-bg" cx="18" cy="18" r="14"></circle>
-              <circle id="emp-progress" class="emp-fg" cx="18" cy="18" r="14"></circle>
-            </svg>
-            <span class="emp-icon mono">⚡</span>
-          </div>
-          <div class="emp-meta">
-            <span class="emp-title" id="emp-title">양손 박수</span>
-            <span class="emp-key mono">CLICK / SPACE</span>
-          </div>
-        </div>
-
-        <button id="btn-skill-tree" class="primary-cta">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="5" cy="18" r="2.2"/><circle cx="19" cy="18" r="2.2"/><path d="M9.6 10.2L6.8 7.8M14.4 10.2l2.8-2.4M9.6 13.8l-2.8 2.4M14.4 13.8l2.8 2.4"/></svg>
-          <span class="cta-text">강화 · 계약</span>
-          <span class="cta-key mono">TAB</span>
-          <span id="affordable-badge" class="affordable-badge hidden mono">0</span>
-        </button>
-      </div>
-    </aside>
-
-    <!-- Subtle Bottom-Edge First-Time Hint (Fades immediately on first movement) -->
-    <div id="onboarding-hint">
-      <div class="hint-chip">
-        <span>날아다니는 모기를 훑거나</span>
-        <span class="hint-accent">클릭으로 양손 박수(짝!)</span>
-        <span>· 볼트를 모아 장비를 진화하세요</span>
-      </div>
-    </div>
-
-    <!-- ================= BLUEPRINT MODAL (3 TABS: SKILL TREE / CONTRACTS / MILESTONES) ================= -->
-    <section id="skill-tree-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="강화 및 계약서">
+    <!-- ================= BLUEPRINT MODAL (4 TABS: SKILL TREE / CONTRACTS / MILESTONES / CODEX) ================= -->
+    <section id="skill-tree-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="설계도 및 도감">
       <div class="modal-backdrop" data-close="skill-tree"></div>
       <div class="tree-shell">
         <div class="tree-topbar">
@@ -243,7 +274,7 @@
                 <div id="insp-branch" class="insp-branch">장비 진화</div>
                 <h3 id="insp-name">장비 진화</h3>
               </div>
-              <span id="insp-level" class="insp-level mono">Lv.0 / 6</span>
+              <span id="insp-level" class="insp-level mono">Lv.0 / 9</span>
             </div>
             <p id="insp-desc" class="insp-desc">노드를 선택해 상세 효과를 확인하세요.</p>
             <div id="insp-effect" class="insp-effect mono"></div>
@@ -275,12 +306,13 @@
           <div id="milestones-grid" class="milestones-grid"></div>
         </div>
 
-        <!-- TAB 4: Mosquito Codex & Live Combat Specs -->
+        <!-- TAB 4: Mosquito Codex & 10-Tier Weapon Roadmap -->
         <div class="tab-panel scroll-panel hidden" id="panel-codex">
           <div class="panel-intro">
-            <h3>모기 도감 &amp; 현재 전투 스펙</h3>
-            <p id="combat-spec-summary" class="mono">기본 화력 13 · 초당 타격 4.4회 · 치명타 10% · 연쇄 점프 0회</p>
+            <h3>장비 진화 로드맵 &amp; 모기 도감</h3>
+            <p id="combat-spec-summary" class="mono">기본 화력 13 · 초당 타격 4.2회 · 치명타 8% · 연쇄 점프 0회</p>
           </div>
+          <div id="weapon-roadmap" class="weapon-roadmap"></div>
           <div id="codex-grid" class="codex-grid"></div>
         </div>
       </div>
@@ -294,7 +326,7 @@
           <h2>작전 지역 선택</h2>
           <button class="ink-btn small close-btn" data-close="stage">✕</button>
         </div>
-        <p class="dialog-desc">보스 아디다스 산모기를 처치하면 다음 작전 지역이 해금되며, 1마리 처치당 멸종 환산 배율이 폭증합니다.</p>
+        <p class="dialog-desc">보스 아디다스 산모기를 처치하면 다음 작전 지역이 해금되며, 새로운 도파민 기믹과 멸종 배율이 열립니다.</p>
         <div id="stage-list" class="stage-list"></div>
       </div>
     </section>
@@ -314,6 +346,10 @@
             <input type="range" id="volume-slider" min="0" max="100" value="65" />
           </label>
           <label class="setting-row">
+            <span>미니멀 배경음 (BGM)</span>
+            <input type="checkbox" id="bgm-toggle" checked />
+          </label>
+          <label class="setting-row">
             <span>화면 진동 (타격감)</span>
             <input type="checkbox" id="shake-toggle" checked />
           </label>
@@ -325,15 +361,17 @@
         <div class="controls-guide">
           <h3>조작법</h3>
           <ul>
-            <li><strong>마우스 이동</strong>: 날아다니는 모기를 스쳐 잡기 (빠르게 휘두르면 스윙 보너스 &amp; 와류 흡인!)</li>
-            <li><strong>마우스 클릭</strong>: 충전 시 양손 박수/고압 펄스 · 재충전 중엔 즉시 쾌속 강타!</li>
-            <li><strong>SPACE</strong>: 고압 펄스 발사 · <strong>TAB</strong>: 강화·계약서 열기/닫기</li>
+            <li><strong>마우스 이동</strong>: 날아다니는 모기를 스쳐 잡기 · 우측 패널에서 클릭으로 즉시 강화!</li>
+            <li><strong>마우스 클릭 / SPACE</strong>: 충전 시 양손 박수·고압 펄스 · 재충전 중엔 즉시 쾌속 강타!</li>
+            <li><strong>E</strong>: 추천 강화 1클릭 구매 · <strong>B</strong>: 보스 소환 · <strong>TAB</strong>: 전체 트리·도감</li>
             <li><strong>1 ~ 6</strong>: 해금된 작전 지역 빠른 전환</li>
           </ul>
         </div>
         <div class="danger-zone">
+          <button id="btn-export-save" class="ink-btn small">세이브 복사</button>
+          <button id="btn-import-save" class="ink-btn small">불러오기</button>
           <button id="btn-prestige" class="prestige-btn hidden">초전도 리부트 (영구 배율 획득)</button>
-          <button id="btn-hard-reset" class="danger-btn">세이브 초기화</button>
+          <button id="btn-hard-reset" class="danger-btn">초기화</button>
         </div>
       </div>
     </section>

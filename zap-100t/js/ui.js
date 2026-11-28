@@ -7,7 +7,11 @@ window.ZAP = window.ZAP || {};
 
   const UI = {
     selectedNodeId: 'weaponTier',
-    activeTab: 'tree', // 'tree' | 'contracts' | 'milestones'
+    activeTab: 'tree', // 'tree' | 'contracts' | 'milestones' | 'codex'
+    dockTab: 'upgrades', // 'upgrades' | 'contracts'
+    buyMode: '1', // '1' | 'max'
+    lastDockWeaponKey: '',
+    lastDockRenderKey: '',
     treePan: { x: 0, y: 0, scale: 0.88, dragging: false, startX: 0, startY: 0, origX: 0, origY: 0 },
     nodeEls: {},
     edgeEls: [],
@@ -21,6 +25,7 @@ window.ZAP = window.ZAP || {};
       this.refreshSettingsInputs();
       this.applyTheme();
       this.updateHUD();
+      this.renderDock(true);
     },
 
     _cacheDom() {
@@ -32,14 +37,24 @@ window.ZAP = window.ZAP || {};
         core: $('core-display'),
 
         weaponBtn: $('btn-weapon-evolve'),
+        dockWeaponCanvas: $('dock-weapon-canvas'),
         weaponIcon: $('weapon-icon'),
         weaponTierLabel: $('weapon-tier-label'),
         weaponName: $('weapon-name-display'),
         weaponNextBadge: $('weapon-next-badge'),
 
+        dockList: $('dock-list'),
+        dockUpgBadge: $('dock-upg-badge'),
+        dockContractBadge: $('dock-contract-badge'),
+        btnBuyMode: $('btn-buy-mode'),
+        btnToggleDock: $('btn-toggle-dock'),
+        dockToggleIcon: $('dock-toggle-icon'),
+        dockSpecStrip: $('dock-spec-strip'),
+
         stageBadge: $('stage-badge'),
         scaleBadge: $('scale-badge'),
         remaining: $('remaining-display'),
+        liveSwarmBadge: $('live-swarm-badge'),
         stageProgressFill: $('stage-progress-fill'),
         stageProgressText: $('stage-progress-text'),
         stageNotifyDot: $('stage-notify-dot'),
@@ -59,14 +74,11 @@ window.ZAP = window.ZAP || {};
         bossHpFill: $('boss-hp-fill'),
         bossSummonBtn: $('btn-summon-boss'),
 
+        feverWidget: $('fever-widget'),
         feverPercent: $('fever-percent'),
         feverFill: $('fever-fill'),
         empProgress: $('emp-progress'),
         empTitle: $('emp-title'),
-
-        quickUpgradeBtn: $('btn-quick-upgrade'),
-        qbName: $('qb-name'),
-        qbCost: $('qb-cost'),
 
         skillTreeBtn: $('btn-skill-tree'),
         affordableBadge: $('affordable-badge'),
@@ -74,6 +86,7 @@ window.ZAP = window.ZAP || {};
         themeBtn: $('btn-theme'),
         soundBtn: $('btn-sound'),
         soundIcon: $('sound-icon'),
+        bgmBtn: $('btn-bgm'),
         stageSelectBtn: $('btn-stage-select'),
         helpBtn: $('btn-help'),
 
@@ -96,6 +109,7 @@ window.ZAP = window.ZAP || {};
         panelCodex: $('panel-codex'),
         contractsGrid: $('contracts-grid'),
         milestonesGrid: $('milestones-grid'),
+        weaponRoadmap: $('weapon-roadmap'),
         codexGrid: $('codex-grid'),
         combatSpecSummary: $('combat-spec-summary'),
         milestoneBonusSummary: $('milestone-bonus-summary'),
@@ -118,8 +132,11 @@ window.ZAP = window.ZAP || {};
         settingsModal: $('settings-modal'),
         statsGrid: $('stats-grid'),
         volumeSlider: $('volume-slider'),
+        bgmToggle: $('bgm-toggle'),
         shakeToggle: $('shake-toggle'),
         numbersToggle: $('numbers-toggle'),
+        btnExportSave: $('btn-export-save'),
+        btnImportSave: $('btn-import-save'),
         btnPrestige: $('btn-prestige'),
         btnHardReset: $('btn-hard-reset'),
 
@@ -149,8 +166,12 @@ window.ZAP = window.ZAP || {};
 
       this.el.corePill.addEventListener('click', (e) => {
         e.stopPropagation();
-        this.switchTab('contracts');
-        this.openModal('skill-tree');
+        if (document.body.classList.contains('dock-collapsed')) {
+          this.switchTab('contracts');
+          this.openModal('skill-tree');
+        } else {
+          this.switchDockTab('contracts');
+        }
       });
 
       this.el.skillTreeBtn.addEventListener('click', (e) => {
@@ -169,6 +190,8 @@ window.ZAP = window.ZAP || {};
         const s = window.ZAP.State.data.settings;
         s.theme = s.theme === 'dark' ? 'light' : 'dark';
         this.applyTheme();
+        this.lastDockWeaponKey = '';
+        this.renderDock(true);
         window.ZAP.State.save();
         this.showToast(s.theme === 'dark' ? '다크 잉크 모드' : '화이트 종이 모드');
       });
@@ -177,6 +200,37 @@ window.ZAP = window.ZAP || {};
         e.stopPropagation();
         this.toggleModal('settings');
       });
+
+      if (this.el.btnToggleDock) {
+        this.el.btnToggleDock.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const collapsed = document.body.classList.toggle('dock-collapsed');
+          if (this.el.dockToggleIcon) {
+            this.el.dockToggleIcon.textContent = collapsed ? '«' : '»';
+          }
+          if (window.ZAP.syncPlayfieldSize) {
+            window.ZAP.syncPlayfieldSize();
+            setTimeout(() => window.ZAP.syncPlayfieldSize(), 210);
+          }
+        });
+      }
+
+      document.querySelectorAll('.dock-tab').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.switchDockTab(btn.dataset.dockTab);
+        });
+      });
+
+      if (this.el.btnBuyMode) {
+        this.el.btnBuyMode.addEventListener('click', (e) => {
+          e.stopPropagation();
+          this.buyMode = this.buyMode === '1' ? 'max' : '1';
+          this.el.btnBuyMode.textContent = this.buyMode === 'max' ? 'MAX' : '×1';
+          this.el.btnBuyMode.classList.toggle('max-active', this.buyMode === 'max');
+          this.renderDock(true);
+        });
+      }
 
       this.el.soundBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -188,16 +242,22 @@ window.ZAP = window.ZAP || {};
         window.ZAP.State.save();
       });
 
+      this.el.bgmBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.ZAP.Audio.unlock();
+        const s = window.ZAP.State.data.settings;
+        s.bgm = !s.bgm;
+        window.ZAP.Audio.setBgmEnabled(s.bgm);
+        this.el.bgmBtn.classList.toggle('bgm-off', !s.bgm);
+        if (this.el.bgmToggle) this.el.bgmToggle.checked = s.bgm;
+        window.ZAP.State.save();
+        this.showToast(s.bgm ? '미니멀 BGM 켜짐' : '미니멀 BGM 꺼짐');
+      });
+
       this.el.bossSummonBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         window.ZAP.Audio.unlock();
         window.ZAP.Engine.summonBoss();
-      });
-
-      this.el.quickUpgradeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        window.ZAP.Audio.unlock();
-        this.buyQuickUpgrade();
       });
 
       this.el.btnCloseTree.addEventListener('click', () => this.closeModal());
@@ -232,6 +292,42 @@ window.ZAP = window.ZAP || {};
         window.ZAP.Audio.setMuted(val === 0);
         this.el.soundIcon.innerHTML = val === 0 ? SOUND_OFF_SVG : SOUND_ON_SVG;
         window.ZAP.State.save();
+      });
+
+      this.el.bgmToggle.addEventListener('change', (e) => {
+        const on = e.target.checked;
+        window.ZAP.State.data.settings.bgm = on;
+        window.ZAP.Audio.setBgmEnabled(on);
+        this.el.bgmBtn.classList.toggle('bgm-off', !on);
+        window.ZAP.State.save();
+      });
+
+      this.el.btnExportSave.addEventListener('click', async () => {
+        const code = window.ZAP.State.exportSave();
+        if (!code) return;
+        try {
+          await navigator.clipboard.writeText(code);
+          this.showToast('세이브 코드가 클립보드에 복사되었습니다!', 'gold');
+        } catch (err) {
+          prompt('아래 세이브 코드를 복사해 보관하세요:', code);
+        }
+      });
+
+      this.el.btnImportSave.addEventListener('click', () => {
+        const code = prompt('불러올 세이브 코드를 붙여넣으세요:');
+        if (!code) return;
+        if (window.ZAP.State.importSave(code)) {
+          this.applyTheme();
+          this.refreshSettingsInputs();
+          window.ZAP.Engine.resetTransient();
+          window.ZAP.Engine.rebuildStructures();
+          window.ZAP.Engine.seedInitialSwarm();
+          this.closeModal();
+          this.updateHUD();
+          this.showToast('세이브를 성공적으로 불러왔습니다!', 'gold');
+        } else {
+          this.showToast('유효하지 않은 세이브 코드입니다.', 'boss');
+        }
       });
 
       this.el.shakeToggle.addEventListener('change', (e) => {
@@ -346,12 +442,16 @@ window.ZAP = window.ZAP || {};
 
     refreshSettingsInputs() {
       const s = window.ZAP.State.data.settings;
+      if (s.bgm === undefined) s.bgm = true;
       this.el.volumeSlider.value = Math.round(s.volume * 100);
+      this.el.bgmToggle.checked = !!s.bgm;
+      this.el.bgmBtn.classList.toggle('bgm-off', !s.bgm);
       this.el.shakeToggle.checked = !!s.shake;
       this.el.numbersToggle.checked = !!s.showNumbers;
       this.el.soundIcon.innerHTML = s.muted ? SOUND_OFF_SVG : SOUND_ON_SVG;
       window.ZAP.Audio.setVolume(s.volume);
       window.ZAP.Audio.setMuted(s.muted);
+      window.ZAP.Audio.setBgmEnabled(s.bgm);
     },
 
     _buildSkillTreeGraph() {
@@ -464,6 +564,7 @@ window.ZAP = window.ZAP || {};
 
       this.refreshSkillTree();
       this.updateHUD();
+      this.renderDock(true);
       return true;
     },
 
@@ -546,8 +647,8 @@ window.ZAP = window.ZAP || {};
         this.el.btnBuyNode.disabled = true;
         this.el.btnBuyMax.disabled = true;
       } else if (!unlocked) {
-        const reqNames = (sel.requires || []).map((r) => state.nodeMap[r]?.name || r).join(' 또는 ');
-        this.el.inspCost.textContent = `선행 필요: ${reqNames}`;
+        const lockReason = state.getNodeLockReason(sel.id);
+        this.el.inspCost.textContent = `잠김 · ${lockReason}`;
         this.el.btnBuyNode.textContent = '잠김';
         this.el.btnBuyNode.disabled = true;
         this.el.btnBuyMax.disabled = true;
@@ -639,10 +740,30 @@ window.ZAP = window.ZAP || {};
       const stats = state.getStats();
       const fmt = window.ZAP.formatNum;
       const kills = state.data.speciesKills || {};
+      const curTier = state.getSkillLevel('weaponTier');
 
       this.el.combatSpecSummary.textContent =
         `기본 화력 ${fmt(stats.baseDamage)} · 초당 타격 ${stats.ticksPerSec.toFixed(1)}회 · 치명타 ${Math.round(stats.critChance * 100)}% (×${stats.critMult.toFixed(1)}) · 연쇄 점프 ${stats.chainJumps}회 · 반경 ${Math.round(stats.zapRadius)}px`;
 
+      // 1. Render 7-Tier Illustrated Weapon Roadmap!
+      this.el.weaponRoadmap.innerHTML = '';
+      window.ZAP.CONFIG.WEAPON_TIERS.forEach((wt, idx) => {
+        const unlocked = idx <= curTier;
+        const isCurrent = idx === curTier;
+        const card = document.createElement('div');
+        card.className = `roadmap-card${isCurrent ? ' current' : unlocked ? '' : ' locked'}`;
+        card.innerHTML = `
+          <span class="roadmap-tag mono">${wt.tag} · ×${wt.dmgMult}</span>
+          <canvas class="roadmap-canvas"></canvas>
+          <span class="roadmap-name">${unlocked ? wt.shortName : '???'}</span>
+        `;
+        this.el.weaponRoadmap.appendChild(card);
+        if (unlocked) {
+          window.ZAP.Renderer.drawWeaponThumb(card.querySelector('canvas'), idx);
+        }
+      });
+
+      // 2. Render 6-Species Illustrated Mosquito Codex!
       this.el.codexGrid.innerHTML = '';
       for (const sp of window.ZAP.CONFIG.CODEX) {
         const count = kills[sp.id] || 0;
@@ -651,15 +772,25 @@ window.ZAP = window.ZAP || {};
         const card = document.createElement('div');
         card.className = `codex-card${seen ? '' : ' unseen'}`;
         card.innerHTML = `
-          <div class="codex-head">
-            <span class="codex-code mono">${sp.code}</span>
-            <span class="codex-kills mono">${seen ? `처치 ${fmt(count)}마리` : '미발견'}</span>
+          <div class="codex-top-row">
+            <div class="codex-portrait-box">
+              ${seen ? '<canvas class="codex-portrait-canvas"></canvas>' : '<span class="mono" style="font-size:18px;font-weight:900;">?</span>'}
+            </div>
+            <div class="codex-meta">
+              <div class="codex-head">
+                <span class="codex-code mono">${sp.code}</span>
+                <span class="codex-kills mono">${seen ? `처치 ${fmt(count)}마리` : '미발견'}</span>
+              </div>
+              <h4 style="margin-top:5px;"><i class="codex-dot" style="background:${sp.accent}"></i>${seen ? sp.name : '??? (미확인 개체)'}</h4>
+            </div>
           </div>
-          <h4><i class="codex-dot" style="background:${sp.accent}"></i>${seen ? sp.name : '??? (미확인 개체)'}</h4>
-          <p class="codex-desc">${seen ? sp.desc : '작전 중 이 특수 모기를 격추하면 도감 기록이 해금됩니다.'}</p>
+          <p class="codex-desc">${seen ? sp.desc : '작전 중 이 특수 모기를 격추하면 도감 기록과 일러스트가 해금됩니다.'}</p>
           <div class="codex-reward mono">${seen ? sp.reward : sp.tag}</div>
         `;
         this.el.codexGrid.appendChild(card);
+        if (seen) {
+          window.ZAP.Renderer.drawCodexPortrait(card.querySelector('canvas'), sp.id);
+        }
       }
     },
 
@@ -681,10 +812,11 @@ window.ZAP = window.ZAP || {};
             <div class="stage-info">
               <h3>STAGE ${idx + 1} · ${stage.name}</h3>
               <p>${unlocked ? stage.desc : `STAGE ${idx} 보스를 처치하면 해금됩니다.`}</p>
+              <p class="mono" style="font-size:11px;margin-top:3px;font-weight:800;opacity:0.85;">${stage.unlockSummary}</p>
             </div>
           </div>
           <div class="stage-item-right">
-            <div class="stage-mult-tag mono">환산 ×${fmt(stage.popScale)}</div>
+            <div class="stage-mult-tag mono">환산 ×${fmt(stage.popScale)} · 최대 ${stage.baseCap}+마리</div>
             <div class="stage-status-tag">${active ? '작전 중' : cleared ? '보스 격파' : unlocked ? '이동 가능' : '잠김'}</div>
           </div>
         `;
@@ -812,6 +944,11 @@ window.ZAP = window.ZAP || {};
       this.el.stageBadge.textContent = `S${stage.id + 1} · ${stage.name}`;
       this.el.scaleBadge.textContent = `×${fmt(stats.popPerKill)}`;
       this.el.remaining.textContent = remaining === 0 ? '0 (멸종 완료!)' : window.ZAP.formatExactPop(remaining);
+      if (this.el.liveSwarmBadge) {
+        const alive = eng.mosquitoes.length;
+        this.el.liveSwarmBadge.textContent = `공중 ${alive}`;
+        this.el.liveSwarmBadge.classList.toggle('dense', alive >= 80);
+      }
 
       const kills = state.data.stageKills[stage.id] || 0;
       const bossDone = state.data.stageBossDefeated[stage.id];
@@ -858,8 +995,10 @@ window.ZAP = window.ZAP || {};
         this.el.comboContainer.classList.add('hidden');
       }
 
-      this.el.feverPercent.textContent = eng.feverActive ? 'MAX' : `${Math.floor(eng.fever)}%`;
-      this.el.feverFill.style.width = `${eng.fever}%`;
+      const odUnlocked = state.isOverdriveUnlocked();
+      if (this.el.feverWidget) this.el.feverWidget.style.opacity = odUnlocked ? '1' : '0.45';
+      this.el.feverPercent.textContent = !odUnlocked ? 'S2 해금' : eng.feverActive ? 'MAX' : `${Math.floor(eng.fever)}%`;
+      this.el.feverFill.style.width = odUnlocked ? `${eng.fever}%` : '0%';
 
       const ratio = 1 - Math.min(1, eng.empTimer / Math.max(0.01, stats.empCooldown));
       const dashLen = 87.96;
@@ -871,15 +1010,260 @@ window.ZAP = window.ZAP || {};
       this.el.affordableBadge.classList.toggle('hidden', affordable === 0);
       this.el.skillTreeBtn.classList.toggle('has-upgrades', affordable > 0);
 
-      // 1-Click Quick-Upgrade Chip (press E or click mid-combat!)
-      const quick = state.getBestQuickUpgrade();
-      if (quick) {
-        this.el.quickUpgradeBtn.classList.remove('hidden');
-        this.el.qbName.textContent = quick.node.name;
-        this.el.qbCost.textContent = `⚡${fmt(quick.cost)}`;
-      } else {
-        this.el.quickUpgradeBtn.classList.add('hidden');
+      // Sync always-visible Right Upgrade Dock (signature-gated to prevent scroll/click flicker)
+      this.renderDock(false);
+    },
+
+    switchDockTab(tab) {
+      this.dockTab = tab === 'contracts' ? 'contracts' : 'upgrades';
+      document.querySelectorAll('.dock-tab').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.dockTab === this.dockTab);
+      });
+      this.renderDock(true);
+    },
+
+    _calcMaxBuy(nodeId) {
+      const state = window.ZAP.State;
+      const node = state.nodeMap[nodeId];
+      if (!node || !state.isNodeUnlocked(nodeId)) return { count: 0, volts: 0, cores: 0 };
+      let lv = state.getSkillLevel(nodeId);
+      let remVolts = state.data.volts;
+      let remCores = state.data.cores;
+      let count = 0;
+      let totalVolts = 0;
+      let totalCores = 0;
+
+      while (lv < node.maxLevel && count < 25) {
+        const c = state.getNodeCostAt(nodeId, lv);
+        if (remVolts < c.volts || remCores < c.cores) break;
+        remVolts -= c.volts;
+        remCores -= c.cores;
+        totalVolts += c.volts;
+        totalCores += c.cores;
+        lv++;
+        count++;
       }
+      return { count, volts: totalVolts, cores: totalCores };
+    },
+
+    renderDock(force = false) {
+      if (!this.el.dockList) return;
+      const state = window.ZAP.State;
+      const cfg = window.ZAP.CONFIG;
+      const fmt = window.ZAP.formatNum;
+      const stats = state.getStats();
+      const curTier = state.getSkillLevel('weaponTier');
+      const theme = state.data.settings.theme === 'dark' ? 'dark' : 'light';
+
+      // 1. Live sculpted miniature weapon portrait (re-drawn only when tier or theme changes)
+      const weaponKey = `${curTier}|${theme}`;
+      if (this.el.dockWeaponCanvas && (force || weaponKey !== this.lastDockWeaponKey)) {
+        this.lastDockWeaponKey = weaponKey;
+        window.ZAP.Renderer.drawWeaponThumb(this.el.dockWeaponCanvas, curTier);
+      }
+
+      // 2. Live Dock Badges & Footer Spec Strip
+      let affNonWeapon = 0;
+      for (const n of cfg.SKILL_NODES) {
+        if (n.id !== 'weaponTier' && state.canAffordNode(n.id)) affNonWeapon++;
+      }
+      if (this.el.dockUpgBadge) {
+        this.el.dockUpgBadge.textContent = affNonWeapon;
+        this.el.dockUpgBadge.classList.toggle('hidden', affNonWeapon === 0);
+      }
+
+      const affContracts = state.countAffordableContracts();
+      if (this.el.dockContractBadge) {
+        this.el.dockContractBadge.textContent = affContracts;
+        this.el.dockContractBadge.classList.toggle('hidden', affContracts === 0);
+      }
+
+      if (this.el.dockSpecStrip) {
+        const chainPart = stats.chainJumps > 0 ? ` · 연쇄 ${stats.chainJumps}` : '';
+        this.el.dockSpecStrip.textContent =
+          `화력 ${fmt(stats.baseDamage)} · ${stats.ticksPerSec.toFixed(1)}/s · 치명 ${Math.round(stats.critChance * 100)}%${chainPart}`;
+      }
+
+      // 3. Signature check so DOM only rebuilds when state/affordability actually changes (zero scroll flicker!)
+      let sig = `${this.dockTab}|${this.buyMode}|${theme}|${state.data.stageIndex}|${state.data.unlockedStage}|${curTier}|${state.data.cores}|`;
+      if (this.dockTab === 'upgrades') {
+        for (const n of cfg.SKILL_NODES) {
+          if (n.id === 'weaponTier') continue;
+          const lv = state.getSkillLevel(n.id);
+          const unl = state.isNodeUnlocked(n.id) ? 1 : 0;
+          const aff = state.canAffordNode(n.id) ? 1 : 0;
+          const mb = (this.buyMode === 'max' && aff) ? this._calcMaxBuy(n.id).count : aff;
+          sig += `${lv}${unl}${mb},`;
+        }
+      } else {
+        for (const c of cfg.CONTRACTS) {
+          sig += `${state.hasContract(c.id) ? 2 : state.canBuyContract(c.id) ? 1 : 0}`;
+        }
+      }
+
+      if (!force && sig === this.lastDockRenderKey) return;
+      this.lastDockRenderKey = sig;
+
+      const prevScroll = this.el.dockList.scrollTop;
+      const frag = document.createDocumentFragment();
+
+      if (this.dockTab === 'contracts') {
+        const banner = document.createElement('div');
+        banner.className = 'dock-core-banner';
+        banner.innerHTML = `<span>보유 변이 CORE</span><span class="mono">CORE ${fmt(state.data.cores)}</span>`;
+        frag.appendChild(banner);
+
+        for (const c of cfg.CONTRACTS) {
+          const signed = state.hasContract(c.id);
+          const canBuy = state.canBuyContract(c.id);
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `dock-item dock-contract${signed ? ' maxed' : canBuy ? ' affordable' : ''}`;
+          btn.disabled = signed || !canBuy;
+          btn.innerHTML = `
+            <span class="dock-icon-box mono" style="--branch-col:var(--accent-violet);font-size:11px;">${c.code}</span>
+            <div class="dock-item-body">
+              <div class="dock-item-title-row">
+                <span class="dock-item-name">${c.name}</span>
+                <span class="dock-cost-tag mono">${signed ? '체결됨' : `CORE ${c.coreCost}`}</span>
+              </div>
+              <div class="dock-item-sub">${c.desc}</div>
+            </div>
+          `;
+          if (!signed && canBuy) {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              window.ZAP.Audio.unlock();
+              if (state.buyContract(c.id)) {
+                window.ZAP.Audio.playStamp();
+                window.ZAP.Engine.rebuildStructures();
+                this.showToast(`계약 체결! [${c.name}] 영구 발동`, 'gold');
+                this.refreshSkillTree();
+                this.updateHUD();
+                this.renderDock(true);
+              }
+            });
+          }
+          frag.appendChild(btn);
+        }
+      } else {
+        const unlockedActive = [];
+        const maxedList = [];
+        const lockedList = [];
+
+        for (const node of cfg.SKILL_NODES) {
+          if (node.id === 'weaponTier') continue;
+          const lv = state.getSkillLevel(node.id);
+          const unlocked = state.isNodeUnlocked(node.id);
+          if (lv >= node.maxLevel) maxedList.push(node);
+          else if (unlocked) unlockedActive.push(node);
+          else lockedList.push(node);
+        }
+
+        // Stable progression order by base cost so cards never jump wildly while rapid-clicking!
+        unlockedActive.sort((a, b) => state.getNodeCostAt(a.id, 0).volts - state.getNodeCostAt(b.id, 0).volts);
+
+        const makeNodeRow = (node, mode) => {
+          const lv = state.getSkillLevel(node.id);
+          const cost = state.getNodeCost(node.id);
+          const affordable = mode === 'active' && state.canAffordNode(node.id);
+          const branchCol = cfg.BRANCH_COLORS[node.branch] || 'var(--ink)';
+          const btn = document.createElement('button');
+          btn.type = 'button';
+
+          let cls = 'dock-item';
+          if (mode === 'locked') cls += ' locked';
+          else if (mode === 'maxed') cls += ' maxed';
+          else if (affordable) cls += ' affordable';
+          btn.className = cls;
+          btn.disabled = mode !== 'active' || !affordable;
+          btn.title = `${node.name} — ${node.desc}`;
+
+          let subText = node.effectText(lv);
+          let costLabel = 'MAX';
+
+          if (mode === 'locked') {
+            subText = state.getNodeLockReason(node.id);
+            costLabel = '잠김';
+          } else if (mode === 'active') {
+            if (this.buyMode === 'max' && affordable) {
+              const mb = this._calcMaxBuy(node.id);
+              const corePart = mb.cores > 0 ? `+C${mb.cores}` : '';
+              costLabel = mb.count > 1 ? `+${mb.count} ⚡${fmt(mb.volts)}${corePart}` : `⚡${fmt(cost.volts)}${corePart}`;
+            } else {
+              costLabel = cost.cores > 0 ? `⚡${fmt(cost.volts)}+C${cost.cores}` : `⚡${fmt(cost.volts)}`;
+            }
+          }
+
+          btn.innerHTML = `
+            <span class="dock-icon-box mono" style="--branch-col:${branchCol};">${node.icon}</span>
+            <div class="dock-item-body">
+              <div class="dock-item-title-row">
+                <span class="dock-item-name">${node.name}</span>
+                <span class="dock-item-lv mono">Lv.${lv}/${node.maxLevel}</span>
+              </div>
+              <div class="dock-item-bottom-row">
+                <span class="dock-item-sub">${subText}</span>
+                <span class="dock-cost-tag mono">${costLabel}</span>
+              </div>
+            </div>
+          `;
+
+          if (mode === 'active' && affordable) {
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              window.ZAP.Audio.unlock();
+              let bought = 0;
+              const limit = this.buyMode === 'max' ? 25 : 1;
+              while (state.canAffordNode(node.id) && bought < limit) {
+                if (!this._purchaseSkill(node.id, bought > 0)) break;
+                bought++;
+              }
+              if (bought > 0) {
+                const eng = window.ZAP.Engine;
+                eng.spawnText(
+                  eng.width * 0.5,
+                  Math.max(96, eng.height * 0.24),
+                  `${node.name} +${bought}!`,
+                  '#ffca00',
+                  17,
+                  true
+                );
+              }
+            });
+          }
+          return btn;
+        };
+
+        if (unlockedActive.length > 0) {
+          const lbl = document.createElement('div');
+          lbl.className = 'dock-section-label';
+          lbl.textContent = `실시간 강화 (${unlockedActive.length})`;
+          frag.appendChild(lbl);
+          for (const node of unlockedActive) frag.appendChild(makeNodeRow(node, 'active'));
+        }
+
+        if (lockedList.length > 0) {
+          const nextLocked = lockedList.slice(0, 4);
+          const lbl = document.createElement('div');
+          lbl.className = 'dock-section-label';
+          lbl.textContent = `다음 해금 예정 (${lockedList.length}개 남음)`;
+          frag.appendChild(lbl);
+          for (const node of nextLocked) frag.appendChild(makeNodeRow(node, 'locked'));
+        }
+
+        if (maxedList.length > 0) {
+          const lbl = document.createElement('div');
+          lbl.className = 'dock-section-label';
+          lbl.textContent = `강화 완료 (${maxedList.length})`;
+          frag.appendChild(lbl);
+          for (const node of maxedList) frag.appendChild(makeNodeRow(node, 'maxed'));
+        }
+      }
+
+      this.el.dockList.innerHTML = '';
+      this.el.dockList.appendChild(frag);
+      this.el.dockList.scrollTop = prevScroll;
     },
   };
 

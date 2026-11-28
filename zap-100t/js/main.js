@@ -1,4 +1,4 @@
-// ZAP 100T — Application Entry Point & Input Wiring
+// ZAP 100T — Application Entry Point & Playfield-Aware Input Wiring
 (function () {
   function boot() {
     const canvas = document.getElementById('game-canvas');
@@ -10,8 +10,15 @@
 
     State.init();
     Renderer.init(canvas);
-    Engine.init(window.innerWidth, window.innerHeight);
+    const initialSize = Renderer.resize();
+    Engine.init(initialSize.width, initialSize.height);
     UI.init();
+
+    function syncPlayfieldSize() {
+      const sz = Renderer.resize();
+      Engine.resize(sz.width, sz.height);
+    }
+    window.ZAP.syncPlayfieldSize = syncPlayfieldSize;
 
     Engine.onToast = (msg, kind) => UI.showToast(msg, kind);
     Engine.onVictory = () => {
@@ -19,14 +26,26 @@
       UI.openModal('victory');
     };
 
-    // Mouse / Touch controls on main Canvas
+    // Accurate playfield-local pointer coordinates!
+    function toCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return [e.clientX - rect.left, e.clientY - rect.top];
+    }
+
     canvas.addEventListener('pointermove', (e) => {
-      Engine.setCursor(e.clientX, e.clientY);
+      const [x, y] = toCanvasCoords(e);
+      Engine.setCursor(x, y);
+    });
+
+    canvas.addEventListener('pointerleave', () => {
+      // Gently park custom cursor when user moves into right Upgrade Dock!
+      Engine.mouse.active = false;
     });
 
     canvas.addEventListener('pointerdown', (e) => {
       Audio.unlock();
-      Engine.setCursor(e.clientX, e.clientY);
+      const [x, y] = toCanvasCoords(e);
+      Engine.setCursor(x, y);
       if (e.button === 0 || e.pointerType !== 'mouse') {
         Engine.triggerPulse();
       }
@@ -51,6 +70,16 @@
           Audio.unlock();
           UI.buyQuickUpgrade();
         }
+      } else if (e.code === 'KeyB') {
+        if (!UI.activeModal) {
+          const st = State.getStage();
+          const kills = State.data.stageKills[st.id] || 0;
+          if (!Engine.boss && kills >= st.bossQuota) {
+            e.preventDefault();
+            Audio.unlock();
+            Engine.summonBoss();
+          }
+        }
       } else if (!UI.activeModal && e.key >= '1' && e.key <= '6') {
         const idx = Number(e.key) - 1;
         if (idx <= State.data.unlockedStage && idx !== State.data.stageIndex) {
@@ -60,17 +89,12 @@
       }
     });
 
-    // Window resize
-    window.addEventListener('resize', () => {
-      Renderer.resize();
-      Engine.resize(window.innerWidth, window.innerHeight);
-    });
+    window.addEventListener('resize', syncPlayfieldSize);
 
     // Auto-save every 5 seconds
     setInterval(() => State.save(), 5000);
     window.addEventListener('beforeunload', () => State.save());
 
-    // Main RAF Loop (60-120fps physics + throttled 15Hz HUD sync)
     let lastTime = performance.now();
     let hudAcc = 0;
 
@@ -82,7 +106,7 @@
       Renderer.render();
 
       hudAcc += dt;
-      if (hudAcc >= 0.065) {
+      if (hudAcc >= 0.08) {
         hudAcc = 0;
         UI.updateHUD();
         if (UI.activeModal === 'skill-tree') {

@@ -89,8 +89,51 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="mt-10 pt-6 border-t border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-500">
-      <p>© {year} {SITE.koName} ({SITE.name}). All rights reserved.</p>
+      <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-3 gap-y-1">
+        <p>© {year} {SITE.koName} ({SITE.name}). All rights reserved.</p>
+        <span
+          id="site-visitor-wrap"
+          class="hidden items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500"
+          aria-live="polite"
+        >
+          <span aria-hidden="true">·</span>
+          <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500/80"></span>
+          <span id="site-visitor-text"></span>
+        </span>
+      </div>
       <p>일부 콘텐츠에는 제휴 링크가 포함될 수 있으며, 모든 비교는 공식 스펙을 기준으로 작성됩니다.</p>
     </div>
   </div>
+
+  <script is:inline>
+    (() => {
+      const wrap = document.getElementById('site-visitor-wrap');
+      const label = document.getElementById('site-visitor-text');
+      if (!wrap || !label) return;
+      if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
+
+      fetch('https://events.vercount.one/api/v2/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: location.href }),
+      })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((json) => {
+          const data = json && json.data;
+          if (!data) return;
+          const uv = Number(data.site_uv || 0);
+          const pv = Number(data.site_pv || 0);
+          if (uv > 0) {
+            label.textContent = `누적 방문자 ${uv.toLocaleString('ko-KR')}명`;
+          } else if (pv > 0) {
+            label.textContent = `누적 방문 ${pv.toLocaleString('ko-KR')}회`;
+          } else {
+            return;
+          }
+          wrap.classList.remove('hidden');
+          wrap.classList.add('inline-flex');
+        })
+        .catch(() => {});
+    })();
+  </script>
 </footer>
